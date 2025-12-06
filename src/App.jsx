@@ -1,15 +1,17 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import DashboardLayout from "./layouts/DashboardLayout"
 import MainLayout from "./layouts/MainLayout"
+import About from "./pages/About"
 import AllLoans from "./pages/AllLoans"
 import ApplyLoan from "./pages/ApplyLoan"
+import Contact from "./pages/Contact"
+import DashboardHome from "./pages/dashboard/DashboardHome"
+import MyLoans from "./pages/dashboard/MyLoans"
 import Home from "./pages/Home"
 import LoanDetails from "./pages/LoanDetails"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import Register from "./pages/Register"
-import DashboardHome from "./pages/dashboard/DashboardHome"
-import MyLoans from "./pages/dashboard/MyLoans"
 import PrivateRoute from "./routes/PrivateRoute"
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="all-loans" element={<AllLoans />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
           <Route
             path="loan-details/:id"
             element={
@@ -38,10 +42,6 @@ function App() {
               </PrivateRoute>
             }
           />
-
-          {/* TODO: Add more public pages */}
-          {/* <Route path="about" element={<AboutUs />} /> */}
-          {/* <Route path="contact" element={<Contact />} /> */}
         </Route>
 
         {/* Protected Routes - Dashboard */}
