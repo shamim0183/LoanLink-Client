@@ -1,5 +1,6 @@
 import React from "react";
-import { motion } from "framer-motion";
+import axios from "axios";
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -59,6 +60,11 @@ const Register = () => {
       const formData = new FormData()
       formData.append("image", file)
 
+      console.log(
+        "📤 Uploading to ImgBB with API key:",
+        import.meta.env.VITE_IMGBB_API_KEY ? "✅ Found" : "❌ Missing"
+      )
+
       const { data } = await axios.post(
         `https://api.imgbb.com/1/upload?key=${
           import.meta.env.VITE_IMGBB_API_KEY
@@ -66,10 +72,16 @@ const Register = () => {
         formData
       )
 
+      console.log("✅ ImgBB upload successful! Full response:", data)
+      console.log("📸 ImgBB display_url:", data.data.display_url)
+
       setPhotoURL(data.data.display_url)
+      console.log("📁 photoURL state updated to:", data.data.display_url)
+
       toast.success("Image uploaded successfully!")
     } catch (error) {
-      console.error("Image upload error:", error)
+      console.error("❌ Image upload error:", error)
+      console.error("Error details:", error.response?.data || error.message)
       toast.error("Failed to upload image")
       setImagePreview(null)
     } finally {
@@ -84,12 +96,33 @@ const Register = () => {
 
       // Register user
       await registerUser(data.email, data.password)
+      console.log("✅ User registered in Firebase")
 
-      // Update profile with photoURL from ImgBB
+      // Update Firebase profile with photoURL from ImgBB
       if (photoURL) {
-        console.log("🔄 Updating profile with photoURL:", photoURL)
+        console.log("🔄 Updating Firebase profile with photoURL:", photoURL)
         await updateUserProfile(data.name, photoURL)
-        console.log("✅ Profile updated successfully")
+        console.log("✅ Firebase profile updated successfully")
+
+        // IMPORTANT: Also update backend database with photoURL
+        try {
+          console.log("🔄 Updating backend database with photoURL...")
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/auth/update-profile`,
+            {
+              name: data.name,
+              photoURL: photoURL,
+            },
+            { withCredentials: true }
+          )
+          console.log("✅ Backend database updated with photoURL!")
+        } catch (backendError) {
+          console.error(
+            "⚠️ Backend update failed (non-critical):",
+            backendError
+          )
+          // Don't fail registration if backend update fails
+        }
       } else {
         console.log("⚠️ No photoURL, updating with name only")
         await updateUserProfile(data.name, "")
