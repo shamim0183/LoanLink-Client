@@ -7,6 +7,10 @@ import {
   FaShieldAlt,
 } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import HowItWorks from "../components/home/HowItWorks"
+import Testimonials from "../components/home/Testimonials"
+import TrustedPartners from "../components/home/TrustedPartners"
+import WhyChooseUs from "../components/home/WhyChooseUs"
 
 const Home = () => {
   return (
@@ -180,6 +184,18 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* How It Works Section */}
+      <HowItWorks />
+
+      {/* Testimonials Section */}
+      <Testimonials />
+
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
+
+      {/* Trusted Partners Section */}
+      <TrustedPartners />
 
       {/* CTA Section */}
       <section className="section-padding bg-gradient-to-r from-primary to-secondary text-white">
