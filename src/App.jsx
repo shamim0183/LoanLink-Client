@@ -1,35 +1,3 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import DashboardLayout from "./layouts/DashboardLayout"
-import MainLayout from "./layouts/MainLayout"
-import About from "./pages/About"
-import AllLoans from "./pages/AllLoans"
-import ApplyLoan from "./pages/ApplyLoan"
-import Contact from "./pages/Contact"
-import AdminAllLoans from "./pages/dashboard/admin/AllLoans"
-import LoanApplications from "./pages/dashboard/admin/LoanApplications"
-import ManageUsers from "./pages/dashboard/admin/ManageUsers"
-import DashboardHome from "./pages/dashboard/DashboardHome"
-import AddLoan from "./pages/dashboard/manager/AddLoan"
-import ApprovedApplications from "./pages/dashboard/manager/ApprovedApplications"
-import ManageLoans from "./pages/dashboard/manager/ManageLoans"
-import PendingApplications from "./pages/dashboard/manager/PendingApplications"
-import MyLoans from "./pages/dashboard/MyLoans"
-import Home from "./pages/Home"
-import LoanDetails from "./pages/LoanDetails"
-import Login from "./pages/Login"
-import NotFound from "./pages/NotFound"
-import Register from "./pages/Register"
-import AdminRoute from "./routes/AdminRoute"
-import ManagerRoute from "./routes/ManagerRoute"
-import PrivateRoute from "./routes/PrivateRoute"
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="all-loans" element={<AllLoans />} />
