@@ -1,4 +1,3 @@
-import React from "react"
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -74,25 +73,6 @@ const Register = () => {
       setImagePreview(null)
     } finally {
       setUploading(false)
-    }
-  }
-
-  const onSubmit = async (data) => {
-    setLoading(true)
-    try {
-      // Register user
-      await registerUser(data.email, data.password)
-
-      // Update profile
-      await updateUserProfile(data.name, photoURL || "")
-
-      toast.success("Registration successful!")
-      navigate("/")
-    } catch (error) {
-      console.error("Registration error:", error)
-      toast.error(error.message || "Registration failed. Please try again.")
-    } finally {
-      setLoading(false)
     }
   }
 
