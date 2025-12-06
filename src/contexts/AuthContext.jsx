@@ -102,22 +102,6 @@ const AuthProvider = ({ children }) => {
             `${import.meta.env.VITE_API_URL}/auth/jwt`,
             {
               email: currentUser.email,
-              name: currentUser.displayName,
-              photoURL: currentUser.photoURL,
-            },
-            { withCredentials: true }
-          )
-
-          setUser(data.user)
-
-          // Show role modal if user doesn't have a role (OAuth users)
-          if (!data.user.role || data.user.role === "undefined") {
-            setShowRoleModal(true)
-          }
-        } catch (error) {
-          console.error("JWT fetch error:", error)
-          setUser(null)
-        }
       } else {
         setUser(null)
         setShowRoleModal(false)
