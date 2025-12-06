@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #ff6b2c;
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #e55a1f;
+  }
+}
+
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    @apply bg-primary text-white px-8 py-3 rounded-lg font-semibold 
+           shadow-md hover:bg-primary-hover hover:-translate-y-0.5 
+           hover:shadow-lg transition-all duration-300 disabled:opacity-50 
+           disabled:cursor-not-allowed;
+  }
+
+  /* Secondary Button */
+  .btn-secondary {
+    @apply bg-transparent text-primary px-8 py-3 rounded-lg font-semibold 
+           border-2 border-primary hover:bg-primary hover:text-white 
+           transition-all duration-300;
+  }
+
+  /* Outline Button */
+  .btn-outline {
+    @apply bg-transparent border-2 border-base-content/20 
+           hover:border-primary hover:bg-primary hover:text-white
+           px-6 py-2 rounded-lg transition-all duration-300;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-base-100 rounded-xl p-6 shadow-md 
+           hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+  }
+
+  /* Card Compact */
+  .card-compact {
+    @apply bg-base-100 rounded-lg p-4 shadow-sm 
+           hover:shadow-md transition-all duration-300;
+  }
+
+  /* Form Input */
+  .input-field {
+    @apply w-full px-4 py-3 border border-base-300 rounded-lg 
+           focus:outline-none focus:border-primary focus:ring-2 
+           focus:ring-primary/20 transition-all bg-base-100
+           placeholder:text-base-content/50;
+  }
+
+  /* Select Field */
+  .select-field {
+    @apply w-full px-4 py-3 border border-base-300 rounded-lg 
+           focus:outline-none focus:border-primary focus:ring-2 
+           focus:ring-primary/20 transition-all bg-base-100
+           cursor-pointer;
+  }
+
+  /* Textarea Field */
+  .textarea-field {
+    @apply w-full px-4 py-3 border border-base-300 rounded-lg 
+           focus:outline-none focus:border-primary focus:ring-2 
+           focus:ring-primary/20 transition-all bg-base-100
+           placeholder:text-base-content/50 resize-none;
+  }
+
+  /* Label */
+  .form-label {
+    @apply block text-sm font-semibold mb-2 text-base-content;
+  }
+
+  /* Error Text */
+  .error-text {
+    @apply text-error text-sm mt-1;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-block px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .badge-success {
+    @apply bg-success/10 text-success border border-success/30;
+  }
+
+  .badge-warning {
+    @apply bg-warning/10 text-warning border border-warning/30;
+  }
+
+  .badge-error {
+    @apply bg-error/10 text-error border border-error/30;
+  }
+
+  .badge-info {
+    @apply bg-info/10 text-info border border-info/30;
+  }
+
+  .badge-primary {
+    @apply bg-primary/10 text-primary border border-primary/30;
+  }
+
+  /* Nav Link */
+  .nav-link {
+    @apply text-base-content hover:text-primary transition-colors 
+           duration-300 font-medium px-4 py-2 rounded-lg
+           hover:bg-base-200;
+  }
+
+  .nav-link.active {
+    @apply text-primary bg-primary/10;
+  }
+
+  /* Section Container */
+  .section-container {
+    @apply container mx-auto px-4 md:px-8 lg:px-16;
+  }
+
+  /* Section Padding */
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  /* Heading Styles */
+  .heading-primary {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold text-base-content;
+  }
+
+  .heading-secondary {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-base-content;
+  }
+
+  .heading-tertiary {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold text-base-content;
+  }
+
+  /* Animated Gradient Background */
+  .gradient-bg {
+    @apply bg-gradient-to-r from-primary via-primary-hover to-secondary;
+  }
+
+  /* Glass Effect */
+  .glass-effect {
+    @apply bg-base-100/80 backdrop-blur-md border border-base-300/50;
+  }
+
+  /* Hover Lift Effect */
+  .hover-lift {
+    @apply hover:-translate-y-2 transition-transform duration-300;
+  }
+
+  /* Loading Spinner */
+  .spinner {
+    @apply border-4 border-base-300 border-t-primary rounded-full 
+           w-12 h-12 animate-spin;
+  }
+}
+
+@layer utilities {
+  /* Custom utilities can go here */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(255, 107, 44, 0.3);
+  }
+}

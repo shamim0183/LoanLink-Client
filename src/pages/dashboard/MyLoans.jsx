@@ -1,0 +1,207 @@
+import axios from "axios"
+import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
+import LoadingSpinner from "../../components/shared/LoadingSpinner"
+import useAuth from "../../hooks/useAuth"
+
+const MyLoans = () => {
+  const { user } = useAuth()
+  const [applications, setApplications] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState("all")
+
+  useEffect(() => {
+    fetchMyApplications()
+  }, [])
+
+  const fetchMyApplications = async () => {
+    try {
+      setLoading(true)
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/applications/my-applications`,
+        { withCredentials: true }
+      )
+      setApplications(data.applications || [])
+    } catch (error) {
+      console.error("Error fetching applications:", error)
+      toast.error("Failed to load applications")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancelApplication = async (id) => {
+    try {
+      const { data } = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/applications/${id}/cancel`,
+        {},
+        { withCredentials: true }
+      )
+
+      toast.success("Application cancelled")
+      fetchMyApplications() // Refresh list
+    } catch (error) {
+      console.error("Cancel error:", error)
+      toast.error(
+        error.response?.data?.message || "Failed to cancel application"
+      )
+    }
+  }
+
+  const filteredApplications = applications.filter((app) => {
+    if (filter === "all") return true
+    return app.status === filter
+  })
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      pending: "badge-warning",
+      approved: "badge-success",
+      rejected: "badge-error",
+      cancelled: "badge-neutral",
+    }
+    return badges[status] || "badge-neutral"
+  }
+
+  if (loading) {
+    return <LoadingSpinner fullScreen />
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">My Loan Applications</h1>
+          <p className="text-base-content/70 mt-2">
+            Track and manage your loan applications
+          </p>
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="tabs tabs-boxed mb-6 bg-base-100">
+        {["all", "pending", "approved", "rejected", "cancelled"].map(
+          (status) => (
+            <a
+              key={status}
+              className={`tab ${filter === status ? "tab-active" : ""}`}
+              onClick={() => setFilter(status)}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </a>
+          )
+        )}
+      </div>
+
+      {/* Applications List */}
+      {filteredApplications.length > 0 ? (
+        <div className="space-y-4">
+          {filteredApplications.map((app, index) => (
+            <motion.div
+              key={app._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="card"
+            >
+              <div className="card-body">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-bold">{app.loanTitle}</h3>
+                      <span className={`badge ${getStatusBadge(app.status)}`}>
+                        {app.status}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                      <div>
+                        <p className="text-sm text-base-content/70">
+                          Loan Amount
+                        </p>
+                        <p className="font-semibold">
+                          ${app.loanAmount?.toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-base-content/70">
+                          Interest Rate
+                        </p>
+                        <p className="font-semibold text-primary">
+                          {app.interestRate}%
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-base-content/70">
+                          Applied On
+                        </p>
+                        <p className="font-semibold">
+                          {new Date(app.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-base-content/70">
+                          Applicant
+                        </p>
+                        <p className="font-semibold">
+                          {app.firstName} {app.lastName}
+                        </p>
+                      </div>
+                    </div>
+
+                    {app.status === "approved" && app.approvedAt && (
+                      <div className="mt-4 p-3 bg-success/10 rounded-lg">
+                        <p className="text-sm text-success font-semibold">
+                          ✓ Approved on{" "}
+                          {new Date(app.approvedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+
+                    {app.status === "rejected" && app.rejectedAt && (
+                      <div className="mt-4 p-3 bg-error/10 rounded-lg">
+                        <p className="text-sm text-error font-semibold">
+                          ✗ Rejected on{" "}
+                          {new Date(app.rejectedAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {app.status === "pending" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleCancelApplication(app._id)}
+                        className="btn btn-error btn-sm"
+                      >
+                        Cancel Application
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <div className="card">
+          <div className="card-body text-center py-12">
+            <p className="text-lg text-base-content/70">
+              {filter === "all"
+                ? "No loan applications yet"
+                : `No ${filter} applications`}
+            </p>
+            {filter === "all" && (
+              <a href="/all-loans" className="btn btn-primary mt-4">
+                Browse Available Loans
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default MyLoans
