@@ -102,6 +102,29 @@ const AuthProvider = ({ children }) => {
             `${import.meta.env.VITE_API_URL}/auth/jwt`,
             {
               email: currentUser.email,
+              name: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+            },
+            { withCredentials: true }
+          )
+
+          // Ensure photoURL is always set from Firebase if not in backend response
+          const userData = {
+            ...data.user,
+            photoURL: data.user.photoURL || currentUser.photoURL,
+            name: data.user.name || currentUser.displayName,
+          }
+
+          setUser(userData)
+
+          // Show role modal if user doesn't have a role (OAuth users)
+          if (!userData.role || userData.role === "undefined") {
+            setShowRoleModal(true)
+          }
+        } catch (error) {
+          console.error("JWT fetch error:", error)
+          setUser(null)
+        }
       } else {
         setUser(null)
         setShowRoleModal(false)
