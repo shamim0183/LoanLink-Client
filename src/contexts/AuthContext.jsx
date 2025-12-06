@@ -10,6 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth"
 import { createContext, useEffect, useState } from "react"
+import RoleSelectionModal from "../components/modals/RoleSelectionModal"
 import { auth } from "../config/firebase.config"
 
 export const AuthContext = createContext()
@@ -17,6 +18,7 @@ export const AuthContext = createContext()
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showRoleModal, setShowRoleModal] = useState(false)
 
   // Register with email and password
   const register = (email, password) => {
@@ -52,6 +54,27 @@ const AuthProvider = ({ children }) => {
     })
   }
 
+  // Handle role selection
+  const handleRoleSelected = async (role) => {
+    try {
+      // Refresh user data from backend
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/jwt`,
+        {
+          email: user.email,
+          name: user.name,
+          photoURL: user.photoURL,
+        },
+        { withCredentials: true }
+      )
+
+      setUser(data.user)
+      setShowRoleModal(false)
+    } catch (error) {
+      console.error("Error refreshing user data:", error)
+    }
+  }
+
   // Logout
   const logout = async () => {
     setLoading(true)
@@ -85,12 +108,18 @@ const AuthProvider = ({ children }) => {
           )
 
           setUser(data.user)
+
+          // Show role modal if user doesn't have a role (OAuth users)
+          if (!data.user.role || data.user.role === "undefined") {
+            setShowRoleModal(true)
+          }
         } catch (error) {
           console.error("JWT fetch error:", error)
           setUser(null)
         }
       } else {
         setUser(null)
+        setShowRoleModal(false)
       }
       setLoading(false)
     })
@@ -110,7 +139,12 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={authInfo}>
+      {children}
+      {showRoleModal && (
+        <RoleSelectionModal onRoleSelected={handleRoleSelected} />
+      )}
+    </AuthContext.Provider>
   )
 }
 

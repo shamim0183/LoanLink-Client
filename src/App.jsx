@@ -1,3 +1,4 @@
+import React from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import DashboardLayout from "./layouts/DashboardLayout"
 import MainLayout from "./layouts/MainLayout"
@@ -14,6 +15,7 @@ import ApprovedApplications from "./pages/dashboard/manager/ApprovedApplications
 import ManageLoans from "./pages/dashboard/manager/ManageLoans"
 import PendingApplications from "./pages/dashboard/manager/PendingApplications"
 import MyLoans from "./pages/dashboard/MyLoans"
+import Profile from "./pages/dashboard/Profile"
 import Home from "./pages/Home"
 import LoanDetails from "./pages/LoanDetails"
 import Login from "./pages/Login"

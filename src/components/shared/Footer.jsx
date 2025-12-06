@@ -8,6 +8,7 @@ import {
   FaTwitter,
 } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import React from "react"
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -22,7 +23,7 @@ const Footer = () => {
             <h3 className="text-2xl font-bold mb-4">
               Loan<span className="text-primary">Link</span>
             </h3>
-            <p className="text-base-content/70 mb-4">
+            <p className="text-white mb-4">
               Empowering financial inclusion through accessible microloans. Your
               trusted partner for quick and transparent loan services.
             </p>
@@ -49,7 +50,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/"
-                  className="text-base-content/70 hover:text-primary transition"
+                  className="text-white hover:text-primary transition"
                 >
                   Home
                 </Link>
@@ -57,7 +58,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/all-loans"
-                  className="text-base-content/70 hover:text-primary transition"
+                  className="text-white hover:text-primary transition"
                 >
                   All Loans
                 </Link>
@@ -65,7 +66,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/about"
-                  className="text-base-content/70 hover:text-primary transition"
+                  className="text-white hover:text-primary transition"
                 >
                   About Us
                 </Link>
@@ -73,7 +74,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/contact"
-                  className="text-base-content/70 hover:text-primary transition"
+                  className="text-white hover:text-primary transition"
                 >
                   Contact
                 </Link>
@@ -85,10 +86,10 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Our Services</h4>
             <ul className="space-y-2">
-              <li className="text-base-content/70">Personal Loans</li>
-              <li className="text-base-content/70">Business Loans</li>
-              <li className="text-base-content/70">Education Loans</li>
-              <li className="text-base-content/70">Emergency Loans</li>
+              <li className="text-white">Personal Loans</li>
+              <li className="text-white">Business Loans</li>
+              <li className="text-white">Education Loans</li>
+              <li className="text-white">Emergency Loans</li>
             </ul>
           </div>
 
@@ -96,15 +97,15 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3">
-              <li className="flex items-center space-x-3 text-base-content/70">
+              <li className="flex items-center space-x-3 text-white">
                 <FaMapMarkerAlt className="text-primary" />
                 <span>123 Finance Street, NY 10001</span>
               </li>
-              <li className="flex items-center space-x-3 text-base-content/70">
+              <li className="flex items-center space-x-3 text-white">
                 <FaPhone className="text-primary" />
                 <span>+1 (555) 123-4567</span>
               </li>
-              <li className="flex items-center space-x-3 text-base-content/70">
+              <li className="flex items-center space-x-3 text-white">
                 <FaEnvelope className="text-primary" />
                 <span>info@loanlink.com</span>
               </li>
@@ -117,19 +118,19 @@ const Footer = () => {
       <div className="border-t border-base-content/10">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-base-content/70 text-sm">
+            <p className="text-white text-sm">
               © {currentYear} LoanLink. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
                 to="/privacy"
-                className="text-base-content/70 hover:text-primary text-sm transition"
+                className="text-white hover:text-primary text-sm transition"
               >
                 Privacy Policy
               </Link>
               <Link
                 to="/terms"
-                className="text-base-content/70 hover:text-primary text-sm transition"
+                className="text-white hover:text-primary text-sm transition"
               >
                 Terms of Service
               </Link>

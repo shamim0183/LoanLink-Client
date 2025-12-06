@@ -1,4 +1,5 @@
-import { useState } from "react"
+import React from "react";
+import { useState } from "react";
 import toast from "react-hot-toast"
 import { FaBars, FaTimes } from "react-icons/fa"
 import { Link, NavLink } from "react-router-dom"
@@ -20,35 +21,32 @@ const Navbar = () => {
 
   const navLinks = user ? (
     <>
-      <NavLink to="/" className="nav-link">
+      <NavLink to="/" className="text-primary">
         Home
       </NavLink>
-      <NavLink to="/all-loans" className="nav-link">
+      <NavLink to="/all-loans" className="text-primary">
         All Loans
       </NavLink>
-      <NavLink to="/dashboard" className="nav-link">
+      <NavLink to="/dashboard" className="text-white">
         Dashboard
       </NavLink>
     </>
   ) : (
     <>
-      <NavLink to="/" className="nav-link">
+      <NavLink to="/" className="text-primary-light">
         Home
       </NavLink>
-      <NavLink to="/all-loans" className="nav-link">
+      <NavLink to="/all-loans" className="text-primary-light">
         All Loans
       </NavLink>
-      <NavLink to="/about" className="nav-link">
+      <NavLink to="/about" className="text-primary-light">
         About Us
       </NavLink>
-      <NavLink to="/contact" className="nav-link">
+      <NavLink to="/contact" className="text-primary-light">
         Contact
       </NavLink>
-      <NavLink to="/login" className="nav-link">
+      <NavLink to="/login" className="text-primary-light">
         Login
-      </NavLink>
-      <NavLink to="/register" className="nav-link">
-        Register
       </NavLink>
     </>
   )
@@ -106,10 +104,30 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 space-y-2">
-            {navLinks}
-            {user && (
+          <div className="md:hidden pb-4 flex flex-col space-y-2">
+            {user ? (
               <>
+                <NavLink
+                  to="/"
+                  className="block px-4 py-2 text-primary hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/all-loans"
+                  className="block px-4 py-2 text-primary hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  All Loans
+                </NavLink>
+                <NavLink
+                  to="/dashboard"
+                  className="block px-4 py-2 text-white hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Dashboard
+                </NavLink>
                 <div className="flex items-center space-x-3 px-4 py-2">
                   <div className="avatar">
                     <div className="w-10 h-10 rounded-full ring ring-primary">
@@ -127,6 +145,44 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/"
+                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/all-loans"
+                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  All Loans
+                </NavLink>
+                <NavLink
+                  to="/about"
+                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  About Us
+                </NavLink>
+                <NavLink
+                  to="/contact"
+                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contact
+                </NavLink>
+                <NavLink
+                  to="/login"
+                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </NavLink>
               </>
             )}
           </div>

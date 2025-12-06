@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import toast from "react-hot-toast"
 import {
   FaEnvelope,
@@ -35,7 +35,7 @@ const Contact = () => {
         <div className="hero-content text-center">
           <div className="max-w-4xl">
             <h1 className="text-5xl font-bold mb-4">Get In Touch</h1>
-            <p className="text-lg opacity-80">
+            <p className="text-lg text-base-content/70">
               Have questions? We'd love to hear from you. Send us a message!
             </p>
           </div>
@@ -117,7 +117,7 @@ const Contact = () => {
           <div className="space-y-8">
             <div>
               <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
-              <p className="text-lg mb-8">
+              <p className="text-lg mb-8 text-white">
                 Feel free to reach out to us through any of these channels. Our
                 team is here to help you!
               </p>
@@ -130,8 +130,12 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Address</h3>
-                  <p className="opacity-70">123 Finance Street, NY 10001</p>
-                  <p className="opacity-70">New York, United States</p>
+                  <p className="text-base-content/70">
+                    123 Finance Street, NY 10001
+                  </p>
+                  <p className="text-base-content/70">
+                    New York, United States
+                  </p>
                 </div>
               </div>
 
@@ -141,8 +145,10 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Phone</h3>
-                  <p className="opacity-70">+1 (555) 123-4567</p>
-                  <p className="opacity-70 text-sm">Mon-Fri 9AM-6PM EST</p>
+                  <p className="text-base-content/70">+1 (555) 123-4567</p>
+                  <p className="text-base-content/70 text-sm">
+                    Mon-Fri 9AM-6PM EST
+                  </p>
                 </div>
               </div>
 
@@ -152,8 +158,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Email</h3>
-                  <p className="opacity-70">support@loanlink.com</p>
-                  <p className="opacity-70">info@loanlink.com</p>
+                  <p className="text-base-content/70">support@loanlink.com</p>
+                  <p className="text-base-content/70">info@loanlink.com</p>
                 </div>
               </div>
             </div>
@@ -185,7 +191,7 @@ const Contact = () => {
         <div className="mt-16">
           <h2 className="text-3xl font-bold text-center mb-8">Find Us</h2>
           <div className="w-full h-96 bg-base-200 rounded-lg flex items-center justify-center">
-            <p className="text-lg opacity-50">
+            <p className="text-lg text-base-content/50">
               Map Placeholder - Integrate Google Maps here
             </p>
           </div>

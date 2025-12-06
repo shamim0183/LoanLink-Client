@@ -1,3 +1,4 @@
+import React from "react"
 import { motion } from "framer-motion"
 import { FaFileAlt, FaHome } from "react-icons/fa"
 import { Link } from "react-router-dom"

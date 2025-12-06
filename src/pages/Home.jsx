@@ -1,4 +1,5 @@
-import { motion } from "framer-motion"
+import React from "react";
+import { motion } from "framer-motion";
 import {
   FaArrowRight,
   FaChartLine,
@@ -39,7 +40,7 @@ const Home = () => {
                 Your Path to{" "}
                 <span className="text-primary">Financial Freedom</span>
               </h1>
-              <p className="text-lg md:text-xl text-base-content/80 mb-8">
+              <p className="text-lg md:text-xl text-white mb-8">
                 Quick, transparent, and accessible microloans designed to
                 empower your dreams. Get approved in minutes, not weeks.
               </p>

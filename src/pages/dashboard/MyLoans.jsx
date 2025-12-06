@@ -1,4 +1,5 @@
-import { loadStripe } from "@stripe/stripe-js"
+import React from "react";
+import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -16,6 +17,8 @@ const MyLoans = () => {
   const [filter, setFilter] = useState("all")
   const [selectedPayment, setSelectedPayment] = useState(null)
   const [processingPayment, setProcessingPayment] = useState(null)
+  const [currentPage, setCurrentPage] = useState(0)
+  const applicationsPerPage = 5
 
   useEffect(() => {
     fetchMyApplications()
@@ -106,6 +109,19 @@ const MyLoans = () => {
     return app.status === filter
   })
 
+  // Pagination
+  const pageCount = Math.ceil(filteredApplications.length / applicationsPerPage)
+  const offset = currentPage * applicationsPerPage
+  const currentApplications = filteredApplications.slice(
+    offset,
+    offset + applicationsPerPage
+  )
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   const getStatusBadge = (status) => {
     const badges = {
       pending: "badge-warning",
@@ -138,7 +154,10 @@ const MyLoans = () => {
             <a
               key={status}
               className={`tab ${filter === status ? "tab-active" : ""}`}
-              onClick={() => setFilter(status)}
+              onClick={() => {
+                setFilter(status)
+                setCurrentPage(0)
+              }}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </a>
@@ -148,121 +167,154 @@ const MyLoans = () => {
 
       {/* Applications List */}
       {filteredApplications.length > 0 ? (
-        <div className="space-y-4">
-          {filteredApplications.map((app, index) => (
-            <motion.div
-              key={app._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="card"
-            >
-              <div className="card-body">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold">{app.loanTitle}</h3>
-                      <span className={`badge ${getStatusBadge(app.status)}`}>
-                        {app.status}
-                      </span>
+        <>
+          <div className="mb-4">
+            <p className="text-base-content/70">
+              Showing{" "}
+              <span className="font-semibold text-primary">
+                {currentApplications.length}
+              </span>{" "}
+              of {filteredApplications.length} application
+              {filteredApplications.length !== 1 ? "s" : ""}
+            </p>
+          </div>
+          <div className="space-y-4">
+            {currentApplications.map((app, index) => (
+              <motion.div
+                key={app._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="card"
+              >
+                <div className="card-body">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-bold">{app.loanTitle}</h3>
+                        <span className={`badge ${getStatusBadge(app.status)}`}>
+                          {app.status}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        <div>
+                          <p className="text-sm text-base-content/70">
+                            Loan Amount
+                          </p>
+                          <p className="font-semibold">
+                            ${app.loanAmount?.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-base-content/70">
+                            Interest Rate
+                          </p>
+                          <p className="font-semibold text-primary">
+                            {app.interestRate}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-base-content/70">
+                            Applied On
+                          </p>
+                          <p className="font-semibold">
+                            {new Date(app.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-base-content/70">
+                            Applicant
+                          </p>
+                          <p className="font-semibold">
+                            {app.firstName} {app.lastName}
+                          </p>
+                        </div>
+                      </div>
+
+                      {app.status === "approved" && app.approvedAt && (
+                        <div className="mt-4 p-3 bg-success/10 rounded-lg">
+                          <p className="text-sm text-success font-semibold">
+                            ✓ Approved on{" "}
+                            {new Date(app.approvedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
+
+                      {app.status === "rejected" && app.rejectedAt && (
+                        <div className="mt-4 p-3 bg-error/10 rounded-lg">
+                          <p className="text-sm text-error font-semibold">
+                            ✗ Rejected on{" "}
+                            {new Date(app.rejectedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                      <div>
-                        <p className="text-sm text-base-content/70">
-                          Loan Amount
-                        </p>
-                        <p className="font-semibold">
-                          ${app.loanAmount?.toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-base-content/70">
-                          Interest Rate
-                        </p>
-                        <p className="font-semibold text-primary">
-                          {app.interestRate}%
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-base-content/70">
-                          Applied On
-                        </p>
-                        <p className="font-semibold">
-                          {new Date(app.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-base-content/70">
-                          Applicant
-                        </p>
-                        <p className="font-semibold">
-                          {app.firstName} {app.lastName}
-                        </p>
-                      </div>
+                    <div className="flex gap-2 flex-wrap">
+                      {/* Pay Button - Show if fee not paid */}
+                      {app.feeStatus === "unpaid" && (
+                        <button
+                          onClick={() => handlePayment(app._id)}
+                          className="btn btn-primary btn-sm"
+                          disabled={processingPayment === app._id}
+                        >
+                          {processingPayment === app._id ? (
+                            <span className="loading loading-spinner loading-sm"></span>
+                          ) : (
+                            "Pay $10 Fee"
+                          )}
+                        </button>
+                      )}
+
+                      {/* Paid Badge - Clickable to view details */}
+                      {app.feeStatus === "paid" && (
+                        <button
+                          onClick={() => handleViewPaymentDetails(app)}
+                          className="btn btn-success btn-sm gap-2"
+                        >
+                          ✓ Paid
+                          <span className="text-xs opacity-70">
+                            View Details
+                          </span>
+                        </button>
+                      )}
+
+                      {/* Cancel Button - Only for pending */}
+                      {app.status === "pending" && (
+                        <button
+                          onClick={() => handleCancelApplication(app._id)}
+                          className="btn btn-error btn-sm"
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </div>
-
-                    {app.status === "approved" && app.approvedAt && (
-                      <div className="mt-4 p-3 bg-success/10 rounded-lg">
-                        <p className="text-sm text-success font-semibold">
-                          ✓ Approved on{" "}
-                          {new Date(app.approvedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
-
-                    {app.status === "rejected" && app.rejectedAt && (
-                      <div className="mt-4 p-3 bg-error/10 rounded-lg">
-                        <p className="text-sm text-error font-semibold">
-                          ✗ Rejected on{" "}
-                          {new Date(app.rejectedAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2 flex-wrap">
-                    {/* Pay Button - Show if fee not paid */}
-                    {app.feeStatus === "unpaid" && (
-                      <button
-                        onClick={() => handlePayment(app._id)}
-                        className="btn btn-primary btn-sm"
-                        disabled={processingPayment === app._id}
-                      >
-                        {processingPayment === app._id ? (
-                          <span className="loading loading-spinner loading-sm"></span>
-                        ) : (
-                          "Pay $10 Fee"
-                        )}
-                      </button>
-                    )}
-
-                    {/* Paid Badge - Clickable to view details */}
-                    {app.feeStatus === "paid" && (
-                      <button
-                        onClick={() => handleViewPaymentDetails(app)}
-                        className="btn btn-success btn-sm gap-2"
-                      >
-                        ✓ Paid
-                        <span className="text-xs opacity-70">View Details</span>
-                      </button>
-                    )}
-
-                    {/* Cancel Button - Only for pending */}
-                    {app.status === "pending" && (
-                      <button
-                        onClick={() => handleCancelApplication(app._id)}
-                        className="btn btn-error btn-sm"
-                      >
-                        Cancel
-                      </button>
-                    )}
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {pageCount > 1 && (
+            <div className="mt-8 flex justify-center">
+              <ReactPaginate
+                previousLabel={"← Previous"}
+                nextLabel={"Next →"}
+                pageCount={pageCount}
+                onPageChange={handlePageClick}
+                containerClassName={"join"}
+                pageClassName={"join-item btn btn-sm"}
+                previousClassName={"join-item btn btn-sm"}
+                nextClassName={"join-item btn btn-sm"}
+                activeClassName={"btn-active btn-primary"}
+                disabledClassName={"btn-disabled"}
+                forcePage={currentPage}
+              />
+            </div>
+          )}
+        </>
       ) : (
         <div className="card">
           <div className="card-body text-center py-12">
