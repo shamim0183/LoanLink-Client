@@ -66,6 +66,7 @@ function App() {
 
           {/* Borrower Routes */}
           <Route path="my-loans" element={<MyLoans />} />
+          <Route path="profile" element={<Profile />} />
 
           {/* Admin Routes */}
           <Route
