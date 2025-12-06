@@ -1,15 +1,21 @@
+import { loadStripe } from "@stripe/stripe-js"
 import axios from "axios"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import PaymentDetailsModal from "../../components/modals/PaymentDetailsModal"
 import LoadingSpinner from "../../components/shared/LoadingSpinner"
 import useAuth from "../../hooks/useAuth"
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 const MyLoans = () => {
   const { user } = useAuth()
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState("all")
+  const [selectedPayment, setSelectedPayment] = useState(null)
+  const [processingPayment, setProcessingPayment] = useState(null)
 
   useEffect(() => {
     fetchMyApplications()
@@ -47,6 +53,52 @@ const MyLoans = () => {
         error.response?.data?.message || "Failed to cancel application"
       )
     }
+  }
+
+  const handlePayment = async (applicationId) => {
+    try {
+      setProcessingPayment(applicationId)
+
+      // Create payment intent
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/payments/create-intent`,
+        {
+          applicationId,
+          amount: 10, // $10 application fee
+        },
+        { withCredentials: true }
+      )
+
+      const stripe = await stripePromise
+
+      // Redirect to Stripe Checkout
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: data.sessionId,
+      })
+
+      if (error) {
+        toast.error(error.message)
+      }
+    } catch (error) {
+      console.error("Payment error:", error)
+      toast.error(error.response?.data?.message || "Payment failed")
+    } finally {
+      setProcessingPayment(null)
+    }
+  }
+
+  const handleViewPaymentDetails = (application) => {
+    // Create payment object from application
+    const paymentDetails = {
+      transactionId: application.paymentTransactionId || application._id,
+      amount: "10.00",
+      email: application.email || user?.email,
+      paidAt: application.feePaidAt,
+      loanId: application.loanId,
+      paymentMethod: "Stripe",
+      notes: `Application fee for ${application.loanTitle}`,
+    }
+    setSelectedPayment(paymentDetails)
   }
 
   const filteredApplications = applications.filter((app) => {
@@ -169,16 +221,43 @@ const MyLoans = () => {
                     )}
                   </div>
 
-                  {app.status === "pending" && (
-                    <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
+                    {/* Pay Button - Show if fee not paid */}
+                    {app.feeStatus === "unpaid" && (
+                      <button
+                        onClick={() => handlePayment(app._id)}
+                        className="btn btn-primary btn-sm"
+                        disabled={processingPayment === app._id}
+                      >
+                        {processingPayment === app._id ? (
+                          <span className="loading loading-spinner loading-sm"></span>
+                        ) : (
+                          "Pay $10 Fee"
+                        )}
+                      </button>
+                    )}
+
+                    {/* Paid Badge - Clickable to view details */}
+                    {app.feeStatus === "paid" && (
+                      <button
+                        onClick={() => handleViewPaymentDetails(app)}
+                        className="btn btn-success btn-sm gap-2"
+                      >
+                        ✓ Paid
+                        <span className="text-xs opacity-70">View Details</span>
+                      </button>
+                    )}
+
+                    {/* Cancel Button - Only for pending */}
+                    {app.status === "pending" && (
                       <button
                         onClick={() => handleCancelApplication(app._id)}
                         className="btn btn-error btn-sm"
                       >
-                        Cancel Application
+                        Cancel
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -199,6 +278,14 @@ const MyLoans = () => {
             )}
           </div>
         </div>
+      )}
+
+      {/* Payment Details Modal */}
+      {selectedPayment && (
+        <PaymentDetailsModal
+          payment={selectedPayment}
+          onClose={() => setSelectedPayment(null)}
+        />
       )}
     </div>
   )
