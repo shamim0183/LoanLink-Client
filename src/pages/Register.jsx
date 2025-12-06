@@ -1,4 +1,5 @@
-import { motion } from "framer-motion"
+import React from "react";
+import { motion } from "framer-motion";
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -73,6 +74,34 @@ const Register = () => {
       setImagePreview(null)
     } finally {
       setUploading(false)
+    }
+  }
+
+  const onSubmit = async (data) => {
+    setLoading(true)
+    try {
+      console.log("📸 Photo URL from ImgBB:", photoURL)
+
+      // Register user
+      await registerUser(data.email, data.password)
+
+      // Update profile with photoURL from ImgBB
+      if (photoURL) {
+        console.log("🔄 Updating profile with photoURL:", photoURL)
+        await updateUserProfile(data.name, photoURL)
+        console.log("✅ Profile updated successfully")
+      } else {
+        console.log("⚠️ No photoURL, updating with name only")
+        await updateUserProfile(data.name, "")
+      }
+
+      toast.success("Registration successful!")
+      navigate("/")
+    } catch (error) {
+      console.error("Registration error:", error)
+      toast.error(error.message || "Registration failed. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
