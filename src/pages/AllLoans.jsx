@@ -1,4 +1,5 @@
-import axios from "axios"
+import React from "react"
+import axios from "axios";
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -193,8 +194,7 @@ const AllLoans = () => {
             <span className="font-semibold text-primary">
               {currentLoans.length}
             </span>{" "}
-            of {filteredLoans.length} loan
-            {filteredLoans.length !== 1 ? "s" : ""}
+            of {filteredLoans.length} loan{filteredLoans.length !== 1 ? "s" : ""}
           </p>
         </div>
 
