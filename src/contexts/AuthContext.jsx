@@ -48,11 +48,17 @@ const AuthProvider = ({ children }) => {
   }
 
   // Update User Profile
-  const updateUserProfile = (name, photoURL) => {
-    return updateProfile(auth.currentUser, {
+  const updateUserProfile = async (name, photoURL) => {
+    await updateProfile(auth.currentUser, {
       displayName: name,
       photoURL: photoURL,
     })
+    // Reload user to ensure the profile is synced
+    await auth.currentUser.reload()
+    console.log(
+      "🔄 User profile updated and reloaded. New photoURL:",
+      auth.currentUser.photoURL
+    )
   }
 
   // Handle role selection
@@ -96,6 +102,12 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
+        console.log("🔥 Firebase currentUser:", {
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+        })
+
         try {
           // Get JWT token from backend and store user data
           const { data } = await axios.post(
@@ -108,6 +120,8 @@ const AuthProvider = ({ children }) => {
             { withCredentials: true }
           )
 
+          console.log("📦 Backend response data.user:", data.user)
+
           // Ensure photoURL is always set from Firebase if not in backend response
           const userData = {
             ...data.user,
@@ -115,6 +129,7 @@ const AuthProvider = ({ children }) => {
             name: data.user.name || currentUser.displayName,
           }
 
+          console.log("✅ Final userData set to state:", userData)
           setUser(userData)
 
           // Show role modal if user doesn't have a role (OAuth users)
