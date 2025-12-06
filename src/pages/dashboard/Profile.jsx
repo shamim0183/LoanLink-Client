@@ -1,4 +1,5 @@
-import axios from "axios"
+import React from "react";
+import axios from "axios";
 import { useState } from "react"
 import toast from "react-hot-toast"
 import {
@@ -151,24 +152,29 @@ const Profile = () => {
                   </div>
                 </div>
                 {isEditing && (
-                  <label
-                    htmlFor="profileImage"
-                    className="absolute bottom-0 right-0 btn btn-circle btn-primary btn-sm"
+                  <div
+                    className="tooltip tooltip-right"
+                    data-tip="Upload Photo"
                   >
-                    {uploading ? (
-                      <span className="loading loading-spinner loading-xs"></span>
-                    ) : (
-                      <FaCamera />
-                    )}
-                    <input
-                      id="profileImage"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageUpload}
-                      disabled={uploading}
-                    />
-                  </label>
+                    <label
+                      htmlFor="profileImage"
+                      className="absolute bottom-0 right-0 btn btn-circle btn-primary btn-sm text-white hover:btn-secondary cursor-pointer"
+                    >
+                      {uploading ? (
+                        <span className="loading loading-spinner loading-xs"></span>
+                      ) : (
+                        <FaCamera className="text-white" />
+                      )}
+                      <input
+                        id="profileImage"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                      />
+                    </label>
+                  </div>
                 )}
               </div>
 
@@ -186,7 +192,7 @@ const Profile = () => {
                 <h2 className="card-title text-2xl mt-4">{user.name}</h2>
               )}
 
-              <div className="badge badge-primary badge-lg capitalize">
+              <div className="badge badge-primary badge-lg capitalize mt-2">
                 {user.role}
               </div>
               <p className="text-sm opacity-70 mt-2">{user.email}</p>

@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa"
+import { FaCamera, FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa"
 import { Link, useNavigate } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
 
@@ -17,6 +17,9 @@ const Register = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [photoURL, setPhotoURL] = useState("")
 
   const {
     register,
@@ -27,6 +30,53 @@ const Register = () => {
 
   const password = watch("password")
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file")
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB")
+      return
+    }
+
+    // Show preview
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImagePreview(reader.result)
+    }
+    reader.readAsDataURL(file)
+
+    // Upload to ImgBB
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append("image", file)
+
+      const { data } = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${
+          import.meta.env.VITE_IMGBB_API_KEY
+        }`,
+        formData
+      )
+
+      setPhotoURL(data.data.display_url)
+      toast.success("Image uploaded successfully!")
+    } catch (error) {
+      console.error("Image upload error:", error)
+      toast.error("Failed to upload image")
+      setImagePreview(null)
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const onSubmit = async (data) => {
     setLoading(true)
     try {
@@ -34,7 +84,7 @@ const Register = () => {
       await registerUser(data.email, data.password)
 
       // Update profile
-      await updateUserProfile(data.name, data.photoURL)
+      await updateUserProfile(data.name, photoURL || "")
 
       toast.success("Registration successful!")
       navigate("/")
@@ -160,25 +210,39 @@ const Register = () => {
                 )}
               </div>
 
-              {/* Photo URL */}
+              {/* Photo Upload */}
               <div className="form-control">
-                <label className="form-label">Photo URL (Optional)</label>
-                <input
-                  type="url"
-                  placeholder="Enter photo URL"
-                  className={`input-field ${
-                    errors.photoURL ? "border-error" : ""
-                  }`}
-                  {...register("photoURL", {
-                    pattern: {
-                      value: /^https?:\/\/.+/,
-                      message: "Invalid URL format",
-                    },
-                  })}
-                />
-                {errors.photoURL && (
-                  <span className="error-text">{errors.photoURL.message}</span>
-                )}
+                <label className="form-label">Profile Photo (Optional)</label>
+                <div className="flex items-center gap-4">
+                  {imagePreview && (
+                    <div className="avatar">
+                      <div className="w-20 h-20 rounded-full ring ring-primary">
+                        <img src={imagePreview} alt="Preview" />
+                      </div>
+                    </div>
+                  )}
+                  <label
+                    htmlFor="photoUpload"
+                    className="btn btn-outline btn-primary flex-1"
+                  >
+                    {uploading ? (
+                      <span className="loading loading-spinner loading-sm"></span>
+                    ) : (
+                      <>
+                        <FaCamera />
+                        {imagePreview ? "Change Photo" : "Upload Photo"}
+                      </>
+                    )}
+                    <input
+                      id="photoUpload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={uploading || loading}
+                    />
+                  </label>
+                </div>
               </div>
 
               {/* Role */}
