@@ -20,6 +20,9 @@ import Home from "./pages/Home"
 import LoanDetails from "./pages/LoanDetails"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
+import PaymentCancel from "./pages/PaymentCancel"
+import PaymentSuccess from "./pages/PaymentSuccess"
+import Receipt from "./pages/Receipt"
 import Register from "./pages/Register"
 import AdminRoute from "./routes/AdminRoute"
 import ManagerRoute from "./routes/ManagerRoute"
@@ -50,6 +53,30 @@ function App() {
             element={
               <PrivateRoute>
                 <ApplyLoan />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="payment-success"
+            element={
+              <PrivateRoute>
+                <PaymentSuccess />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="payment-cancel"
+            element={
+              <PrivateRoute>
+                <PaymentCancel />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="receipt/:applicationId"
+            element={
+              <PrivateRoute>
+                <Receipt />
               </PrivateRoute>
             }
           />

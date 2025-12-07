@@ -1,4 +1,5 @@
-import axios from "axios"
+import React from "react";
+import axios from "axios";
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
@@ -120,19 +121,15 @@ const ManageUsers = () => {
 
       {/* Search */}
       <div className="mb-6">
-        <div className="form-control">
-          <div className="input-group">
-            <span>
-              <FaSearch />
-            </span>
-            <input
-              type="text"
-              placeholder="Search by name, email, or role..."
-              className="input input-bordered w-full"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="relative">
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50" />
+          <input
+            type="text"
+            placeholder="Search by name, email, or role..."
+            className="input input-bordered w-full pl-12"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
 
@@ -169,7 +166,7 @@ const ManageUsers = () => {
                 <td>{user.email}</td>
                 <td>
                   <span
-                    className={`badge ${
+                    className={`badge flex justify-center items-center py-3 ${
                       user.role === "admin"
                         ? "badge-error"
                         : user.role === "manager"
@@ -182,9 +179,13 @@ const ManageUsers = () => {
                 </td>
                 <td>
                   {user.suspended ? (
-                    <span className="badge badge-error">Suspended</span>
+                    <span className="badge badge-error flex justify-center items-center py-3">
+                      Suspended
+                    </span>
                   ) : (
-                    <span className="badge badge-success">Active</span>
+                    <span className="badge badge-success flex justify-center items-center py-3">
+                      Active
+                    </span>
                   )}
                 </td>
                 <td>

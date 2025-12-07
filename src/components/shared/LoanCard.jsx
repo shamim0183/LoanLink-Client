@@ -55,7 +55,7 @@ const LoanCard = ({ loan }) => {
         <div className="card-actions">
           <Link
             to={`/loan-details/${loan._id}`}
-            className="btn btn-primary btn-sm w-full"
+            className="btn btn-primary btn-sm w-full flex justify-center items-center py-2"
           >
             View Details
           </Link>

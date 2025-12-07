@@ -1,4 +1,5 @@
-import axios from "axios"
+import React from 'react'
+import axios from "axios";
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaToggleOff, FaToggleOn, FaTrash } from "react-icons/fa"
@@ -78,8 +79,8 @@ const AllLoans = () => {
       title: loan.title,
       description: loan.description,
       category: loan.category,
-      interest: loan.interest,
-      maxLimit: loan.maxLimit,
+      interestRate: loan.interestRate,
+      maxLoanLimit: loan.maxLoanLimit,
     })
     setEditMode(true)
     document.getElementById("edit_loan_modal").showModal()
@@ -142,18 +143,22 @@ const AllLoans = () => {
                   <div className="avatar">
                     <div className="w-16 h-16 rounded">
                       <img
-                        src={loan.image || "https://via.placeholder.com/64"}
+                        src={
+                          loan.images?.[0] || "https://via.placeholder.com/64"
+                        }
                         alt={loan.title}
                       />
                     </div>
                   </div>
                 </td>
                 <td className="font-semibold">{loan.title}</td>
-                <td>{loan.interest}%</td>
+                <td>{loan.interestRate}%</td>
                 <td>
-                  <span className="badge badge-primary">{loan.category}</span>
+                  <span className="badge badge-primary flex justify-center items-center py-3">
+                    {loan.category}
+                  </span>
                 </td>
-                <td>${loan.maxLimit?.toLocaleString()}</td>
+                <td>${loan.maxLoanLimit?.toLocaleString()}</td>
                 <td>{loan.createdBy?.name || "N/A"}</td>
                 <td>
                   <button
@@ -257,11 +262,11 @@ const AllLoans = () => {
                   type="number"
                   step="0.1"
                   className="input input-bordered"
-                  value={formData.interest || ""}
+                  value={formData.interestRate || ""}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      interest: Number(e.target.value),
+                      interestRate: Number(e.target.value),
                     })
                   }
                   required
@@ -276,9 +281,12 @@ const AllLoans = () => {
               <input
                 type="number"
                 className="input input-bordered"
-                value={formData.maxLimit || ""}
+                value={formData.maxLoanLimit || ""}
                 onChange={(e) =>
-                  setFormData({ ...formData, maxLimit: Number(e.target.value) })
+                  setFormData({
+                    ...formData,
+                    maxLoanLimit: Number(e.target.value),
+                  })
                 }
                 required
               />

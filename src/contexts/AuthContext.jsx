@@ -116,6 +116,7 @@ const AuthProvider = ({ children }) => {
               email: currentUser.email,
               name: currentUser.displayName,
               photoURL: currentUser.photoURL,
+              uid: currentUser.uid, // For GitHub users without public email
             },
             { withCredentials: true }
           )

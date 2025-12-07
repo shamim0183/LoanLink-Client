@@ -1,5 +1,5 @@
-import React from "react"
-import { motion } from "framer-motion"
+import React from 'react'
+import { motion } from "framer-motion";
 import {
   FaCheckCircle,
   FaFileAlt,
@@ -7,9 +7,11 @@ import {
   FaUsers,
 } from "react-icons/fa"
 import useAuth from "../../hooks/useAuth"
+import { useNavigate } from "react-router-dom"
 
 const DashboardHome = () => {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   // Demo stats
   const stats = {
@@ -153,23 +155,68 @@ const DashboardHome = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {user?.role === "borrower" && (
               <>
-                <button className="btn btn-primary">Apply for New Loan</button>
-                <button className="btn btn-outline">View My Loans</button>
-                <button className="btn btn-outline">Payment History</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/all-loans")}
+                >
+                  Apply for New Loan
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => navigate("/dashboard/my-loans")}
+                >
+                  View My Loans
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => navigate("/dashboard/my-loans")}
+                >
+                  Payment History
+                </button>
               </>
             )}
             {user?.role === "manager" && (
               <>
-                <button className="btn btn-primary">Add New Loan</button>
-                <button className="btn btn-outline">Review Applications</button>
-                <button className="btn btn-outline">View Reports</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/dashboard/add-loan")}
+                >
+                  Add New Loan
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => navigate("/dashboard/pending")}
+                >
+                  Review Applications
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => navigate("/dashboard/manage-loans")}
+                >
+                  View Reports
+                </button>
               </>
             )}
             {user?.role === "admin" && (
               <>
-                <button className="btn btn-primary">Manage Users</button>
-                <button className="btn btn-outline">View All Loans</button>
-                <button className="btn btn-outline">System Settings</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/dashboard/manage-users")}
+                >
+                  Manage Users
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => navigate("/dashboard/all-loans")}
+                >
+                  View All Loans
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => navigate("/dashboard/manage-users")}
+                >
+                  System Settings
+                </button>
               </>
             )}
           </div>
@@ -191,21 +238,27 @@ const DashboardHome = () => {
                 <p className="font-semibold">New loan application submitted</p>
                 <p className="text-sm text-base-content/70">2 hours ago</p>
               </div>
-              <span className="badge badge-warning">Pending</span>
+              <span className="badge badge-warning flex justify-center items-center py-3">
+                Pending
+              </span>
             </div>
             <div className="flex items-center justify-between p-4 bg-base-200 rounded-lg">
               <div>
                 <p className="font-semibold">Loan application approved</p>
                 <p className="text-sm text-base-content/70">1 day ago</p>
               </div>
-              <span className="badge badge-success">Approved</span>
+              <span className="badge badge-success flex justify-center items-center py-3">
+                Approved
+              </span>
             </div>
             <div className="flex items-center justify-between p-4 bg-base-200 rounded-lg">
               <div>
                 <p className="font-semibold">Payment received</p>
                 <p className="text-sm text-base-content/70">3 days ago</p>
               </div>
-              <span className="badge badge-info">Paid</span>
+              <span className="badge badge-info flex justify-center items-center py-3">
+                Paid
+              </span>
             </div>
           </div>
         </div>
