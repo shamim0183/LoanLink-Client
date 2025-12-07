@@ -1,4 +1,5 @@
-import axios from "axios"
+import React from "react";
+import axios from "axios";
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -31,12 +32,17 @@ const AddLoan = () => {
   const onSubmit = async (data) => {
     try {
       const loanData = {
-        ...data,
-        interest: Number(data.interest),
-        maxLimit: Number(data.maxLimit),
-        emiPlans,
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        interestRate: Number(data.interest), // Changed from interest
+        maxLoanLimit: Number(data.maxLimit), // Changed from maxLimit
+        requiredDocuments: data.requiredDocs
+          .split(",")
+          .map((doc) => doc.trim()), // Changed from requiredDocs
+        emiPlans: emiPlans.map((plan) => JSON.stringify(plan)), // Convert objects to strings
+        images: [data.image], // Wrap single image URL in array
         showOnHome,
-        requiredDocs: data.requiredDocs.split(",").map((doc) => doc.trim()),
       }
 
       await axios.post(

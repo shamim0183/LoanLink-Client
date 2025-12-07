@@ -1,3 +1,4 @@
+import React from "react"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
@@ -8,6 +9,8 @@ const ManageLoans = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredLoans, setFilteredLoans] = useState([])
   const [loading, setLoading] = useState(true)
+  const [editingLoan, setEditingLoan] = useState(null)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
     fetchLoans()
@@ -59,6 +62,28 @@ const ManageLoans = () => {
     }
   }
 
+  const handleEdit = (loan) => {
+    setEditingLoan(loan)
+    setShowEditModal(true)
+  }
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/manager/loans/${editingLoan._id}`,
+        editingLoan,
+        { withCredentials: true }
+      )
+      toast.success("Loan updated successfully")
+      setShowEditModal(false)
+      fetchLoans()
+    } catch (error) {
+      toast.error("Failed to update loan")
+      console.error(error)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
@@ -98,7 +123,7 @@ const ManageLoans = () => {
           <div key={loan._id} className="card bg-base-100 shadow-xl">
             <figure>
               <img
-                src={loan.image || "https://via.placeholder.com/400x200"}
+                src={loan.images?.[0] || "https://via.placeholder.com/400x200"}
                 alt={loan.title}
                 className="h-48 w-full object-cover"
               />
@@ -106,31 +131,36 @@ const ManageLoans = () => {
             <div className="card-body">
               <h2 className="card-title">
                 {loan.title}
-                <span className="badge badge-primary">{loan.category}</span>
+                <span className="badge badge-primary flex justify-center items-center py-3">{loan.category}</span>
               </h2>
               <p>{loan.description?.substring(0, 100)}...</p>
 
               <div className="grid grid-cols-2 gap-2 my-2 text-sm">
                 <div>
                   <span className="opacity-70">Interest:</span>
-                  <span className="font-semibold ml-2">{loan.interest}%</span>
+                  <span className="font-semibold ml-2">
+                    {loan.interestRate}%
+                  </span>
                 </div>
                 <div>
                   <span className="opacity-70">Max Limit:</span>
                   <span className="font-semibold ml-2">
-                    ${loan.maxLimit?.toLocaleString()}
+                    ${loan.maxLoanLimit?.toLocaleString()}
                   </span>
                 </div>
               </div>
 
               {loan.showOnHome && (
-                <div className="badge badge-success badge-sm">
-                  Shown on Home
-                </div>
+                <div className="badge badge-success badge-sm flex justify-center items-center py-3"> 
+                    Shown on Home
+                  </div>
               )}
 
-              <div className="card-actions justify-end mt-4">
-                <button className="btn btn-sm btn-info gap-2">
+              <div className="card-actions justify-end mt-4 gap-2">
+                <button
+                  className="btn btn-sm btn-info gap-2"
+                  onClick={() => handleEdit(loan)}
+                >
                   <FaEdit /> Edit
                 </button>
                 <button
@@ -148,6 +178,144 @@ const ManageLoans = () => {
       {filteredLoans.length === 0 && (
         <div className="text-center py-12">
           <p className="text-lg opacity-70">No loans found</p>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && editingLoan && (
+        <div className="modal modal-open">
+          <div className="modal-box max-w-2xl">
+            <h3 className="font-bold text-2xl mb-4">Edit Loan</h3>
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="form-control">
+                <label className="label">Title</label>
+                <input
+                  type="text"
+                  className="input input-bordered"
+                  value={editingLoan.title}
+                  onChange={(e) =>
+                    setEditingLoan({ ...editingLoan, title: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">Description</label>
+                <textarea
+                  className="textarea textarea-bordered h-24"
+                  value={editingLoan.description}
+                  onChange={(e) =>
+                    setEditingLoan({
+                      ...editingLoan,
+                      description: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="form-control">
+                  <label className="label">Category</label>
+                  <select
+                    className="select select-bordered"
+                    value={editingLoan.category}
+                    onChange={(e) =>
+                      setEditingLoan({
+                        ...editingLoan,
+                        category: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="Personal">Personal</option>
+                    <option value="Business">Business</option>
+                    <option value="Education">Education</option>
+                    <option value="Emergency">Emergency</option>
+                  </select>
+                </div>
+
+                <div className="form-control">
+                  <label className="label">Interest Rate (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    className="input input-bordered"
+                    value={editingLoan.interestRate}
+                    onChange={(e) =>
+                      setEditingLoan({
+                        ...editingLoan,
+                        interestRate: Number(e.target.value),
+                      })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-control">
+                <label className="label">Maximum Loan Limit ($)</label>
+                <input
+                  type="number"
+                  className="input input-bordered"
+                  value={editingLoan.maxLoanLimit}
+                  onChange={(e) =>
+                    setEditingLoan({
+                      ...editingLoan,
+                      maxLoanLimit: Number(e.target.value),
+                    })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label">Image URL</label>
+                <input
+                  type="url"
+                  className="input input-bordered"
+                  value={editingLoan.images?.[0] || ""}
+                  onChange={(e) =>
+                    setEditingLoan({
+                      ...editingLoan,
+                      images: [e.target.value],
+                    })
+                  }
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+
+              <div className="form-control">
+                <label className="label cursor-pointer justify-start gap-4">
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-primary"
+                    checked={editingLoan.showOnHome}
+                    onChange={(e) =>
+                      setEditingLoan({
+                        ...editingLoan,
+                        showOnHome: e.target.checked,
+                      })
+                    }
+                  />
+                  <span>Show on Home Page</span>
+                </label>
+              </div>
+
+              <div className="modal-action">
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Update Loan
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
