@@ -6,7 +6,7 @@ import useAuth from "../../hooks/useAuth"
 import ThemeToggle from "./ThemeToggle"
 
 const Navbar = () => {
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleLogout = async () => {
@@ -134,33 +134,37 @@ const Navbar = () => {
             {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* User Section */}
-            {user && (
-              <div className="flex items-center space-x-4">
-                <div className="avatar">
-                  <div className="w-10 h-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-                    <img
-                      src={(() => {
-                        const photoURL =
-                          user.photoURL || "https://via.placeholder.com/150"
-                        console.log("🖼️ Navbar photoURL:", photoURL)
-                        console.log(
-                          "📸 Is from ImgBB?",
-                          photoURL.includes("imgbb") ? "✅ YES" : "❌ NO"
-                        )
-                        return photoURL
-                      })()}
-                      alt={user.name}
-                    />
+            {/* User Section - Only show after loading */}
+            {!loading && (
+              <>
+                {user && (
+                  <div className="flex items-center space-x-4">
+                    <div className="avatar">
+                      <div className="w-10 h-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+                        <img
+                          src={(() => {
+                            const photoURL =
+                              user.photoURL || "https://via.placeholder.com/150"
+                            console.log("🖼️ Navbar photoURL:", photoURL)
+                            console.log(
+                              "📸 Is from ImgBB?",
+                              photoURL.includes("imgbb") ? "✅ YES" : "❌ NO"
+                            )
+                            return photoURL
+                          })()}
+                          alt={user.name}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="btn btn-primary btn-sm px-6 py-2"
+                    >
+                      Logout
+                    </button>
                   </div>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="btn btn-primary btn-sm px-6 py-2"
-                >
-                  Logout
-                </button>
-              </div>
+                )}
+              </>
             )}
           </div>
 

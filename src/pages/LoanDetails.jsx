@@ -124,7 +124,9 @@ const LoanDetails = () => {
               className="card"
             >
               <div className="card-body">
-                <div className="badge badge-primary mb-2">{loan.category}</div>
+                <div className="badge badge-primary mb-2 flex justify-center items-center py-3">
+                  {loan.category}
+                </div>
                 <h1 className="text-3xl font-bold mb-4">{loan.title}</h1>
                 <p className="text-base-content/70 leading-relaxed">
                   {loan.description}
@@ -162,14 +164,41 @@ const LoanDetails = () => {
               <div className="card-body">
                 <h3 className="text-xl font-bold mb-4">Available EMI Plans</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {loan.emiPlans.map((plan, index) => (
-                    <div
-                      key={index}
-                      className="bg-base-200 p-4 rounded-lg text-center"
-                    >
-                      <p className="font-semibold text-primary">{plan}</p>
-                    </div>
-                  ))}
+                  {loan.emiPlans.map((plan, index) => {
+                    try {
+                      // Parse JSON string to object
+                      const parsedPlan =
+                        typeof plan === "string" ? JSON.parse(plan) : plan
+                      return (
+                        <div
+                          key={index}
+                          className="bg-base-200 p-4 rounded-lg text-center"
+                        >
+                          <p className="text-2xl font-bold text-primary mb-1">
+                            {parsedPlan.months}
+                          </p>
+                          <p className="text-sm text-base-content/70">months</p>
+                          <div className="divider my-2"></div>
+                          <p className="text-lg font-semibold text-success">
+                            {parsedPlan.rate}%
+                          </p>
+                          <p className="text-xs text-base-content/60">
+                            interest
+                          </p>
+                        </div>
+                      )
+                    } catch (e) {
+                      // Fallback for non-JSON plans
+                      return (
+                        <div
+                          key={index}
+                          className="bg-base-200 p-4 rounded-lg text-center"
+                        >
+                          <p className="font-semibold text-primary">{plan}</p>
+                        </div>
+                      )
+                    }
+                  })}
                 </div>
               </div>
             </motion.div>

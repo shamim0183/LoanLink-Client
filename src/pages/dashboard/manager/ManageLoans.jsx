@@ -1,5 +1,5 @@
 import React from "react"
-import axios from "axios"
+import axios from "axios";
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"
@@ -101,19 +101,15 @@ const ManageLoans = () => {
 
       {/* Search */}
       <div className="mb-6">
-        <div className="form-control">
-          <div className="input-group">
-            <span>
-              <FaSearch />
-            </span>
-            <input
-              type="text"
-              placeholder="Search by title or category..."
-              className="input input-bordered w-full"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+        <div className="relative">
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50" />
+          <input
+            type="text"
+            placeholder="Search by title or category..."
+            className="input input-bordered w-full pl-12"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </div>
 
@@ -131,7 +127,9 @@ const ManageLoans = () => {
             <div className="card-body">
               <h2 className="card-title">
                 {loan.title}
-                <span className="badge badge-primary flex justify-center items-center py-3">{loan.category}</span>
+                <span className="badge badge-primary flex justify-center items-center py-3">
+                  {loan.category}
+                </span>
               </h2>
               <p>{loan.description?.substring(0, 100)}...</p>
 
@@ -151,9 +149,9 @@ const ManageLoans = () => {
               </div>
 
               {loan.showOnHome && (
-                <div className="badge badge-success badge-sm flex justify-center items-center py-3"> 
-                    Shown on Home
-                  </div>
+                <div className="badge badge-success badge-sm flex justify-center items-center py-3">
+                  Shown on Home
+                </div>
               )}
 
               <div className="card-actions justify-end mt-4 gap-2">

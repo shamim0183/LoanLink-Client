@@ -23,7 +23,9 @@ const LoanCard = ({ loan }) => {
 
       <div className="card-body">
         {/* Category Badge */}
-        <div className="badge badge-primary mb-2">{loan.category}</div>
+        <div className="badge badge-primary mb-2 flex justify-center items-center py-3">
+          {loan.category}
+        </div>
 
         {/* Title */}
         <h3 className="card-title text-lg">{loan.title}</h3>

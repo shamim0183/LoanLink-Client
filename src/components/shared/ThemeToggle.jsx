@@ -10,10 +10,16 @@ const ThemeToggle = () => {
     document.documentElement.setAttribute("data-theme", theme)
     // Save to localStorage
     localStorage.setItem("theme", theme)
+    // Force a repaint to ensure immediate theme application
+    document.documentElement.classList.add("theme-transition")
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition")
+    }, 300)
   }, [theme])
 
   const toggleTheme = () => {
-    setTheme(theme === "loanlink" ? "dark" : "loanlink")
+    const newTheme = theme === "loanlink" ? "dark" : "loanlink"
+    setTheme(newTheme)
   }
 
   return (
