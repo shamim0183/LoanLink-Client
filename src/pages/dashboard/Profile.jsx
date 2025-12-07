@@ -158,7 +158,7 @@ const Profile = () => {
                   >
                     <label
                       htmlFor="profileImage"
-                      className="absolute bottom-0 right-0 btn btn-circle btn-primary btn-sm text-white hover:btn-secondary cursor-pointer"
+                      className="absolute bottom-0 right-0 btn  btn-xs hover:btn-xs cursor-pointer"
                     >
                       {uploading ? (
                         <span className="loading loading-spinner loading-xs"></span>
@@ -169,7 +169,7 @@ const Profile = () => {
                         id="profileImage"
                         type="file"
                         accept="image/*"
-                        className="hidden"
+                        className="hidden "
                         onChange={handleImageUpload}
                         disabled={uploading}
                       />
@@ -192,7 +192,7 @@ const Profile = () => {
                 <h2 className="card-title text-2xl mt-4">{user.name}</h2>
               )}
 
-              <div className="badge badge-primary badge-lg capitalize mt-2">
+              <div className="badge badge-primary badge-lg capitalize mt-2 flex justify-center items-center py-3">
                 {user.role}
               </div>
               <p className="text-sm opacity-70 mt-2">{user.email}</p>

@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react"
 import toast from "react-hot-toast"
 import { FaBars, FaTimes } from "react-icons/fa"
 import { Link, NavLink } from "react-router-dom"
@@ -21,32 +20,98 @@ const Navbar = () => {
 
   const navLinks = user ? (
     <>
-      <NavLink to="/" className="text-primary">
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         Home
       </NavLink>
-      <NavLink to="/all-loans" className="text-primary">
+      <NavLink
+        to="/all-loans"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         All Loans
       </NavLink>
-      <NavLink to="/dashboard" className="text-white">
+      <NavLink
+        to="/dashboard"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         Dashboard
       </NavLink>
     </>
   ) : (
     <>
-      <NavLink to="/" className="text-primary-light">
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         Home
       </NavLink>
-      <NavLink to="/all-loans" className="text-primary-light">
+      <NavLink
+        to="/all-loans"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         All Loans
       </NavLink>
-      <NavLink to="/about" className="text-primary-light">
+      <NavLink
+        to="/about"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         About Us
       </NavLink>
-      <NavLink to="/contact" className="text-primary-light">
+      <NavLink
+        to="/contact"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         Contact
       </NavLink>
-      <NavLink to="/login" className="text-primary-light">
+      <NavLink
+        to="/login"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
         Login
+      </NavLink>
+      <NavLink
+        to="/register"
+        className={({ isActive }) =>
+          isActive
+            ? "text-primary font-semibold"
+            : "text-white hover:text-primary transition-colors"
+        }
+      >
+        Register
       </NavLink>
     </>
   )
@@ -91,7 +156,7 @@ const Navbar = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-primary btn-sm px-6 py-2"
                 >
                   Logout
                 </button>
