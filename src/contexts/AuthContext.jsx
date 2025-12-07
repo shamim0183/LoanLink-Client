@@ -121,8 +121,10 @@ const AuthProvider = ({ children }) => {
           )
 
           console.log("📦 Backend response data.user:", data.user)
+          console.log("🔥 Firebase displayName:", currentUser.displayName)
+          console.log("💾 Backend name:", data.user.name)
 
-          // Ensure photoURL is always set from Firebase if not in backend response
+          // Ensure photoURL and name are always set from backend first, then Firebase
           const userData = {
             ...data.user,
             photoURL: data.user.photoURL || currentUser.photoURL,
@@ -130,6 +132,7 @@ const AuthProvider = ({ children }) => {
           }
 
           console.log("✅ Final userData set to state:", userData)
+          console.log("📝 Name being used:", userData.name)
           setUser(userData)
 
           // Show role modal if user doesn't have a role (OAuth users)
