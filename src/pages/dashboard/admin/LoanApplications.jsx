@@ -51,12 +51,46 @@ const LoanApplications = () => {
 
   const getStatusBadge = (status) => {
     const badges = {
-      Pending: "badge-warning",
-      Approved: "badge-success",
-      Rejected: "badge-error",
-      Cancelled: "badge-ghost",
+      pending: "badge-warning",
+      approved: "badge-success",
+      rejected: "badge-error",
+      cancelled: "badge-ghost",
     }
     return `badge ${badges[status] || "badge-info"}`
+  }
+
+  const handleApprove = async (id) => {
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/applications/${id}/approve`,
+        {},
+        { withCredentials: true }
+      )
+      toast.success("Application approved successfully")
+      fetchApplications() // Refresh list
+      setSelectedApp(null)
+      document.getElementById("view_application_modal").close()
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to approve")
+      console.error(error)
+    }
+  }
+
+  const handleReject = async (id) => {
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/applications/${id}/reject`,
+        {},
+        { withCredentials: true }
+      )
+      toast.success("Application rejected")
+      fetchApplications() // Refresh list
+      setSelectedApp(null)
+      document.getElementById("view_application_modal").close()
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to reject")
+      console.error(error)
+    }
   }
 
   if (loading) {
@@ -86,10 +120,10 @@ const LoanApplications = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
           >
             <option value="all">All Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-            <option value="Cancelled">Cancelled</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </div>
       </div>
@@ -116,26 +150,28 @@ const LoanApplications = () => {
                 <td>
                   <div>
                     <div className="font-semibold">
-                      {app.user?.name || "N/A"}
+                      {app.userId?.name || "N/A"}
                     </div>
-                    <div className="text-xs opacity-70">{app.user?.email}</div>
+                    <div className="text-xs opacity-70">
+                      {app.userId?.email}
+                    </div>
                   </div>
                 </td>
-                <td>{app.loan?.title || "N/A"}</td>
+                <td>{app.loanId?.title || "N/A"}</td>
                 <td>
-                  <span className="badge badge-primary">
-                    {app.loan?.category || "N/A"}
+                  <span className="badge badge-primary flex justify-center items-center py-4">
+                    {app.loanId?.category || "N/A"}
                   </span>
                 </td>
                 <td className="font-semibold">
                   ${app.loanAmount?.toLocaleString()}
                 </td>
                 <td>
-                  <span className={getStatusBadge(app.status)}>
+                  <span className={getStatusBadge(app.status) + " flex justify-center items-center py-4"}>
                     {app.status}
                   </span>
                 </td>
-                <td>{new Date(app.appliedDate).toLocaleDateString()}</td>
+                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                 <td>
                   <button
                     className="btn btn-sm btn-info"
@@ -153,6 +189,17 @@ const LoanApplications = () => {
       {/* View Application Modal */}
       <dialog id="view_application_modal" className="modal">
         <div className="modal-box max-w-4xl">
+          {/* Close button - X */}
+          <button
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            onClick={() => {
+              setSelectedApp(null)
+              document.getElementById("view_application_modal").close()
+            }}
+          >
+            ✕
+          </button>
+
           <h3 className="font-bold text-lg mb-4">Application Details</h3>
 
           {selectedApp && (
@@ -170,7 +217,9 @@ const LoanApplications = () => {
                     </div>
                     <div>
                       <p className="text-sm opacity-70">Email</p>
-                      <p className="font-semibold">{selectedApp.user?.email}</p>
+                      <p className="font-semibold">
+                        {selectedApp.userId?.email}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm opacity-70">Contact Number</p>
@@ -193,12 +242,14 @@ const LoanApplications = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm opacity-70">Loan Title</p>
-                      <p className="font-semibold">{selectedApp.loan?.title}</p>
+                      <p className="font-semibold">
+                        {selectedApp.loanId?.title}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm opacity-70">Category</p>
                       <p className="font-semibold">
-                        {selectedApp.loan?.category}
+                        {selectedApp.loanId?.category}
                       </p>
                     </div>
                     <div>
@@ -236,9 +287,7 @@ const LoanApplications = () => {
                     </div>
                     <div className="col-span-2">
                       <p className="text-sm opacity-70">Reason for Loan</p>
-                      <p className="font-semibold">
-                        {selectedApp.reasonForLoan}
-                      </p>
+                      <p className="font-semibold">{selectedApp.reason}</p>
                     </div>
                   </div>
                 </div>
@@ -270,27 +319,25 @@ const LoanApplications = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm opacity-70">Application Status</p>
-                      <span className={getStatusBadge(selectedApp.status)}>
+                      <span className={getStatusBadge(selectedApp.status) + " flex justify-center items-center py-4"}>
                         {selectedApp.status}
                       </span>
                     </div>
                     <div>
                       <p className="text-sm opacity-70">Fee Status</p>
                       <span
-                        className={`badge ${
-                          selectedApp.feeStatus === "Paid"
+                        className={`badge flex justify-center items-center py-4 ${
+                          selectedApp.applicationFeeStatus === "paid"
                             ? "badge-success"
                             : "badge-warning"
                         }`}
                       >
-                        {selectedApp.feeStatus}
+                        {selectedApp.applicationFeeStatus}
                       </span>
                     </div>
                     <div>
                       <p className="text-sm opacity-70">Applied Date</p>
-                      <p>
-                        {new Date(selectedApp.appliedDate).toLocaleString()}
-                      </p>
+                      <p>{new Date(selectedApp.createdAt).toLocaleString()}</p>
                     </div>
                     {selectedApp.approvedAt && (
                       <div>
@@ -307,6 +354,23 @@ const LoanApplications = () => {
           )}
 
           <div className="modal-action">
+            {/* Show approve/reject buttons only for pending applications */}
+            {selectedApp?.status === "pending" && (
+              <>
+                <button
+                  className="btn btn-success"
+                  onClick={() => handleApprove(selectedApp._id)}
+                >
+                  Approve
+                </button>
+                <button
+                  className="btn btn-error"
+                  onClick={() => handleReject(selectedApp._id)}
+                >
+                  Reject
+                </button>
+              </>
+            )}
             <button
               className="btn"
               onClick={() => {

@@ -15,6 +15,7 @@ import ApprovedApplications from "./pages/dashboard/manager/ApprovedApplications
 import ManageLoans from "./pages/dashboard/manager/ManageLoans"
 import PendingApplications from "./pages/dashboard/manager/PendingApplications"
 import MyLoans from "./pages/dashboard/MyLoans"
+import PaymentHistory from "./pages/dashboard/PaymentHistory"
 import Profile from "./pages/dashboard/Profile"
 import Home from "./pages/Home"
 import LoanDetails from "./pages/LoanDetails"
@@ -95,6 +96,7 @@ function App() {
 
           {/* Borrower Routes */}
           <Route path="my-loans" element={<MyLoans />} />
+          <Route path="payment-history" element={<PaymentHistory />} />
           <Route path="profile" element={<Profile />} />
 
           {/* Admin Routes */}

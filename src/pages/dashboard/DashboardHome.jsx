@@ -6,8 +6,8 @@ import {
   FaHourglassHalf,
   FaUsers,
 } from "react-icons/fa"
-import useAuth from "../../hooks/useAuth"
 import { useNavigate } from "react-router-dom"
+import useAuth from "../../hooks/useAuth"
 
 const DashboardHome = () => {
   const { user } = useAuth()
@@ -169,7 +169,7 @@ const DashboardHome = () => {
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/my-loans")}
+                  onClick={() => navigate("/dashboard/payment-history")}
                 >
                   Payment History
                 </button>
