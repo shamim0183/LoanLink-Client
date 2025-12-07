@@ -53,9 +53,13 @@ const DashboardLayout = () => {
       icon: <FaFileAlt />,
       text: "Manage Loans",
     },
-    { to: "/dashboard/pending-loans", icon: <FaTasks />, text: "Pending" },
     {
-      to: "/dashboard/approved-loans",
+      to: "/dashboard/pending-applications",
+      icon: <FaTasks />,
+      text: "Pending",
+    },
+    {
+      to: "/dashboard/approved-applications",
       icon: <FaCheckCircle />,
       text: "Approved",
     },

@@ -1,36 +1,25 @@
 import React from "react";
 import axios from "axios";
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import LoadingSpinner from "../../components/shared/LoadingSpinner"
 
 const PaymentHistory = () => {
   const navigate = useNavigate()
-  const [payments, setPayments] = useState([])
-  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState("all") // all, completed, pending
 
-  useEffect(() => {
-    fetchPaymentHistory()
-  }, [])
-
-  const fetchPaymentHistory = async () => {
-    try {
-      setLoading(true)
+  // Fetch payment history using TanStack Query
+  const { data: payments = [], isLoading: loading } = useQuery({
+    queryKey: ["payment-history"],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/payments/history`,
         { withCredentials: true }
       )
-      setPayments(data.payments || [])
-    } catch (error) {
-      console.error("Error fetching payment history:", error)
-      toast.error("Failed to load payment history")
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data.payments || []
+    },
+  })
 
   const filteredPayments = payments.filter((payment) => {
     if (filter === "all") return true

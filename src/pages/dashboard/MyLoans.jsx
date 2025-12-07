@@ -2,7 +2,7 @@ import React from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import toast from "react-hot-toast"
 import ReactPaginate from "react-paginate"
 import PaymentDetailsModal from "../../components/modals/PaymentDetailsModal"
@@ -13,50 +13,47 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 const MyLoans = () => {
   const { user } = useAuth()
-  const [applications, setApplications] = useState([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
   const [filter, setFilter] = useState("all")
   const [selectedPayment, setSelectedPayment] = useState(null)
   const [processingPayment, setProcessingPayment] = useState(null)
   const [currentPage, setCurrentPage] = useState(0)
   const applicationsPerPage = 5
 
-  useEffect(() => {
-    fetchMyApplications()
-  }, [])
-
-  const fetchMyApplications = async () => {
-    try {
-      setLoading(true)
+  // Fetch user's loan applications using TanStack Query
+  const { data: applications = [], isLoading: loading } = useQuery({
+    queryKey: ["my-applications"],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/applications/my-applications`,
         { withCredentials: true }
       )
-      setApplications(data.applications || [])
-    } catch (error) {
-      console.error("Error fetching applications:", error)
-      toast.error("Failed to load applications")
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data.applications || []
+    },
+  })
 
-  const handleCancelApplication = async (id) => {
-    try {
-      const { data } = await axios.patch(
+  // Cancel application mutation
+  const cancelMutation = useMutation({
+    mutationFn: async (id) => {
+      await axios.patch(
         `${import.meta.env.VITE_API_URL}/applications/${id}/cancel`,
         {},
         { withCredentials: true }
       )
-
+    },
+    onSuccess: () => {
       toast.success("Application cancelled")
-      fetchMyApplications() // Refresh list
-    } catch (error) {
-      console.error("Cancel error:", error)
+      queryClient.invalidateQueries(["my-applications"])
+    },
+    onError: (error) => {
       toast.error(
         error.response?.data?.message || "Failed to cancel application"
       )
-    }
+    },
+  })
+
+  const handleCancelApplication = async (id) => {
+    cancelMutation.mutate(id)
   }
 
   const handlePayment = async (applicationId) => {

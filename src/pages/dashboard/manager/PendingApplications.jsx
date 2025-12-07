@@ -1,67 +1,131 @@
+import React from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import { useState } from "react"
 import { FaCheck, FaEye, FaTimes } from "react-icons/fa"
+import Swal from "sweetalert2"
 
 const PendingApplications = () => {
-  const [applications, setApplications] = useState([])
-  const [loading, setLoading] = useState(true)
   const [selectedApp, setSelectedApp] = useState(null)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    fetchApplications()
-  }, [])
-
-  const fetchApplications = async () => {
-    try {
-      setLoading(true)
+  // Fetch pending applications using TanStack Query
+  const { data: applications = [], isLoading: loading } = useQuery({
+    queryKey: ["pending-applications"],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/manager/applications/pending`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       )
-      setApplications(data)
-    } catch (error) {
-      toast.error("Failed to fetch applications")
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data || []
+    },
+  })
 
-  const handleApprove = async (appId) => {
-    if (!window.confirm("Approve this application?")) return
-
-    try {
+  // Approve mutation
+  const approveMutation = useMutation({
+    mutationFn: async (appId) => {
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/manager/applications/${appId}/approve`,
         {},
         { withCredentials: true }
       )
-      toast.success("Application approved successfully!")
-      fetchApplications()
-    } catch (error) {
-      toast.error("Failed to approve application")
-      console.error(error)
-    }
-  }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["pending-applications"])
+      queryClient.invalidateQueries(["approved-applications"])
+    },
+  })
 
-  const handleReject = async (appId) => {
-    const reason = prompt("Please provide a reason for rejection:")
-    if (!reason) return
-
-    try {
+  // Reject mutation
+  const rejectMutation = useMutation({
+    mutationFn: async ({ appId, reason }) => {
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/manager/applications/${appId}/reject`,
         { reason },
         { withCredentials: true }
       )
-      toast.success("Application rejected")
-      fetchApplications()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["pending-applications"])
+    },
+  })
+
+  const handleApprove = async (appId) => {
+    const result = await Swal.fire({
+      title: "Approve Application?",
+      text: "Are you sure you want to approve this loan application?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#10b981",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, approve it!",
+      cancelButtonText: "Cancel",
+    })
+
+    if (!result.isConfirmed) return
+
+    try {
+      await approveMutation.mutateAsync(appId)
+
+      Swal.fire({
+        title: "Approved!",
+        text: "The application has been approved successfully.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      })
     } catch (error) {
-      toast.error("Failed to reject application")
-      console.error(error)
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.error || "Failed to approve application",
+        icon: "error",
+      })
+    }
+  }
+
+  const handleReject = async (appId) => {
+    const result = await Swal.fire({
+      title: "Reject Application?",
+      text: "Please provide a reason for rejection:",
+      icon: "warning",
+      input: "textarea",
+      inputPlaceholder: "Enter rejection reason here...",
+      inputAttributes: {
+        "aria-label": "Rejection reason",
+      },
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Reject Application",
+      cancelButtonText: "Cancel",
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to provide a rejection reason!"
+        }
+      },
+    })
+
+    if (!result.isConfirmed) return
+
+    try {
+      await rejectMutation.mutateAsync({
+        appId,
+        reason: result.value,
+      })
+
+      Swal.fire({
+        title: "Rejected!",
+        text: "The application has been rejected.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      })
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.error || "Failed to reject application",
+        icon: "error",
+      })
     }
   }
 
@@ -107,14 +171,16 @@ const PendingApplications = () => {
                     <div className="font-semibold">
                       {app.firstName} {app.lastName}
                     </div>
-                    <div className="text-xs opacity-70">{app.user?.email}</div>
+                    <div className="text-xs opacity-70">
+                      {app.userId?.email}
+                    </div>
                   </div>
                 </td>
-                <td>{app.loan?.title}</td>
+                <td>{app.loanId?.title}</td>
                 <td className="font-semibold text-primary">
                   ${app.loanAmount?.toLocaleString()}
                 </td>
-                <td>{new Date(app.appliedDate).toLocaleDateString()}</td>
+                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                 <td>
                   <div className="flex gap-2">
                     <button

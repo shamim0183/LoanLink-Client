@@ -1,33 +1,19 @@
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import { FaCalendar } from "react-icons/fa"
 
 const ApprovedApplications = () => {
-  const [applications, setApplications] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchApplications()
-  }, [])
-
-  const fetchApplications = async () => {
-    try {
-      setLoading(true)
+  // Fetch approved applications using TanStack Query
+  const { data: applications = [], isLoading: loading } = useQuery({
+    queryKey: ["approved-applications"],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/manager/applications/approved`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       )
-      setApplications(data)
-    } catch (error) {
-      toast.error("Failed to fetch approved applications")
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data || []
+    },
+  })
 
   if (loading) {
     return (
@@ -67,14 +53,16 @@ const ApprovedApplications = () => {
                     <div className="font-semibold">
                       {app.firstName} {app.lastName}
                     </div>
-                    <div className="text-xs opacity-70">{app.user?.email}</div>
+                    <div className="text-xs opacity-70">
+                      {app.userId?.email}
+                    </div>
                   </div>
                 </td>
-                <td>{app.loan?.title}</td>
+                <td>{app.loanId?.title}</td>
                 <td className="font-semibold text-success">
                   ${app.loanAmount?.toLocaleString()}
                 </td>
-                <td>{new Date(app.appliedDate).toLocaleDateString()}</td>
+                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                 <td>
                   <div className="flex items-center gap-2">
                     <FaCalendar className="text-success" />
@@ -83,13 +71,13 @@ const ApprovedApplications = () => {
                 </td>
                 <td>
                   <span
-                    className={`badge ${
-                      app.feeStatus === "Paid"
+                    className={`badge badge-lg flex justify-center items-center py-4 ${
+                      app.applicationFeeStatus === "paid"
                         ? "badge-success"
                         : "badge-warning"
                     }`}
                   >
-                    {app.feeStatus}
+                    {app.applicationFeeStatus === "paid" ? "Paid" : "Unpaid"}
                   </span>
                 </td>
               </tr>

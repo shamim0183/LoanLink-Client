@@ -1,8 +1,6 @@
 import React from "react"
 import axios from "axios"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
@@ -12,47 +10,18 @@ const LoanDetails = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const [loan, setLoan] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchLoanDetails()
-  }, [id])
-
-  const fetchLoanDetails = async () => {
-    try {
-      setLoading(true)
+  // Fetch loan details using TanStack Query
+  const { data: loan, isLoading: loading } = useQuery({
+    queryKey: ["loan-details", id],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/loans/${id}`
       )
-      setLoan(data.loan)
-    } catch (error) {
-      console.error("Error fetching loan:", error)
-      // Demo data for development
-      setLoan({
-        _id: id,
-        title: "Personal Loan",
-        description:
-          "Our personal loan is designed to help you meet your immediate financial needs with flexible repayment options and competitive interest rates. Whether it's for a medical emergency, home renovation, or debt consolidation, we've got you covered.",
-        category: "Personal",
-        interestRate: 8.5,
-        maxLoanLimit: 50000,
-        requiredDocuments: [
-          "Valid Government ID",
-          "Proof of Income (Last 3 months)",
-          "Bank Statements (Last 6 months)",
-          "Address Proof",
-        ],
-        emiPlans: ["6 months", "12 months", "18 months", "24 months"],
-        images: [
-          "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&h=600&fit=crop",
-          "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&h=600&fit=crop",
-        ],
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data.loan
+    },
+    enabled: !!id, // Only run query if id exists
+  })
 
   const handleApplyNow = () => {
     if (!user) {

@@ -3,54 +3,97 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaToggleOff, FaToggleOn, FaTrash } from "react-icons/fa"
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query"
 
 const AllLoans = () => {
-  const [loans, setLoans] = useState([])
-  const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
   const [selectedLoan, setSelectedLoan] = useState(null)
   const [editMode, setEditMode] = useState(false)
   const [formData, setFormData] = useState({})
 
-  useEffect(() => {
-    fetchLoans()
-  }, [])
-
-  const fetchLoans = async () => {
-    try {
-      setLoading(true)
+  // Fetch all loans using TanStack Query
+  const { data: loans = [], isLoading: loading } = useQuery({
+    queryKey: ["admin-all-loans"],
+    queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/admin/loans`,
-        {
-          withCredentials: true,
-        }
-      )
-      setLoans(data)
-    } catch (error) {
-      toast.error("Failed to fetch loans")
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleToggleShowOnHome = async (loanId, currentStatus) => {
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/admin/loans/${loanId}/show-home`,
-        { showOnHome: !currentStatus },
         { withCredentials: true }
       )
-      toast.success(
-        `Loan ${!currentStatus ? "added to" : "removed from"} home page`
+      return data || []
+    },
+  })
+
+  // Toggle showOnHome mutation
+  const toggleShowOnHomeMutation = useMutation({
+    mutationFn: async ({ loanId, showOnHome }) => {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/admin/loans/${loanId}/show-home`,
+        { showOnHome },
+        { withCredentials: true }
       )
-      fetchLoans()
-    } catch (error) {
+    },
+    onSuccess: (_, variables) => {
+      toast.success(
+        `Loan ${variables.showOnHome ? "added to" : "removed from"} home page`
+      )
+      queryClient.invalidateQueries(["admin-all-loans"])
+      queryClient.invalidateQueries(["featured-loans"])
+    },
+    onError: () => {
       toast.error("Failed to update loan visibility")
-      console.error(error)
-    }
+    },
+  })
+
+  // Delete loan mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (loanId) => {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/admin/loans/${loanId}`,
+        { withCredentials: true }
+      )
+    },
+    onSuccess: () => {
+      toast.success("Loan deleted successfully")
+      queryClient.invalidateQueries(["admin-all-loans"])
+      queryClient.invalidateQueries(["featured-loans"])
+      queryClient.invalidateQueries(["all-loans"])
+    },
+    onError: () => {
+      toast.error("Failed to delete loan")
+    },
+  })
+
+  // Update loan mutation
+  const updateMutation = useMutation({
+    mutationFn: async ({ loanId, data }) => {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/admin/loans/${loanId}`,
+        data,
+        { withCredentials: true }
+      )
+    },
+    onSuccess: () => {
+      toast.success("Loan updated successfully")
+      setEditMode(false)
+      setSelectedLoan(null)
+      document.getElementById("edit_loan_modal").close()
+      queryClient.invalidateQueries(["admin-all-loans"])
+      queryClient.invalidateQueries(["featured-loans"])
+      queryClient.invalidateQueries(["all-loans"])
+    },
+    onError: () => {
+      toast.error("Failed to update loan")
+    },
+  })
+
+  const handleToggleShowOnHome = (loanId, currentStatus) => {
+    toggleShowOnHomeMutation.mutate({
+      loanId,
+      showOnHome: !currentStatus,
+    })
   }
 
-  const handleDelete = async (loanId) => {
+  const handleDelete = (loanId) => {
     if (
       !window.confirm(
         "Are you sure you want to delete this loan? This action cannot be undone."
@@ -58,19 +101,7 @@ const AllLoans = () => {
     )
       return
 
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_API_URL}/admin/loans/${loanId}`,
-        {
-          withCredentials: true,
-        }
-      )
-      toast.success("Loan deleted successfully")
-      fetchLoans()
-    } catch (error) {
-      toast.error("Failed to delete loan")
-      console.error(error)
-    }
+    deleteMutation.mutate(loanId)
   }
 
   const handleEdit = (loan) => {
@@ -86,24 +117,12 @@ const AllLoans = () => {
     document.getElementById("edit_loan_modal").showModal()
   }
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = (e) => {
     e.preventDefault()
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/admin/loans/${selectedLoan._id}`,
-        formData,
-        { withCredentials: true }
-      )
-      toast.success("Loan updated successfully")
-      setEditMode(false)
-      setSelectedLoan(null)
-      document.getElementById("edit_loan_modal").close()
-      fetchLoans()
-    } catch (error) {
-      toast.error("Failed to update loan")
-      console.error(error)
-    }
+    updateMutation.mutate({
+      loanId: selectedLoan._id,
+      data: formData,
+    })
   }
 
   if (loading) {

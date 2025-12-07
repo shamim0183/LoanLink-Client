@@ -1,4 +1,6 @@
-import React from "react";
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   FaArrowRight,
@@ -8,12 +10,30 @@ import {
   FaShieldAlt,
 } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import "swiper/css"
+import "swiper/css/navigation"
+import "swiper/css/pagination"
+import { Autoplay, Navigation, Pagination } from "swiper/modules"
+import { Swiper, SwiperSlide } from "swiper/react"
 import HowItWorks from "../components/home/HowItWorks"
 import Testimonials from "../components/home/Testimonials"
 import TrustedPartners from "../components/home/TrustedPartners"
 import WhyChooseUs from "../components/home/WhyChooseUs"
+import LoadingSpinner from "../components/shared/LoadingSpinner"
+import LoanCard from "../components/shared/LoanCard"
 
 const Home = () => {
+  // Fetch featured loans using TanStack Query
+  const { data: featuredLoans = [], isLoading: loadingLoans } = useQuery({
+    queryKey: ["featured-loans"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/loans/featured`
+      )
+      return data.loans || []
+    },
+  })
+
   return (
     <div>
       {/* Hero Section */}
@@ -164,23 +184,58 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Available Loans Section - Placeholder */}
+      {/* Featured Loans Section with Swiper */}
       <section className="section-padding">
         <div className="section-container">
-          <div className="text-center mb-12">
-            <h2 className="heading-secondary mb-4">Available Loan Products</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="heading-secondary mb-4">Featured Loan Products</h2>
             <p className="text-lg text-base-content/70">
-              Choose from our range of flexible loan options
+              Discover our most popular loan options tailored to your needs
             </p>
-          </div>
+          </motion.div>
 
-          {/* TODO: Add loan cards from database */}
-          <div className="text-center py-12 bg-base-200 rounded-xl">
-            <p className="text-base-content/70">
-              Loan products will be displayed here from the database
-            </p>
-            <Link to="/all-loans" className="btn btn-primary mt-4">
+          {loadingLoans ? (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner />
+            </div>
+          ) : featuredLoans.length > 0 ? (
+            <Swiper
+              modules={[Navigation, Pagination, Autoplay]}
+              spaceBetween={24}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+              autoplay={{ delay: 5000, disableOnInteraction: false }}
+              breakpoints={{
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+                1280: { slidesPerView: 4 },
+              }}
+              className="pb-12"
+            >
+              {featuredLoans.map((loan) => (
+                <SwiperSlide key={loan._id}>
+                  <LoanCard loan={loan} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="text-center py-12 bg-base-200 rounded-xl">
+              <p className="text-base-content/70">
+                No featured loans available
+              </p>
+            </div>
+          )}
+
+          <div className="text-center mt-8">
+            <Link to="/all-loans" className="btn btn-primary btn-lg">
               View All Loans
+              <FaArrowRight />
             </Link>
           </div>
         </div>

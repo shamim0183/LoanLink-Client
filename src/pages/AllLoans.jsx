@@ -1,106 +1,26 @@
 import React from "react"
 import axios from "axios";
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import { useState } from "react"
 import { FaSearch } from "react-icons/fa"
 import ReactPaginate from "react-paginate"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
 
 const AllLoans = () => {
-  const [loans, setLoans] = useState([])
-  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [currentPage, setCurrentPage] = useState(0)
   const loansPerPage = 6
 
-  useEffect(() => {
-    fetchLoans()
-  }, [])
-
-  const fetchLoans = async () => {
-    try {
-      setLoading(true)
+  // Fetch all loans using TanStack Query
+  const { data: loans = [], isLoading: loading } = useQuery({
+    queryKey: ["all-loans"],
+    queryFn: async () => {
       const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/loans`)
-      setLoans(data.loans || [])
-    } catch (error) {
-      console.error("Error fetching loans:", error)
-      toast.error("Failed to load loans")
-      // Demo data for development
-      setLoans([
-        {
-          _id: "1",
-          title: "Personal Loan",
-          description: "Quick personal loans for your immediate needs",
-          category: "Personal",
-          interestRate: 8.5,
-          maxLoanLimit: 50000,
-          images: [
-            "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=400&h=300&fit=crop",
-          ],
-        },
-        {
-          _id: "2",
-          title: "Business Expansion Loan",
-          description: "Grow your business with our flexible business loans",
-          category: "Business",
-          interestRate: 9.2,
-          maxLoanLimit: 100000,
-          images: [
-            "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop",
-          ],
-        },
-        {
-          _id: "3",
-          title: "Education Loan",
-          description: "Invest in your future with our education loans",
-          category: "Education",
-          interestRate: 7.5,
-          maxLoanLimit: 75000,
-          images: [
-            "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop",
-          ],
-        },
-        {
-          _id: "4",
-          title: "Home Renovation Loan",
-          description: "Transform your home with our renovation loans",
-          category: "Home",
-          interestRate: 8.0,
-          maxLoanLimit: 80000,
-          images: [
-            "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&h=300&fit=crop",
-          ],
-        },
-        {
-          _id: "5",
-          title: "Emergency Loan",
-          description: "Quick approval for urgent financial needs",
-          category: "Emergency",
-          interestRate: 10.0,
-          maxLoanLimit: 25000,
-          images: [
-            "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&h=300&fit=crop",
-          ],
-        },
-        {
-          _id: "6",
-          title: "Wedding Loan",
-          description: "Make your special day memorable",
-          category: "Personal",
-          interestRate: 9.5,
-          maxLoanLimit: 60000,
-          images: [
-            "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop",
-          ],
-        },
-      ])
-    } finally {
-      setLoading(false)
-    }
-  }
+      return data.loans || []
+    },
+  })
 
   // Filter loans
   const filteredLoans = loans.filter((loan) => {
@@ -194,7 +114,8 @@ const AllLoans = () => {
             <span className="font-semibold text-primary">
               {currentLoans.length}
             </span>{" "}
-            of {filteredLoans.length} loan{filteredLoans.length !== 1 ? "s" : ""}
+            of {filteredLoans.length} loan
+            {filteredLoans.length !== 1 ? "s" : ""}
           </p>
         </div>
 

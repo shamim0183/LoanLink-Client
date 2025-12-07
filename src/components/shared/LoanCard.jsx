@@ -51,13 +51,13 @@ const LoanCard = ({ loan }) => {
           </div>
         </div>
 
-        {/* View Details Button */}
+        {/* Apply for Loan Button */}
         <div className="card-actions">
           <Link
             to={`/loan-details/${loan._id}`}
             className="btn btn-primary btn-sm w-full flex justify-center items-center py-2"
           >
-            View Details
+            Apply for Loan
           </Link>
         </div>
       </div>

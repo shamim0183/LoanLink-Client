@@ -5,15 +5,22 @@ import toast from "react-hot-toast"
 import { FaEye, FaFilter } from "react-icons/fa"
 
 const LoanApplications = () => {
-  const [applications, setApplications] = useState([])
+  const queryClient = useQueryClient()
   const [filteredApplications, setFilteredApplications] = useState([])
   const [statusFilter, setStatusFilter] = useState("all")
-  const [loading, setLoading] = useState(true)
   const [selectedApp, setSelectedApp] = useState(null)
 
-  useEffect(() => {
-    fetchApplications()
-  }, [])
+  // Fetch all loan applications using TanStack Query
+  const { data: applications = [], isLoading: loading } = useQuery({
+    queryKey: ["admin-applications"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/applications`,
+        { withCredentials: true }
+      )
+      return data || []
+    },
+  })
 
   useEffect(() => {
     if (statusFilter === "all") {
@@ -25,24 +32,48 @@ const LoanApplications = () => {
     }
   }, [statusFilter, applications])
 
-  const fetchApplications = async () => {
-    try {
-      setLoading(true)
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/admin/applications`,
-        {
-          withCredentials: true,
-        }
+  // Approve application mutation
+  const approveMutation = useMutation({
+    mutationFn: async (id) => {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/applications/${id}/approve`,
+        {},
+        { withCredentials: true }
       )
-      setApplications(data)
-      setFilteredApplications(data)
-    } catch (error) {
-      toast.error("Failed to fetch applications")
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+    },
+    onSuccess: () => {
+      toast.success("Application approved successfully")
+      setSelectedApp(null)
+      document.getElementById("view_application_modal").close()
+      queryClient.invalidateQueries(["admin-applications"])
+      queryClient.invalidateQueries(["pending-applications"])
+      queryClient.invalidateQueries(["approved-applications"])
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to approve")
+    },
+  })
+
+  // Reject application mutation
+  const rejectMutation = useMutation({
+    mutationFn: async (id) => {
+      await axios.patch(
+        `${import.meta.env.VITE_API_URL}/applications/${id}/reject`,
+        {},
+        { withCredentials: true }
+      )
+    },
+    onSuccess: () => {
+      toast.success("Application rejected")
+      setSelectedApp(null)
+      document.getElementById("view_application_modal").close()
+      queryClient.invalidateQueries(["admin-applications"])
+      queryClient.invalidateQueries(["pending-applications"])
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to reject")
+    },
+  })
 
   const handleView = (app) => {
     setSelectedApp(app)
@@ -59,38 +90,12 @@ const LoanApplications = () => {
     return `badge ${badges[status] || "badge-info"}`
   }
 
-  const handleApprove = async (id) => {
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/applications/${id}/approve`,
-        {},
-        { withCredentials: true }
-      )
-      toast.success("Application approved successfully")
-      fetchApplications() // Refresh list
-      setSelectedApp(null)
-      document.getElementById("view_application_modal").close()
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to approve")
-      console.error(error)
-    }
+  const handleApprove = (id) => {
+    approveMutation.mutate(id)
   }
 
-  const handleReject = async (id) => {
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/applications/${id}/reject`,
-        {},
-        { withCredentials: true }
-      )
-      toast.success("Application rejected")
-      fetchApplications() // Refresh list
-      setSelectedApp(null)
-      document.getElementById("view_application_modal").close()
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to reject")
-      console.error(error)
-    }
+  const handleReject = (id) => {
+    rejectMutation.mutate(id)
   }
 
   if (loading) {
@@ -167,7 +172,12 @@ const LoanApplications = () => {
                   ${app.loanAmount?.toLocaleString()}
                 </td>
                 <td>
-                  <span className={getStatusBadge(app.status) + " flex justify-center items-center py-4"}>
+                  <span
+                    className={
+                      getStatusBadge(app.status) +
+                      " flex justify-center items-center py-4"
+                    }
+                  >
                     {app.status}
                   </span>
                 </td>
@@ -319,7 +329,12 @@ const LoanApplications = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm opacity-70">Application Status</p>
-                      <span className={getStatusBadge(selectedApp.status) + " flex justify-center items-center py-4"}>
+                      <span
+                        className={
+                          getStatusBadge(selectedApp.status) +
+                          " flex justify-center items-center py-4"
+                        }
+                      >
                         {selectedApp.status}
                       </span>
                     </div>

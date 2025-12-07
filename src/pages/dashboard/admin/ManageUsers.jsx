@@ -5,16 +5,23 @@ import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([])
+  const queryClient = useQueryClient()
   const [filteredUsers, setFilteredUsers] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState(null)
   const [suspendReason, setSuspendReason] = useState("")
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
+  // Fetch all users using TanStack Query
+  const { data: users = [], isLoading: loading } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/users`,
+        { withCredentials: true }
+      )
+      return data || []
+    },
+  })
 
   useEffect(() => {
     const filtered = users.filter(
@@ -26,82 +33,82 @@ const ManageUsers = () => {
     setFilteredUsers(filtered)
   }, [searchTerm, users])
 
-  const fetchUsers = async () => {
-    try {
-      setLoading(true)
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/admin/users`,
-        {
-          withCredentials: true,
-        }
-      )
-      setUsers(data)
-      setFilteredUsers(data)
-    } catch (error) {
-      toast.error("Failed to fetch users")
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUpdateRole = async (userId, newRole) => {
-    if (!window.confirm(`Change user role to ${newRole}?`)) return
-
-    try {
+  // Update role mutation
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ userId, role }) => {
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/admin/users/${userId}/role`,
-        { role: newRole },
+        { role },
         { withCredentials: true }
       )
+    },
+    onSuccess: () => {
       toast.success("User role updated successfully")
-      fetchUsers()
-    } catch (error) {
+      queryClient.invalidateQueries(["admin-users"])
+    },
+    onError: () => {
       toast.error("Failed to update user role")
-      console.error(error)
-    }
-  }
+    },
+  })
 
-  const handleSuspend = async () => {
-    if (!suspendReason.trim()) {
-      toast.error("Please provide a reason for suspension")
-      return
-    }
-
-    try {
+  // Suspend user mutation
+  const suspendMutation = useMutation({
+    mutationFn: async ({ userId, reason }) => {
       await axios.patch(
-        `${import.meta.env.VITE_API_URL}/admin/users/${
-          selectedUser._id
-        }/suspend`,
-        { reason: suspendReason, suspended: true },
+        `${import.meta.env.VITE_API_URL}/admin/users/${userId}/suspend`,
+        { reason, suspended: true },
         { withCredentials: true }
       )
+    },
+    onSuccess: () => {
       toast.success("User suspended successfully")
       setSuspendReason("")
       setSelectedUser(null)
       document.getElementById("suspend_modal").close()
-      fetchUsers()
-    } catch (error) {
+      queryClient.invalidateQueries(["admin-users"])
+    },
+    onError: () => {
       toast.error("Failed to suspend user")
-      console.error(error)
-    }
-  }
+    },
+  })
 
-  const handleUnsuspend = async (userId) => {
-    if (!window.confirm("Unsuspend this user?")) return
-
-    try {
+  // Unsuspend user mutation
+  const unsuspendMutation = useMutation({
+    mutationFn: async (userId) => {
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/admin/users/${userId}/suspend`,
         { suspended: false },
         { withCredentials: true }
       )
+    },
+    onSuccess: () => {
       toast.success("User unsuspended successfully")
-      fetchUsers()
-    } catch (error) {
+      queryClient.invalidateQueries(["admin-users"])
+    },
+    onError: () => {
       toast.error("Failed to unsuspend user")
-      console.error(error)
+    },
+  })
+
+  const handleUpdateRole = (userId, newRole) => {
+    if (!window.confirm(`Change user role to ${newRole}?`)) return
+    updateRoleMutation.mutate({ userId, role: newRole })
+  }
+
+  const handleSuspend = () => {
+    if (!suspendReason.trim()) {
+      toast.error("Please provide a reason for suspension")
+      return
     }
+    suspendMutation.mutate({
+      userId: selectedUser._id,
+      reason: suspendReason,
+    })
+  }
+
+  const handleUnsuspend = (userId) => {
+    if (!window.confirm("Unsuspend this user?")) return
+    unsuspendMutation.mutate(userId)
   }
 
   if (loading) {
