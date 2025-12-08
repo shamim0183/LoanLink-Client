@@ -24,8 +24,8 @@ const Navbar = () => {
         to="/"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         Home
@@ -34,8 +34,8 @@ const Navbar = () => {
         to="/all-loans"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         All Loans
@@ -44,8 +44,8 @@ const Navbar = () => {
         to="/dashboard"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         Dashboard
@@ -57,8 +57,8 @@ const Navbar = () => {
         to="/"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         Home
@@ -67,8 +67,8 @@ const Navbar = () => {
         to="/all-loans"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         All Loans
@@ -77,8 +77,8 @@ const Navbar = () => {
         to="/about"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         About Us
@@ -87,8 +87,8 @@ const Navbar = () => {
         to="/contact"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         Contact
@@ -97,8 +97,8 @@ const Navbar = () => {
         to="/login"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         Login
@@ -107,8 +107,8 @@ const Navbar = () => {
         to="/register"
         className={({ isActive }) =>
           isActive
-            ? "text-primary font-semibold"
-            : "text-white hover:text-primary transition-colors"
+            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
         }
       >
         Register
@@ -117,55 +117,66 @@ const Navbar = () => {
   )
 
   return (
-    <nav className="bg-neutral shadow-lg sticky top-0 z-50">
+    <nav className="bg-base-100/80 backdrop-blur-lg border-b border-base-content/10 shadow-sm sticky top-0 z-50 transition-all duration-300">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-white">
+          <Link to="/" className="flex items-center space-x-2 group">
+            <span className="text-2xl font-bold text-base-content group-hover:scale-105 transition-transform duration-200">
               Loan<span className="text-primary">Link</span>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            {navLinks}
+          <div className="hidden md:flex items-center space-x-8">
+            <div className="flex items-center space-x-6">{navLinks}</div>
 
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            <div className="flex items-center space-x-4 border-l border-base-content/10 pl-6">
+              {/* Theme Toggle */}
+              <ThemeToggle />
 
-            {/* User Section - Only show after loading */}
-            {!loading && (
-              <>
-                {user && (
-                  <div className="flex items-center space-x-4">
-                    <div className="avatar">
-                      <div className="w-10 h-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-                        <img
-                          src={(() => {
-                            const photoURL =
-                              user.photoURL || "https://via.placeholder.com/150"
-                            console.log("🖼️ Navbar photoURL:", photoURL)
-                            console.log(
-                              "📸 Is from ImgBB?",
-                              photoURL.includes("imgbb") ? "✅ YES" : "❌ NO"
-                            )
-                            return photoURL
-                          })()}
-                          alt={user.name}
-                        />
+              {/* User Section - Only show after loading */}
+              {!loading && (
+                <>
+                  {user && (
+                    <div className="flex items-center space-x-3">
+                      <div className="group relative">
+                        <div className="avatar">
+                          <div className="w-10 h-10 rounded-full ring-2 ring-primary/50 hover:ring-primary transition-all duration-200 group-hover:scale-110">
+                            <img
+                              src={(() => {
+                                const photoURL =
+                                  user.photoURL ||
+                                  "https://via.placeholder.com/150"
+                                console.log("🖼️ Navbar photoURL:", photoURL)
+                                console.log(
+                                  "📸 Is from ImgBB?",
+                                  photoURL.includes("imgbb")
+                                    ? "✅ YES"
+                                    : "❌ NO"
+                                )
+                                return photoURL
+                              })()}
+                              alt={user.name}
+                              className="object-cover"
+                            />
+                          </div>
+                        </div>
+                        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-base-300 text-base-content text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
+                          {user.name}
+                        </div>
                       </div>
+                      <button
+                        onClick={handleLogout}
+                        className="btn btn-sm bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:scale-105 text-white border-none transition-all duration-200"
+                      >
+                        Logout
+                      </button>
                     </div>
-                    <button
-                      onClick={handleLogout}
-                      className="btn btn-primary btn-sm px-6 py-2"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
+                  )}
+                </>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -173,7 +184,8 @@ const Navbar = () => {
             <ThemeToggle />
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white text-2xl"
+              className="text-base-content hover:text-primary text-2xl transition-all duration-200 hover:scale-110"
+              aria-label="Toggle menu"
             >
               {isMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
@@ -182,44 +194,59 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden pb-4 flex flex-col space-y-2">
+          <div className="md:hidden pb-4 flex flex-col space-y-1 bg-base-200/50 rounded-lg mt-2 p-2">
             {user ? (
               <>
                 <NavLink
                   to="/"
-                  className="block px-4 py-2 text-primary hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Home
                 </NavLink>
                 <NavLink
                   to="/all-loans"
-                  className="block px-4 py-2 text-primary hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   All Loans
                 </NavLink>
                 <NavLink
                   to="/dashboard"
-                  className="block px-4 py-2 text-white hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
                 </NavLink>
-                <div className="flex items-center space-x-3 px-4 py-2">
+                <div className="flex items-center space-x-3 px-4 py-3 bg-base-300 rounded-lg mt-2">
                   <div className="avatar">
-                    <div className="w-10 h-10 rounded-full ring ring-primary">
+                    <div className="w-10 h-10 rounded-full ring-2 ring-primary/50">
                       <img
                         src={user.photoURL || "https://via.placeholder.com/150"}
                         alt={user.name}
+                        className="object-cover"
                       />
                     </div>
                   </div>
-                  <span className="text-white">{user.name}</span>
+                  <span className="text-base-content font-medium">
+                    {user.name}
+                  </span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-white hover:bg-primary/20 rounded-lg transition"
+                  className="w-full text-center px-4 py-3 bg-primary text-white hover:bg-primary-hover rounded-lg transition-all font-medium mt-2"
                 >
                   Logout
                 </button>
@@ -228,38 +255,69 @@ const Navbar = () => {
               <>
                 <NavLink
                   to="/"
-                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Home
                 </NavLink>
                 <NavLink
                   to="/all-loans"
-                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   All Loans
                 </NavLink>
                 <NavLink
                   to="/about"
-                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   About Us
                 </NavLink>
                 <NavLink
                   to="/contact"
-                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Contact
                 </NavLink>
                 <NavLink
                   to="/login"
-                  className="block px-4 py-2 text-primary-light hover:bg-primary/20 rounded-lg transition"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
+                </NavLink>
+                <NavLink
+                  to="/register"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "block px-4 py-3 bg-primary text-white font-medium rounded-lg transition-all mt-2"
+                      : "block px-4 py-3 bg-primary/80 text-white hover:bg-primary rounded-lg transition-all mt-2 font-medium"
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Register
                 </NavLink>
               </>
             )}

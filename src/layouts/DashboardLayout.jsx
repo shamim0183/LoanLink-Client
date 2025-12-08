@@ -103,7 +103,8 @@ const DashboardLayout = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 btn btn-primary btn-sm"
+        className="lg:hidden fixed top-4 right-4 z-50 btn btn-sm bg-base-100 border border-base-content/20 hover:bg-primary hover:border-primary text-base-content hover:text-white shadow-lg transition-all"
+        aria-label="Toggle sidebar"
       >
         {sidebarOpen ? <FaTimes /> : <FaBars />}
       </button>
@@ -176,7 +177,7 @@ const DashboardLayout = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-x-hidden">
-        <div className="p-4 lg:p-8">
+        <div className="p-4 pt-16 lg:p-8">
           <Outlet />
         </div>
       </main>

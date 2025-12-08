@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: "class", // DaisyUI uses this
+  darkMode: false, // DaisyUI uses data-theme attributes, not class-based dark mode
   theme: {
     extend: {
       colors: {

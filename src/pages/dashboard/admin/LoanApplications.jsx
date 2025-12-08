@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEye, FaFilter } from "react-icons/fa"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const LoanApplications = () => {
   const queryClient = useQueryClient()
@@ -184,7 +185,7 @@ const LoanApplications = () => {
                 <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                 <td>
                   <button
-                    className="btn btn-sm btn-info"
+                    className="btn btn-neutral btn-info"
                     onClick={() => handleView(app)}
                   >
                     <FaEye /> View

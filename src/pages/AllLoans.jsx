@@ -6,6 +6,7 @@ import { FaSearch } from "react-icons/fa"
 import ReactPaginate from "react-paginate"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
+import { useQuery } from "@tanstack/react-query";
 
 const AllLoans = () => {
   const [searchTerm, setSearchTerm] = useState("")
@@ -148,12 +149,25 @@ const AllLoans = () => {
                   nextLabel={"Next →"}
                   pageCount={pageCount}
                   onPageChange={handlePageClick}
-                  containerClassName={"join"}
-                  pageClassName={"join-item btn btn-sm"}
-                  previousClassName={"join-item btn btn-sm"}
-                  nextClassName={"join-item btn btn-sm"}
-                  activeClassName={"btn-active btn-primary"}
-                  disabledClassName={"btn-disabled"}
+                  containerClassName={"flex items-center gap-2"}
+                  pageClassName={""}
+                  pageLinkClassName={
+                    "px-4 py-2 rounded-lg bg-base-100 border border-base-content/10 hover:border-primary hover:bg-primary/10 transition-all duration-200 font-medium"
+                  }
+                  previousClassName={""}
+                  previousLinkClassName={
+                    "px-4 py-2 rounded-lg bg-base-100 border border-base-content/10 hover:border-primary hover:bg-primary/10 transition-all duration-200 font-medium flex items-center gap-1"
+                  }
+                  nextClassName={""}
+                  nextLinkClassName={
+                    "px-4 py-2 rounded-lg bg-base-100 border border-base-content/10 hover:border-primary hover:bg-primary/10 transition-all duration-200 font-medium flex items-center gap-1"
+                  }
+                  activeLinkClassName={
+                    "!bg-primary !text-white !border-primary shadow-md"
+                  }
+                  disabledLinkClassName={
+                    "opacity-50 cursor-not-allowed hover:!bg-base-100 hover:!border-base-content/10"
+                  }
                   forcePage={currentPage}
                 />
               </div>

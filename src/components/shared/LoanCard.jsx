@@ -1,5 +1,5 @@
-import React from "react"
-import { motion } from "framer-motion"
+import React from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom"
 
 const LoanCard = ({ loan }) => {
@@ -7,10 +7,10 @@ const LoanCard = ({ loan }) => {
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
-      className="card h-full"
+      className="card bg-base-100 border border-base-content/10 shadow-xl h-full  flex flex-col overflow-hidden"
     >
       {/* Loan Image */}
-      <figure className="h-48 overflow-hidden">
+      <figure className="h-48 flex-shrink-0 overflow-hidden">
         <img
           src={
             loan.images?.[0] ||
@@ -21,22 +21,24 @@ const LoanCard = ({ loan }) => {
         />
       </figure>
 
-      <div className="card-body">
+      <div className="card-body flex-1 flex flex-col p-5">
         {/* Category Badge */}
-        <div className="badge badge-primary mb-2 flex justify-center items-center py-3">
+        <div className="badge badge-primary mb-3 flex justify-center items-center py-3 text-xs font-medium">
           {loan.category}
         </div>
 
         {/* Title */}
-        <h3 className="card-title text-lg">{loan.title}</h3>
+        <h3 className="card-title text-lg font-bold mb-2 line-clamp-1">
+          {loan.title}
+        </h3>
 
         {/* Description */}
-        <p className="text-base-content/70 text-sm line-clamp-2 mb-4">
+        {/* <p className="text-base-content/70 text-sm line-clamp-2 mb-4 flex-shrink-0">
           {loan.description}
-        </p>
+        </p> */}
 
         {/* Loan Details */}
-        <div className="space-y-2 mb-4">
+        <div className="space-y-2 mb-4 flex-shrink-0">
           <div className="flex justify-between items-center">
             <span className="text-sm text-base-content/70">Interest Rate:</span>
             <span className="font-semibold text-primary">
@@ -52,10 +54,10 @@ const LoanCard = ({ loan }) => {
         </div>
 
         {/* Apply for Loan Button */}
-        <div className="card-actions">
+        <div className="card-actions mt-auto">
           <Link
             to={`/loan-details/${loan._id}`}
-            className="btn btn-primary btn-sm w-full flex justify-center items-center py-2"
+            className="btn btn-primary  w-full flex justify-center items-center pb-3"
           >
             Apply for Loan
           </Link>
