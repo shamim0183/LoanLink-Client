@@ -1,5 +1,7 @@
 import React from 'react'
-import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios"
+import { motion } from "framer-motion"
 import {
   FaCheckCircle,
   FaFileAlt,
@@ -8,8 +10,6 @@ import {
 } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
-import { useQuery } from '@tanstack/react-query';
-import axios from "axios"
 
 const DashboardHome = () => {
   const { user } = useAuth()
@@ -274,33 +274,54 @@ const DashboardHome = () => {
         <div className="card-body">
           <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-base-200 rounded-lg">
-              <div>
-                <p className="font-semibold">New loan application submitted</p>
-                <p className="text-sm text-base-content/70">2 hours ago</p>
+            {isLoading ? (
+              // Loading skeletons
+              Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-base-200 rounded-lg"
+                >
+                  <div className="flex-1">
+                    <div className="h-4 bg-base-300 rounded w-3/4 mb-2 animate-pulse"></div>
+                    <div className="h-3 bg-base-300 rounded w-1/4 animate-pulse"></div>
+                  </div>
+                  <div className="w-20 h-6 bg-base-300 rounded animate-pulse"></div>
+                </div>
+              ))
+            ) : statsData?.recentActivity &&
+              statsData.recentActivity.length > 0 ? (
+              statsData.recentActivity.map((activity, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-base-200 rounded-lg"
+                >
+                  <div>
+                    <p className="font-semibold">{activity.message}</p>
+                    <p className="text-sm text-base-content/70">
+                      {new Date(activity.time).toRelativeTimeString?.() ||
+                        new Date(activity.time).toLocaleString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`badge flex justify-center items-center py-3 ${
+                      activity.status === "approved"
+                        ? "badge-success"
+                        : activity.status === "pending"
+                        ? "badge-warning"
+                        : activity.status === "rejected"
+                        ? "badge-error"
+                        : "badge-info"
+                    }`}
+                  >
+                    {activity.status}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-base-content/70">
+                No recent activity
               </div>
-              <span className="badge badge-warning flex justify-center items-center py-3">
-                Pending
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-base-200 rounded-lg">
-              <div>
-                <p className="font-semibold">Loan application approved</p>
-                <p className="text-sm text-base-content/70">1 day ago</p>
-              </div>
-              <span className="badge badge-success flex justify-center items-center py-3">
-                Approved
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-4 bg-base-200 rounded-lg">
-              <div>
-                <p className="font-semibold">Payment received</p>
-                <p className="text-sm text-base-content/70">3 days ago</p>
-              </div>
-              <span className="badge badge-info flex justify-center items-center py-3">
-                Paid
-              </span>
-            </div>
+            )}
           </div>
         </div>
       </motion.div>
