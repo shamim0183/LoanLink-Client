@@ -3,10 +3,9 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/api/*"
-  to = "https://loan-link-server-hpwdmvo98-shamim0183s-projects.vercel.app/api/:splat"
+  from = "/*"
+  to = "/index.html"
   status = 200
-  force = true
 
 [build.environment]
   NODE_VERSION = "18"
