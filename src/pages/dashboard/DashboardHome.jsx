@@ -1,5 +1,6 @@
-import React from 'react'
-import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
+import { motion } from "framer-motion"
 import {
   FaCheckCircle,
   FaFileAlt,
@@ -13,89 +14,113 @@ const DashboardHome = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
 
-  // Demo stats
-  const stats = {
-    admin: [
-      {
-        label: "Total Users",
-        value: "1,234",
-        icon: <FaUsers />,
-        color: "bg-primary",
-      },
-      {
-        label: "Total Loans",
-        value: "156",
-        icon: <FaFileAlt />,
-        color: "bg-secondary",
-      },
-      {
-        label: "Pending",
-        value: "23",
-        icon: <FaHourglassHalf />,
-        color: "bg-warning",
-      },
-      {
-        label: "Approved",
-        value: "133",
-        icon: <FaCheckCircle />,
-        color: "bg-success",
-      },
-    ],
-    manager: [
-      {
-        label: "My Loans",
-        value: "45",
-        icon: <FaFileAlt />,
-        color: "bg-primary",
-      },
-      {
-        label: "Pending Apps",
-        value: "12",
-        icon: <FaHourglassHalf />,
-        color: "bg-warning",
-      },
-      {
-        label: "Approved",
-        value: "28",
-        icon: <FaCheckCircle />,
-        color: "bg-success",
-      },
-      {
-        label: "Total Amount",
-        value: "$1.2M",
-        icon: <FaFileAlt />,
-        color: "bg-secondary",
-      },
-    ],
-    borrower: [
+  // Fetch dynamic stats from backend
+  const { data: statsData, isLoading } = useQuery({
+    queryKey: ["dashboardStats", user?.role],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/dashboard/stats`,
+        {
+          withCredentials: true,
+        }
+      )
+      return data
+    },
+    enabled: !!user,
+  })
+
+  // Build stats array based on role and fetched data
+  const getStats = () => {
+    if (!statsData) return []
+
+    if (user?.role === "admin") {
+      return [
+        {
+          label: "Total Users",
+          value: statsData.totalUsers || 0,
+          icon: <FaUsers />,
+          color: "bg-primary",
+        },
+        {
+          label: "Total Loans",
+          value: statsData.totalLoans || 0,
+          icon: <FaFileAlt />,
+          color: "bg-secondary",
+        },
+        {
+          label: "Pending",
+          value: statsData.pendingApplications || 0,
+          icon: <FaHourglassHalf />,
+          color: "bg-warning",
+        },
+        {
+          label: "Approved",
+          value: statsData.approvedApplications || 0,
+          icon: <FaCheckCircle />,
+          color: "bg-success",
+        },
+      ]
+    }
+
+    if (user?.role === "manager") {
+      return [
+        {
+          label: "My Loans",
+          value: statsData.myLoans || 0,
+          icon: <FaFileAlt />,
+          color: "bg-primary",
+        },
+        {
+          label: "Pending Apps",
+          value: statsData.pendingApplications || 0,
+          icon: <FaHourglassHalf />,
+          color: "bg-warning",
+        },
+        {
+          label: "Approved",
+          value: statsData.approvedApplications || 0,
+          icon: <FaCheckCircle />,
+          color: "bg-success",
+        },
+        {
+          label: "Total Amount",
+          value: `$${((statsData.totalAmount || 0) / 1000).toFixed(1)}K`,
+          icon: <FaFileAlt />,
+          color: "bg-secondary",
+        },
+      ]
+    }
+
+    // Borrower stats
+    return [
       {
         label: "My Applications",
-        value: "3",
+        value: statsData.myApplications || 0,
         icon: <FaFileAlt />,
         color: "bg-primary",
       },
       {
         label: "Pending",
-        value: "1",
+        value: statsData.pendingApplications || 0,
         icon: <FaHourglassHalf />,
         color: "bg-warning",
       },
       {
         label: "Approved",
-        value: "2",
+        value: statsData.approvedApplications || 0,
         icon: <FaCheckCircle />,
         color: "bg-success",
       },
       {
         label: "Total Borrowed",
-        value: "$15K",
+        value: `$${((statsData.totalBorrowed || 0) / 1000).toFixed(1)}K`,
         icon: <FaFileAlt />,
         color: "bg-secondary",
       },
-    ],
+    ]
   }
 
-  const userStats = stats[user?.role] || stats.borrower
+  const userStats = getStats()
 
   return (
     <div>
@@ -116,31 +141,46 @@ const DashboardHome = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {userStats.map((stat, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="card"
-          >
-            <div className="card-body">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-base-content/70 mb-1">
-                    {stat.label}
-                  </p>
-                  <p className="text-3xl font-bold">{stat.value}</p>
-                </div>
-                <div
-                  className={`p-4 rounded-lg ${stat.color} text-white text-2xl`}
-                >
-                  {stat.icon}
+        {isLoading
+          ? // Loading skeletons
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="card">
+                <div className="card-body">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="h-4 bg-base-300 rounded w-24 mb-2 animate-pulse"></div>
+                      <div className="h-8 bg-base-300 rounded w-16 animate-pulse"></div>
+                    </div>
+                    <div className="w-16 h-16 bg-base-300 rounded-lg animate-pulse"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            ))
+          : userStats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="card"
+              >
+                <div className="card-body">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-base-content/70 mb-1">
+                        {stat.label}
+                      </p>
+                      <p className="text-3xl font-bold">{stat.value}</p>
+                    </div>
+                    <div
+                      className={`p-4 rounded-lg ${stat.color} text-white text-2xl`}
+                    >
+                      {stat.icon}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
       </div>
 
       {/* Quick Actions */}
