@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const ManageLoans = () => {
   const queryClient = useQueryClient()
