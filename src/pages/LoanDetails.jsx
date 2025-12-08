@@ -5,6 +5,8 @@ import { FaArrowLeft, FaCheckCircle } from "react-icons/fa"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import useAuth from "../hooks/useAuth"
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const LoanDetails = () => {
   const { id } = useParams()
