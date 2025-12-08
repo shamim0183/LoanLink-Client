@@ -24,7 +24,7 @@ const Footer = () => {
               Loan<span className="text-primary">Link</span>
             </h3>
             <p className="text-white mb-4">
-              Empowering financial inclusion through accessible microloans. Your
+              Empowering financial inclusion through accessible microloans in Bangladesh. Your
               trusted partner for quick and transparent loan services.
             </p>
             <div className="flex space-x-4">
