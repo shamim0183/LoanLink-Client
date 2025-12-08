@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
-import { motion } from "framer-motion"
+import React from 'react'
+import { motion } from "framer-motion";
 import {
   FaCheckCircle,
   FaFileAlt,
@@ -9,6 +8,8 @@ import {
 } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
+import { useQuery } from '@tanstack/react-query';
+import axios from "axios"
 
 const DashboardHome = () => {
   const { user } = useAuth()

@@ -140,7 +140,7 @@ const DashboardLayout = () => {
                 <p className="text-white font-semibold truncate">
                   {user?.name}
                 </p>
-                <p className="text-sm text-base-content/70 capitalize">
+                <p className="text-sm font-semibold text-primary/70 capitalize">
                   {user?.role}
                 </p>
               </div>
