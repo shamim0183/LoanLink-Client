@@ -7,7 +7,6 @@
 ![Firebase](https://img.shields.io/badge/Firebase-10.14.1-ffca28?logo=firebase)
 ![Stripe](https://img.shields.io/badge/Stripe-Integrated-635bff?logo=stripe)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.15-38bdf8?logo=tailwindcss)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 **A modern, feature-rich microloan management platform with role-based access control**
 
@@ -254,20 +253,6 @@ _Coming Soon - Add screenshot here_
 _Coming Soon - Add screenshot here_
 
 </div>
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/shamim0183/LoanLink-Client/issues).
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'feat: add some amazing feature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 👨‍💻 Author
 
