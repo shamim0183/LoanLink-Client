@@ -144,19 +144,10 @@ const Navbar = () => {
                         <div className="avatar">
                           <div className="w-10 h-10 rounded-full ring-2 ring-primary/50 hover:ring-primary transition-all duration-200 group-hover:scale-110">
                             <img
-                              src={(() => {
-                                const photoURL =
-                                  user.photoURL ||
-                                  "https://via.placeholder.com/150"
-                                console.log("🖼️ Navbar photoURL:", photoURL)
-                                console.log(
-                                  "📸 Is from ImgBB?",
-                                  photoURL.includes("imgbb")
-                                    ? "✅ YES"
-                                    : "❌ NO"
-                                )
-                                return photoURL
-                              })()}
+                              src={
+                                user.photoURL ||
+                                "https://via.placeholder.com/150"
+                              }
                               alt={user.name}
                               className="object-cover"
                             />

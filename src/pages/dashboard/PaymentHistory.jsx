@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import LoadingSpinner from "../../components/shared/LoadingSpinner"
+import { useQuery } from "@tanstack/react-query";
 
 const PaymentHistory = () => {
   const navigate = useNavigate()
@@ -164,7 +165,7 @@ const PaymentHistory = () => {
                               Application Status:
                             </span>
                             <span
-                              className={`badge badge-sm ${
+                              className={`badge badge-sm flex items-center justify-center py-3 ${
                                 payment.applicationId.status === "approved"
                                   ? "badge-success"
                                   : payment.applicationId.status === "rejected"
@@ -186,7 +187,7 @@ const PaymentHistory = () => {
                       {payment.status === "completed" && (
                         <button
                           onClick={() => handleViewReceipt(payment)}
-                          className="btn btn-primary btn-sm gap-2"
+                          className="btn btn-primary gap-2 "
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

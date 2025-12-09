@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
 import { motion } from "framer-motion"
@@ -85,7 +85,7 @@ const DashboardHome = () => {
         },
         {
           label: "Total Amount",
-          value: `$${((statsData.totalAmount || 0) / 1000).toFixed(1)}K`,
+          value: `$${(statsData.totalAmount || 0).toLocaleString()}`,
           icon: <FaFileAlt />,
           color: "bg-secondary",
         },
@@ -114,7 +114,7 @@ const DashboardHome = () => {
       },
       {
         label: "Total Borrowed",
-        value: `$${((statsData.totalBorrowed || 0) / 1000).toFixed(1)}K`,
+        value: `$${(statsData.totalBorrowed || 0).toLocaleString()}`,
         icon: <FaFileAlt />,
         color: "bg-secondary",
       },
@@ -226,7 +226,7 @@ const DashboardHome = () => {
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/pending")}
+                  onClick={() => navigate("/dashboard/pending-applications")}
                 >
                   Review Applications
                 </button>
@@ -234,7 +234,7 @@ const DashboardHome = () => {
                   className="btn btn-outline"
                   onClick={() => navigate("/dashboard/manage-loans")}
                 >
-                  View Reports
+                  Manage Loans
                 </button>
               </>
             )}
