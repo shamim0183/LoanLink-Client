@@ -1,4 +1,5 @@
-import { useState } from "react"
+import React from "react";
+import { useState } from "react";
 import toast from "react-hot-toast"
 import {
   FaEnvelope,
@@ -6,6 +7,7 @@ import {
   FaPaperPlane,
   FaPhone,
 } from "react-icons/fa"
+import LocationMap from "../components/LocationMap"
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -131,11 +133,9 @@ const Contact = () => {
                 <div>
                   <h3 className="font-bold text-lg">Address</h3>
                   <p className="text-base-content/70">
-                    123 Finance Street, NY 10001
+                    Level-4, 34, Awal Centre
                   </p>
-                  <p className="text-base-content/70">
-                    New York, United States
-                  </p>
+                  <p className="text-base-content/70">Dhaka 1213, Bangladesh</p>
                 </div>
               </div>
 
@@ -190,11 +190,11 @@ const Contact = () => {
         {/* Map Section */}
         <div className="mt-16">
           <h2 className="text-3xl font-bold text-center mb-8">Find Us</h2>
-          <div className="w-full h-96 bg-base-200 rounded-lg flex items-center justify-center">
-            <p className="text-lg text-base-content/50">
-              Map Placeholder - Integrate Google Maps here
-            </p>
-          </div>
+          <LocationMap
+            latitude={23.793807217195145}
+            longitude={90.4053528677049}
+            locationName="LoanLink Office"
+          />
         </div>
       </div>
     </div>

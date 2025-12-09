@@ -48,7 +48,7 @@ const About = () => {
             </div>
             <div className="stat bg-base-200 rounded-lg p-6">
               <div className="stat-title">Success Rate</div>
-              <div className="stat-value text-accent">95%</div>
+              <div className="stat-value text-primary">95%</div>
             </div>
             <div className="stat bg-base-200 rounded-lg p-6">
               <div className="stat-title">Total Funds</div>
@@ -114,7 +114,7 @@ const About = () => {
             {
               name: "Sarah Johnson",
               role: "CEO & Founder",
-              image: "https://randomuser.me/api/portraits/women/1.jpg",
+              image: "https://i.ibb.co/gLYGTc6j/01838326265.jpg",
             },
             {
               name: "Michael Chen",

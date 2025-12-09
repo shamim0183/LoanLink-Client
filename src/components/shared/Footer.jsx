@@ -24,8 +24,9 @@ const Footer = () => {
               Loan<span className="text-primary">Link</span>
             </h3>
             <p className="text-white mb-4">
-              Empowering financial inclusion through accessible microloans in Bangladesh. Your
-              trusted partner for quick and transparent loan services.
+              Empowering financial inclusion through accessible microloans in
+              Bangladesh. Your trusted partner for quick and transparent loan
+              services.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-2xl hover:text-primary transition">
@@ -99,7 +100,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center space-x-3 text-white">
                 <FaMapMarkerAlt className="text-primary" />
-                <span>123 Finance Street, NY 10001</span>
+                <span>Level-4, 34, London Tower, Narayanganj, Bangladesh</span>
               </li>
               <li className="flex items-center space-x-3 text-white">
                 <FaPhone className="text-primary" />
