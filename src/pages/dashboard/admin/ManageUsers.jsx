@@ -1,13 +1,14 @@
-import React from "react";
-import axios from "axios";
-import { useEffect, useState } from "react"
+import React from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios"
+import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import useAuth from "../../../hooks/useAuth"
 
 const ManageUsers = () => {
+  const { user: currentUser } = useAuth() // Get current logged-in user
   const queryClient = useQueryClient()
-  const [filteredUsers, setFilteredUsers] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedUser, setSelectedUser] = useState(null)
   const [suspendReason, setSuspendReason] = useState("")
@@ -24,14 +25,14 @@ const ManageUsers = () => {
     },
   })
 
-  useEffect(() => {
-    const filtered = users.filter(
+  // Use useMemo instead of useEffect to prevent infinite re-renders
+  const filteredUsers = useMemo(() => {
+    return users.filter(
       (user) =>
         user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.role?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    setFilteredUsers(filtered)
   }, [searchTerm, users])
 
   // Update role mutation
@@ -205,7 +206,12 @@ const ManageUsers = () => {
                       onChange={(e) =>
                         handleUpdateRole(user._id, e.target.value)
                       }
-                      disabled={user.suspended}
+                      disabled={user.suspended || user._id === currentUser?._id}
+                      title={
+                        user._id === currentUser?._id
+                          ? "You cannot change your own role"
+                          : ""
+                      }
                     >
                       <option value="borrower">Borrower</option>
                       <option value="manager">Manager</option>
@@ -217,6 +223,12 @@ const ManageUsers = () => {
                       <button
                         className="btn btn-sm btn-success"
                         onClick={() => handleUnsuspend(user._id)}
+                        disabled={user._id === currentUser?._id}
+                        title={
+                          user._id === currentUser?._id
+                            ? "You cannot unsuspend yourself"
+                            : ""
+                        }
                       >
                         Unsuspend
                       </button>
@@ -227,6 +239,12 @@ const ManageUsers = () => {
                           setSelectedUser(user)
                           document.getElementById("suspend_modal").showModal()
                         }}
+                        disabled={user._id === currentUser?._id}
+                        title={
+                          user._id === currentUser?._id
+                            ? "You cannot suspend yourself"
+                            : ""
+                        }
                       >
                         <FaBan /> Suspend
                       </button>
