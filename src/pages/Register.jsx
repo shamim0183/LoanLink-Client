@@ -104,18 +104,19 @@ const Register = () => {
         await updateUserProfile(data.name, photoURL)
         console.log("✅ Firebase profile updated successfully")
 
-        // IMPORTANT: Also update backend database with photoURL
+        // IMPORTANT: Also update backend database with photoURL and role
         try {
-          console.log("🔄 Updating backend database with photoURL...")
+          console.log("🔄 Updating backend database with photoURL and role...")
           await axios.patch(
             `${import.meta.env.VITE_API_URL}/auth/update-profile`,
             {
               name: data.name,
               photoURL: photoURL,
+              role: data.role, // Send the selected role
             },
             { withCredentials: true }
           )
-          console.log("✅ Backend database updated with photoURL!")
+          console.log("✅ Backend database updated with photoURL and role!")
         } catch (backendError) {
           console.error(
             "⚠️ Backend update failed (non-critical):",
@@ -124,8 +125,25 @@ const Register = () => {
           // Don't fail registration if backend update fails
         }
       } else {
-        console.log("⚠️ No photoURL, updating with name only")
+        console.log("⚠️ No photoURL, updating with name and role only")
         await updateUserProfile(data.name, "")
+
+        // Still update backend with role even without photo
+        try {
+          await axios.patch(
+            `${import.meta.env.VITE_API_URL}/auth/update-profile`,
+            {
+              name: data.name,
+              role: data.role,
+            },
+            { withCredentials: true }
+          )
+        } catch (backendError) {
+          console.error(
+            "⚠️ Backend update failed (non-critical):",
+            backendError
+          )
+        }
       }
 
       toast.success("Registration successful!")

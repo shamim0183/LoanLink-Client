@@ -1,14 +1,13 @@
-import React from "react"
-import axios from "axios";
-import { useEffect, useState } from "react"
+import React from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios"
+import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const ManageLoans = () => {
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredLoans, setFilteredLoans] = useState([])
   const [editingLoan, setEditingLoan] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
 
@@ -24,13 +23,13 @@ const ManageLoans = () => {
     },
   })
 
-  useEffect(() => {
-    const filtered = loans.filter(
+  // Use useMemo instead of useEffect to prevent infinite re-renders
+  const filteredLoans = useMemo(() => {
+    return loans.filter(
       (loan) =>
         loan.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         loan.category?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    setFilteredLoans(filtered)
   }, [searchTerm, loans])
 
   // Delete loan mutation
