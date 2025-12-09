@@ -1,282 +1,110 @@
-# 🏦 LoanLink Client
+# 💼 LoanLink Client
 
-<div align="center">
-
-![React](https://img.shields.io/badge/React-18.3.1-61dafb?logo=react)
-![Vite](https://img.shields.io/badge/Vite-5.4.10-646cff?logo=vite)
-![Firebase](https://img.shields.io/badge/Firebase-10.14.1-ffca28?logo=firebase)
+![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react) 
+![Vite](https://img.shields.io/badge/Vite-5.4-646cff?logo=vite) 
+![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?logo=tailwindcss) 
+![Firebase](https://img.shields.io/badge/Firebase-10.14-ffca28?logo=firebase) 
 ![Stripe](https://img.shields.io/badge/Stripe-Integrated-635bff?logo=stripe)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4.15-38bdf8?logo=tailwindcss)
 
-**A modern, feature-rich microloan management platform with role-based access control**
+Modern microloan management platform with role-based dashboards for borrowers, managers, and admins.
 
-[Live Demo](#) • [Server Repository](https://github.com/shamim0183/LoanLink-Server) • [Report Bug](https://github.com/shamim0183/LoanLink-Client/issues)
+## ✨ Features
 
-</div>
-
----
-
-## 📖 About The Project
-
-LoanLink is a comprehensive microloan management system that streamlines the loan application and approval process. Built with modern web technologies, it provides a seamless experience for borrowers, loan managers, and administrators. The platform features secure payment processing through Stripe, real-time application tracking, and an intuitive dashboard for all user roles.
-
-## 🚀 Features
-
-### Public Features
-
-- **Home Page**: Featured loans, statistics, and loan categories
-- **All Loans**: Browse and search available loans with pagination
-- **Loan Details**: View comprehensive loan information
-- **About**: Company information and mission
-- **Contact**: Get in touch with support
-
-### Authentication
-
-- Firebase Authentication (Email/Password & Google OAuth)
-- JWT-based session management
-- Protected routes with role-based access control
-
-### User Roles & Dashboards
-
-#### 👤 Borrower
-
-- Apply for loans
-- View loan applications status
-- Make payments via Stripe
-- Download payment receipts
-- Track payment history
-- Manage profile
-
-#### 👨‍💼 Manager
-
-- Add new loan products
-- Manage existing loans
-- Review and approve/reject applications
-- View pending and approved applications
-- Monitor loan portfolio
-
-#### 👑 Admin
-
-- Manage all users (promote/demote roles)
-- View all loans in the system
-- Monitor all loan applications
-- Full system oversight
+- Browse and apply for loans
+- Stripe payment integration
+- Real-time application tracking
+- Role-based dashboards (Borrower, Manager, Admin)
+- Firebase authentication (Email + Google OAuth)
 
 ## 🛠️ Tech Stack
 
-- **Framework**: React 18 with Vite
-- **Routing**: React Router DOM v6
-- **State Management**: React Context API + TanStack Query
-- **Styling**: Tailwind CSS + DaisyUI
-- **Authentication**: Firebase Auth
-- **Payments**: Stripe (@stripe/react-stripe-js)
-- **Forms**: React Hook Form
-- **Animations**: Framer Motion
-- **UI Components**:
-  - React Icons
-  - SweetAlert2
-  - React Hot Toast
-  - Swiper (carousels)
-  - React Confetti
-  - Canvas Confetti
-- **PDF Generation**: jsPDF + html2canvas
-- **Print**: React to Print
-- **HTTP Client**: Axios
+- React 18 + Vite
+- Tailwind CSS + DaisyUI
+- Firebase Auth
+- TanStack Query
+- React Router v6
+- Stripe Integration
+- Framer Motion
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
-- Node.js (v16 or higher)
-- npm or yarn
-- Firebase account
-- Stripe account
+```bash
+# Install dependencies
+npm install
 
-## ⚙️ Installation
+# Create .env.local (see below)
+# Start dev server
+npm run dev
+```
 
-1. **Clone the repository**
+## 🔐 Environment Setup
 
-   ```bash
-   git clone https://github.com/shamim0183/LoanLink-Client.git
-   cd LoanLink-Client
-   ```
+Create `.env.local`:
 
-2. **Install dependencies**
+```env
+VITE_API_URL=http://localhost:5000/api
 
-   ```bash
-   npm install
-   ```
+# Firebase
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
 
-3. **Create environment file**
+# Stripe
+VITE_STRIPE_PUBLISHABLE_KEY=your_publishable_key
+```
 
-   Create a `.env.local` file in the root directory:
+## 👥 User Roles
 
-   ```env
-   VITE_API_URL=http://localhost:5000/api
+**Borrower**
 
-   # Firebase Configuration
-   VITE_FIREBASE_API_KEY=your_firebase_api_key
-   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=your_project_id
-   VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   VITE_FIREBASE_APP_ID=your_app_id
+- Apply for loans
+- Make payments
+- Track application status
+- Download receipts
 
-   # Stripe
-   VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-   ```
+**Manager**
 
-4. **Start development server**
+- Create loan products
+- Approve/reject applications
+- View pending applications
 
-   ```bash
-   npm run dev
-   ```
+**Admin**
 
-   The application will be available at `http://localhost:5173`
+- Manage all users
+- View all loans and applications
+- Assign user roles
 
-## 🏗️ Build for Production
+## 📁 Project Structure
+
+```
+src/
+├── components/      # Reusable UI components
+├── contexts/        # Context providers
+├── pages/           # Page components
+│   └── dashboard/   # Role-based dashboards
+├── routes/          # Route guards
+└── config/          # Firebase config
+```
+
+## 📦 Build
 
 ```bash
 npm run build
 ```
 
-Build output will be in the `dist` directory.
+Output in `dist/` folder.
 
-## 📁 Project Structure
+## 🌐 Deployment
 
-```
-client/
-├── src/
-│   ├── components/          # Reusable UI components
-│   │   └── shared/          # Shared components (Header, Footer, etc.)
-│   ├── config/              # Configuration files (Firebase)
-│   ├── contexts/            # React Context providers
-│   ├── hooks/               # Custom React hooks
-│   ├── layouts/             # Layout components (Main, Dashboard)
-│   ├── pages/               # Page components
-│   │   └── dashboard/       # Dashboard pages (Admin, Manager, Borrower)
-│   ├── routes/              # Route guards (PrivateRoute, AdminRoute, ManagerRoute)
-│   ├── App.jsx              # Root component with routing
-│   ├── main.jsx             # Application entry point
-│   └── index.css            # Global styles
-├── public/                  # Static assets
-├── .env.local               # Environment variables (not in git)
-├── package.json             # Dependencies and scripts
-├── vite.config.js           # Vite configuration
-└── tailwind.config.js       # Tailwind CSS configuration
-```
+Tested on Netlify.
 
-## 🔑 Key Routes
-
-### Public Routes
-
-- `/` - Home page
-- `/login` - User login
-- `/register` - User registration
-- `/all-loans` - Browse all loans
-- `/about` - About page
-- `/contact` - Contact page
-
-### Protected Routes
-
-- `/loan-details/:id` - View loan details
-- `/apply-loan/:id` - Apply for a loan
-- `/payment-success` - Payment confirmation
-- `/payment-cancel` - Payment cancellation
-- `/receipt/:applicationId` - Download receipt
-
-### Dashboard Routes
-
-- `/dashboard` - Dashboard home
-- `/dashboard/my-loans` - Borrower's loans
-- `/dashboard/payment-history` - Payment history
-- `/dashboard/profile` - User profile
-
-### Admin Routes
-
-- `/dashboard/manage-users` - Manage users
-- `/dashboard/all-loans` - View all loans
-- `/dashboard/loan-applications` - View all applications
-
-### Manager Routes
-
-- `/dashboard/add-loan` - Add new loan product
-- `/dashboard/manage-loans` - Manage loans
-- `/dashboard/pending-applications` - Review pending applications
-- `/dashboard/approved-applications` - View approved applications
-
-## 🎨 Features in Detail
-
-### Payment System
-
-- Integrated Stripe payment gateway
-- Secure payment processing
-- Automatic receipt generation
-- Payment history tracking
-- Downloadable PDF receipts
-
-### User Experience
-
-- Responsive design (mobile, tablet, desktop)
-- Dark mode support (via DaisyUI)
-- Smooth animations and transitions
-- Loading states and error handling
-- Toast notifications for user feedback
-- Confetti celebrations for successful actions
-
-### Security
-
-- Protected routes with authentication
-- Role-based access control
-- Secure API communication with JWT
-- Firebase authentication
-
-## 📝 Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## 📸 Screenshots
-
-<div align="center">
-
-### Landing Page
-
-_Coming Soon - Add screenshot here_
-
-### Dashboard
-
-_Coming Soon - Add screenshot here_
-
-### Payment Integration
-
-_Coming Soon - Add screenshot here_
-
-</div>
-
-## 👨‍💻 Author
-
-**Shamim**
-
-- GitHub: [@shamim0183](https://github.com/shamim0183)
-- Project Link: [LoanLink Client](https://github.com/shamim0183/LoanLink-Client)
-- Server Repository: [LoanLink Server](https://github.com/shamim0183/LoanLink-Server)
-
-## 🙏 Acknowledgments
-
-- [React](https://reactjs.org/) - The amazing UI library
-- [Vite](https://vitejs.dev/) - Next generation frontend tooling
-- [Firebase](https://firebase.google.com/) - Authentication and backend services
-- [Stripe](https://stripe.com/) - Secure payment processing
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [DaisyUI](https://daisyui.com/) - Beautiful component library
+1. Build the project
+2. Set environment variables
+3. Deploy `dist` folder
 
 ---
 
-<div align="center">
-
-Made with ❤️ by [Shamim](https://github.com/shamim0183)
-
-**[⬆ Back to Top](#-loanlink-client)**
-
-</div>
+Built by [Shamim](https://github.com/shamim0183)

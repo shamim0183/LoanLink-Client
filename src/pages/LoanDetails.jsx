@@ -1,12 +1,12 @@
 import React from "react"
 import axios from "axios"
 import { motion } from "framer-motion"
+import toast from "react-hot-toast"
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import useAuth from "../hooks/useAuth"
 import { useQuery } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 
 const LoanDetails = () => {
   const { id } = useParams()
@@ -36,6 +36,12 @@ const LoanDetails = () => {
 
     if (user.role === "admin" || user.role === "manager") {
       toast.error("Admins and Managers cannot apply for loans")
+      return
+    }
+
+    // Check if user is suspended
+    if (user.isSuspended) {
+      toast.error("Cannot apply while your account is suspended")
       return
     }
 

@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query"
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 import {
   FaArrowRight,
   FaChartLine,
@@ -65,16 +65,10 @@ const Home = () => {
                 empower your dreams. Get approved in minutes, not weeks.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/register" className="btn btn-primary btn-lg gap-2">
+              <div>
+                <Link to="/all-loans" className="btn btn-primary btn-lg gap-2">
                   Apply for Loan
                   <FaArrowRight />
-                </Link>
-                <Link
-                  to="/all-loans"
-                  className="btn btn-outline btn-lg text-white border-white hover:bg-white hover:text-neutral"
-                >
-                  Explore Loans
                 </Link>
               </div>
 
@@ -269,7 +263,7 @@ const Home = () => {
               Join thousands of satisfied customers who trust LoanLink for their
               financial needs
             </p>
-            <Link to="/register" className="btn btn-neutral btn-lg">
+            <Link to="/all-loans" className="btn btn-neutral btn-lg">
               Apply Now - It's Free
             </Link>
           </motion.div>

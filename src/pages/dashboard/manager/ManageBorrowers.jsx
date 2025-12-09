@@ -5,10 +5,8 @@ import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
 import Swal from "sweetalert2"
-import useAuth from "../../../hooks/useAuth"
 
-const ManageUsers = () => {
-  const { user: currentUser } = useAuth() // Get current logged-in user
+const ManageBorrowers = () => {
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedUser, setSelectedUser] = useState(null)
@@ -18,67 +16,41 @@ const ManageUsers = () => {
     durationType: "day",
   })
 
-  // Fetch all users using TanStack Query
-  const { data: users = [], isLoading: loading } = useQuery({
-    queryKey: ["admin-users"],
+  // Fetch all borrowers using TanStack Query
+  const { data: borrowers = [], isLoading: loading } = useQuery({
+    queryKey: ["manager-borrowers"],
     queryFn: async () => {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/admin/users`,
+        `${import.meta.env.VITE_API_URL}/manager/borrowers`,
         { withCredentials: true }
       )
       return data || []
     },
   })
 
-  // Use useMemo instead of useEffect to prevent infinite re-renders
-  const filteredUsers = useMemo(() => {
-    return users.filter(
+  // Use useMemo to filter borrowers
+  const filteredBorrowers = useMemo(() => {
+    return borrowers.filter(
       (user) =>
         user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.role?.toLowerCase().includes(searchTerm.toLowerCase())
+        user.email?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-  }, [searchTerm, users])
+  }, [searchTerm, borrowers])
 
-  // Update role mutation
-  const updateRoleMutation = useMutation({
-    mutationFn: async ({ userId, role }) => {
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/admin/users/${userId}/role`,
-        { role },
-        { withCredentials: true }
-      )
-    },
-    onSuccess: () => {
-      Swal.fire({
-        icon: "success",
-        title: "Role Updated!",
-        text: "User role has been updated successfully.",
-        confirmButtonColor: "#570DF8",
-        timer: 2000,
-        showConfirmButton: false,
-      })
-      queryClient.invalidateQueries(["admin-users"])
-    },
-    onError: () => {
-      toast.error("Failed to update user role")
-    },
-  })
-
-  // Suspend user mutation
+  // Suspend borrower mutation
   const suspendMutation = useMutation({
     mutationFn: async ({ userId, reason, duration, durationType }) => {
       await axios.patch(
-        `${import.meta.env.VITE_API_URL}/admin/users/${userId}/suspend`,
-        { reason, duration, durationType, suspended: true },
+        `${import.meta.env.VITE_API_URL}/manager/borrowers/${userId}/suspend`,
+        { reason, duration, durationType },
         { withCredentials: true }
       )
     },
     onSuccess: () => {
       Swal.fire({
         icon: "success",
-        title: "User Suspended!",
-        text: "User has been suspended successfully.",
+        title: "Borrower Suspended!",
+        text: "Borrower has been suspended successfully.",
         confirmButtonColor: "#570DF8",
         timer: 2000,
         showConfirmButton: false,
@@ -86,54 +58,37 @@ const ManageUsers = () => {
       setSuspendData({ reason: "", duration: "", durationType: "day" })
       setSelectedUser(null)
       document.getElementById("suspend_modal").close()
-      queryClient.invalidateQueries(["admin-users"])
+      queryClient.invalidateQueries(["manager-borrowers"])
     },
-    onError: () => {
-      toast.error("Failed to suspend user")
+    onError: (error) => {
+      toast.error(error.response?.data?.error || "Failed to suspend borrower")
     },
   })
 
-  // Unsuspend user mutation
+  // Unsuspend borrower mutation
   const unsuspendMutation = useMutation({
     mutationFn: async (userId) => {
       await axios.patch(
-        `${import.meta.env.VITE_API_URL}/admin/users/${userId}/suspend`,
-        { suspended: false },
+        `${import.meta.env.VITE_API_URL}/manager/borrowers/${userId}/unsuspend`,
+        {},
         { withCredentials: true }
       )
     },
     onSuccess: () => {
       Swal.fire({
         icon: "success",
-        title: "User Unsuspended!",
-        text: "User has been unsuspended successfully.",
+        title: "Borrower Unsuspended!",
+        text: "Borrower has been unsuspended successfully.",
         confirmButtonColor: "#570DF8",
         timer: 2000,
         showConfirmButton: false,
       })
-      queryClient.invalidateQueries(["admin-users"])
+      queryClient.invalidateQueries(["manager-borrowers"])
     },
-    onError: () => {
-      toast.error("Failed to unsuspend user")
+    onError: (error) => {
+      toast.error(error.response?.data?.error || "Failed to unsuspend borrower")
     },
   })
-
-  const handleUpdateRole = async (userId, newRole) => {
-    const result = await Swal.fire({
-      title: "Change User Role?",
-      text: `Are you sure you want to change this user's role to ${newRole}?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#570DF8",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Yes, change it!",
-      cancelButtonText: "Cancel",
-    })
-
-    if (result.isConfirmed) {
-      updateRoleMutation.mutate({ userId, role: newRole })
-    }
-  }
 
   const handleSuspend = () => {
     if (!suspendData.reason.trim()) {
@@ -152,8 +107,8 @@ const ManageUsers = () => {
 
   const handleUnsuspend = async (userId) => {
     const result = await Swal.fire({
-      title: "Unsuspend User?",
-      text: "Are you sure you want to unsuspend this user?",
+      title: "Unsuspend Borrower?",
+      text: "Are you sure you want to unsuspend this borrower?",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#570DF8",
@@ -178,8 +133,10 @@ const ManageUsers = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Manage Users</h1>
-        <div className="text-sm opacity-70">{filteredUsers.length} users</div>
+        <h1 className="text-3xl font-bold">Manage Borrowers</h1>
+        <div className="text-sm opacity-70">
+          {filteredBorrowers.length} borrowers
+        </div>
       </div>
 
       {/* Search */}
@@ -188,7 +145,7 @@ const ManageUsers = () => {
           <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50" />
           <input
             type="text"
-            placeholder="Search by name, email, or role..."
+            placeholder="Search by name or email..."
             className="input input-bordered w-full pl-12"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -196,20 +153,20 @@ const ManageUsers = () => {
         </div>
       </div>
 
-      {/* Users Table */}
+      {/* Borrowers Table */}
       <div className="overflow-x-auto bg-base-100 rounded-lg shadow">
         <table className="table table-zebra w-full">
           <thead>
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Role</th>
               <th>Status</th>
+              <th>Suspension Details</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
+            {filteredBorrowers.map((user) => (
               <tr key={user._id}>
                 <td>
                   <div className="flex items-center gap-3">
@@ -228,19 +185,6 @@ const ManageUsers = () => {
                 </td>
                 <td>{user.email}</td>
                 <td>
-                  <span
-                    className={`badge flex justify-center items-center py-3 ${
-                      user.role === "admin"
-                        ? "badge-error"
-                        : user.role === "manager"
-                        ? "badge-warning"
-                        : "badge-info"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
-                </td>
-                <td>
                   {user.status === "suspended" ? (
                     <span className="badge badge-error flex justify-center items-center py-3">
                       Suspended
@@ -252,65 +196,40 @@ const ManageUsers = () => {
                   )}
                 </td>
                 <td>
-                  <div className="flex gap-2">
-                    {/* Role Dropdown */}
-                    <select
-                      className="select select-bordered select-sm"
-                      value={user.role}
-                      onChange={(e) =>
-                        handleUpdateRole(user._id, e.target.value)
-                      }
-                      disabled={
-                        user.status === "suspended" ||
-                        user._id === currentUser?._id
-                      }
-                      title={
-                        user._id === currentUser?._id
-                          ? "You cannot change your own role"
-                          : ""
-                      }
+                  {user.status === "suspended" && user.suspendUntil && (
+                    <div className="text-sm">
+                      <p className="text-error font-semibold">
+                        Until:{" "}
+                        {new Date(user.suspendUntil).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs opacity-70 truncate max-w-[200px]">
+                        {user.suspensionReason || "No reason provided"}
+                      </p>
+                    </div>
+                  )}
+                  {user.status === "suspended" && !user.suspendUntil && (
+                    <span className="text-error text-sm">Permanent</span>
+                  )}
+                </td>
+                <td>
+                  {user.status === "suspended" ? (
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={() => handleUnsuspend(user._id)}
                     >
-                      <option value="borrower">Borrower</option>
-                      <option value="manager">Manager</option>
-                      <option value="admin">Admin</option>
-                    </select>
-
-                    {/* Suspend/Unsuspend Button */}
-                    {user.status === "suspended" ? (
-                      <button
-                        className="btn btn-sm btn-success"
-                        onClick={() => handleUnsuspend(user._id)}
-                        disabled={user._id === currentUser?._id}
-                        title={
-                          user._id === currentUser?._id
-                            ? "You cannot unsuspend yourself"
-                            : ""
-                        }
-                      >
-                        Unsuspend
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-sm btn-error"
-                        onClick={() => {
-                          setSelectedUser(user)
-                          document.getElementById("suspend_modal").showModal()
-                        }}
-                        disabled={
-                          user._id === currentUser?._id || user.role === "admin"
-                        }
-                        title={
-                          user._id === currentUser?._id
-                            ? "You cannot suspend yourself"
-                            : user.role === "admin"
-                            ? "Cannot suspend admin users"
-                            : ""
-                        }
-                      >
-                        <FaBan /> Suspend
-                      </button>
-                    )}
-                  </div>
+                      Unsuspend
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn-sm btn-error"
+                      onClick={() => {
+                        setSelectedUser(user)
+                        document.getElementById("suspend_modal").showModal()
+                      }}
+                    >
+                      <FaBan /> Suspend
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -318,10 +237,16 @@ const ManageUsers = () => {
         </table>
       </div>
 
+      {filteredBorrowers.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-lg opacity-70">No borrowers found</p>
+        </div>
+      )}
+
       {/* Suspend Modal */}
       <dialog id="suspend_modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg mb-4">Suspend User</h3>
+          <h3 className="font-bold text-lg mb-4">Suspend Borrower</h3>
 
           {selectedUser && (
             <div className="mb-4 p-4 bg-base-200 rounded-lg">
@@ -402,7 +327,7 @@ const ManageUsers = () => {
               Cancel
             </button>
             <button className="btn btn-error" onClick={handleSuspend}>
-              Suspend User
+              Suspend Borrower
             </button>
           </div>
         </div>
@@ -411,4 +336,4 @@ const ManageUsers = () => {
   )
 }
 
-export default ManageUsers
+export default ManageBorrowers

@@ -21,7 +21,7 @@ const HowItWorks = () => {
         "Fill out a simple application form with your details. Upload required documents for verification.",
     },
     {
-      icon: <FaCreditCard className="text-5xl text-accent" />,
+      icon: <FaCreditCard className="text-5xl text-primary" />,
       title: "3. Get Approved",
       description:
         "Our loan managers review your application within 24-48 hours. Get notified of approval status.",
@@ -45,7 +45,7 @@ const HowItWorks = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
             <div
               key={index}

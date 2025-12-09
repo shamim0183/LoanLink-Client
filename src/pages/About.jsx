@@ -86,7 +86,7 @@ const About = () => {
             </div>
             <div className="card bg-base-100 shadow-xl">
               <div className="card-body items-center text-center">
-                <FaChartLine className="text-5xl text-accent mb-4" />
+                <FaChartLine className="text-5xl text-primary mb-4" />
                 <h3 className="card-title">Growth</h3>
                 <p>
                   Empowering financial independence and sustainable development

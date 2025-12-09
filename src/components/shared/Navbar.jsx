@@ -1,13 +1,30 @@
-import React, { useState } from "react"
+import React from 'react'
+import { useState } from "react";
+import Countdown from "react-countdown"
 import toast from "react-hot-toast"
 import { FaBars, FaTimes } from "react-icons/fa"
 import { Link, NavLink } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
+import SuspendDetailsModal from "../modals/SuspendDetailsModal"
 import ThemeToggle from "./ThemeToggle"
 
 const Navbar = () => {
   const { user, logout, loading } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [showSuspendModal, setShowSuspendModal] = useState(false)
+
+  // Countdown renderer for navbar
+  const countdownRenderer = ({ days, hours, minutes, seconds, completed }) => {
+    if (completed) {
+      return null
+    }
+    return (
+      <span className="text-error text-sm font-bold">
+        {days > 0 && <>{days}d </>}
+        {hours}h {minutes}m {seconds}s
+      </span>
+    )
+  }
 
   const handleLogout = async () => {
     try {
@@ -157,6 +174,27 @@ const Navbar = () => {
                           {user.name}
                         </div>
                       </div>
+
+                      {/* Countdown Timer - Always visible for suspended users */}
+                      {user.isSuspended && user.suspendUntil && (
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-error/10 rounded-lg border border-error/20">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] text-error/70 uppercase font-semibold">
+                              Suspended
+                            </span>
+                            <Countdown
+                              date={new Date(user.suspendUntil)}
+                              renderer={countdownRenderer}
+                            />
+                          </div>
+                          <button
+                            onClick={() => setShowSuspendModal(true)}
+                            className="btn btn-xs btn-error"
+                          >
+                            Details
+                          </button>
+                        </div>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="btn btn-sm bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:scale-105 text-white border-none transition-all duration-200"
@@ -231,10 +269,32 @@ const Navbar = () => {
                       />
                     </div>
                   </div>
-                  <span className="text-base-content font-medium">
-                    {user.name}
-                  </span>
+                  <div className="flex-1">
+                    <span className="text-base-content font-medium block">
+                      {user.name}
+                    </span>
+                    {/* Mobile Countdown */}
+                    {user.isSuspended && user.suspendUntil && (
+                      <div className="mt-1">
+                        <Countdown
+                          date={new Date(user.suspendUntil)}
+                          renderer={countdownRenderer}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* Suspend Details Button - Mobile */}
+                {user.isSuspended && (
+                  <button
+                    onClick={() => setShowSuspendModal(true)}
+                    className="w-full text-center px-4 py-3 bg-error/20 text-error hover:bg-error/30 rounded-lg transition-all font-medium"
+                  >
+                    View Suspension Details
+                  </button>
+                )}
+
                 <button
                   onClick={handleLogout}
                   className="w-full text-center px-4 py-3 bg-primary text-white hover:bg-primary-hover rounded-lg transition-all font-medium mt-2"
@@ -315,6 +375,14 @@ const Navbar = () => {
           </div>
         )}
       </div>
+
+      {/* Suspend Details Modal */}
+      <SuspendDetailsModal
+        isOpen={showSuspendModal}
+        onClose={() => setShowSuspendModal(false)}
+        suspensionReason={user?.suspensionReason}
+        suspendUntil={user?.suspendUntil}
+      />
     </nav>
   )
 }

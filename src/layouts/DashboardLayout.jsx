@@ -63,6 +63,11 @@ const DashboardLayout = () => {
       icon: <FaCheckCircle />,
       text: "Approved",
     },
+    {
+      to: "/dashboard/manage-borrowers",
+      icon: <FaUsers />,
+      text: "Manage Borrowers",
+    },
     { to: "/dashboard/profile", icon: <FaUser />, text: "Profile" },
   ]
 

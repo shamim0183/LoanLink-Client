@@ -30,7 +30,7 @@ const TrustedPartners = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
             Our Impact in Numbers
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className={`text-5xl font-bold mb-2 ${stat.color}`}>
@@ -64,7 +64,7 @@ const TrustedPartners = () => {
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
           <div className="p-6 bg-base-100 rounded-lg shadow">
             <p className="text-sm opacity-70">SSL Certified</p>
             <p className="font-bold text-primary">🔒 Secure</p>
@@ -75,7 +75,7 @@ const TrustedPartners = () => {
           </div>
           <div className="p-6 bg-base-100 rounded-lg shadow">
             <p className="text-sm opacity-70">FDIC Insured</p>
-            <p className="font-bold text-accent">🛡️ Protected</p>
+            <p className="font-bold text-primary">🛡️ Protected</p>
           </div>
           <div className="p-6 bg-base-100 rounded-lg shadow">
             <p className="text-sm opacity-70">Best Rated 2024</p>

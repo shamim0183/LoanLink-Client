@@ -1,5 +1,7 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import LoadingScreen from "./components/shared/LoadingScreen"
+import useAuth from "./hooks/useAuth"
 import DashboardLayout from "./layouts/DashboardLayout"
 import MainLayout from "./layouts/MainLayout"
 import About from "./pages/About"
@@ -12,6 +14,7 @@ import ManageUsers from "./pages/dashboard/admin/ManageUsers"
 import DashboardHome from "./pages/dashboard/DashboardHome"
 import AddLoan from "./pages/dashboard/manager/AddLoan"
 import ApprovedApplications from "./pages/dashboard/manager/ApprovedApplications"
+import ManageBorrowers from "./pages/dashboard/manager/ManageBorrowers"
 import ManageLoans from "./pages/dashboard/manager/ManageLoans"
 import PendingApplications from "./pages/dashboard/manager/PendingApplications"
 import MyLoans from "./pages/dashboard/MyLoans"
@@ -30,6 +33,23 @@ import ManagerRoute from "./routes/ManagerRoute"
 import PrivateRoute from "./routes/PrivateRoute"
 
 function App() {
+  const { loading } = useAuth()
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false)
+
+  // Ensure loading screen shows for at least 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinTimeElapsed(true)
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Show loading screen while auth is initializing OR if minimum time hasn't elapsed
+  if (loading || !minTimeElapsed) {
+    return <LoadingScreen />
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -155,6 +175,14 @@ function App() {
             element={
               <ManagerRoute>
                 <ApprovedApplications />
+              </ManagerRoute>
+            }
+          />
+          <Route
+            path="manage-borrowers"
+            element={
+              <ManagerRoute>
+                <ManageBorrowers />
               </ManagerRoute>
             }
           />
