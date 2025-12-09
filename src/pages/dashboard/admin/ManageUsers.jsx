@@ -1,9 +1,10 @@
 import React from "react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
+import Swal from "sweetalert2"
 import useAuth from "../../../hooks/useAuth"
 
 const ManageUsers = () => {
@@ -45,7 +46,14 @@ const ManageUsers = () => {
       )
     },
     onSuccess: () => {
-      toast.success("User role updated successfully")
+      Swal.fire({
+        icon: "success",
+        title: "Role Updated!",
+        text: "User role has been updated successfully.",
+        confirmButtonColor: "#570DF8",
+        timer: 2000,
+        showConfirmButton: false,
+      })
       queryClient.invalidateQueries(["admin-users"])
     },
     onError: () => {
@@ -63,7 +71,14 @@ const ManageUsers = () => {
       )
     },
     onSuccess: () => {
-      toast.success("User suspended successfully")
+      Swal.fire({
+        icon: "success",
+        title: "User Suspended!",
+        text: "User has been suspended successfully.",
+        confirmButtonColor: "#570DF8",
+        timer: 2000,
+        showConfirmButton: false,
+      })
       setSuspendReason("")
       setSelectedUser(null)
       document.getElementById("suspend_modal").close()
@@ -84,7 +99,14 @@ const ManageUsers = () => {
       )
     },
     onSuccess: () => {
-      toast.success("User unsuspended successfully")
+      Swal.fire({
+        icon: "success",
+        title: "User Unsuspended!",
+        text: "User has been unsuspended successfully.",
+        confirmButtonColor: "#570DF8",
+        timer: 2000,
+        showConfirmButton: false,
+      })
       queryClient.invalidateQueries(["admin-users"])
     },
     onError: () => {
@@ -92,9 +114,21 @@ const ManageUsers = () => {
     },
   })
 
-  const handleUpdateRole = (userId, newRole) => {
-    if (!window.confirm(`Change user role to ${newRole}?`)) return
-    updateRoleMutation.mutate({ userId, role: newRole })
+  const handleUpdateRole = async (userId, newRole) => {
+    const result = await Swal.fire({
+      title: "Change User Role?",
+      text: `Are you sure you want to change this user's role to ${newRole}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#570DF8",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, change it!",
+      cancelButtonText: "Cancel",
+    })
+
+    if (result.isConfirmed) {
+      updateRoleMutation.mutate({ userId, role: newRole })
+    }
   }
 
   const handleSuspend = () => {
@@ -108,9 +142,21 @@ const ManageUsers = () => {
     })
   }
 
-  const handleUnsuspend = (userId) => {
-    if (!window.confirm("Unsuspend this user?")) return
-    unsuspendMutation.mutate(userId)
+  const handleUnsuspend = async (userId) => {
+    const result = await Swal.fire({
+      title: "Unsuspend User?",
+      text: "Are you sure you want to unsuspend this user?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#570DF8",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Yes, unsuspend!",
+      cancelButtonText: "Cancel",
+    })
+
+    if (result.isConfirmed) {
+      unsuspendMutation.mutate(userId)
+    }
   }
 
   if (loading) {

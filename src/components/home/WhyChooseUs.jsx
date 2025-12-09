@@ -21,7 +21,7 @@ const WhyChooseUs = () => {
         "Our dedicated support team is available round the clock to help you with any questions or concerns.",
     },
     {
-      icon: <FaMoneyBillWave className="text-5xl text-accent" />,
+      icon: <FaMoneyBillWave className="text-5xl text-primary" />,
       title: "Competitive Rates",
       description:
         "We offer some of the most competitive interest rates in the market with flexible repayment options.",

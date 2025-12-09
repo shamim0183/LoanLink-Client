@@ -1,7 +1,8 @@
-import React from "react";
+import React from 'react'
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+import { useEffect } from "react"
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet"
 
 // Fix for default marker icon issue with Webpack
 delete L.Icon.Default.prototype._getIconUrl
@@ -14,14 +15,36 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 })
 
-const LocationMap = ({ latitude, longitude, locationName }) => {
+// Component to handle zoom animation
+const ZoomAnimation = ({ position, isVisible }) => {
+  const map = useMap()
+
+  useEffect(() => {
+    if (isVisible) {
+      // Start zoomed out
+      map.setView(position, 10, { animate: false })
+
+      // Animate to zoom level 15 after a short delay
+      setTimeout(() => {
+        map.flyTo(position, 15, {
+          duration: 2,
+          easeLinearity: 0.5,
+        })
+      }, 300)
+    }
+  }, [isVisible, map, position])
+
+  return null
+}
+
+const LocationMap = ({ latitude, longitude, locationName, isVisible }) => {
   const position = [latitude, longitude]
 
   return (
     <div className="w-full h-[400px] rounded-lg overflow-hidden shadow-xl border-4 border-primary/20">
       <MapContainer
         center={position}
-        zoom={15}
+        zoom={10}
         scrollWheelZoom={false}
         className="h-full w-full"
       >
@@ -29,6 +52,7 @@ const LocationMap = ({ latitude, longitude, locationName }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <ZoomAnimation position={position} isVisible={isVisible} />
         <Marker position={position}>
           <Popup>
             <div className="font-semibold text-center">

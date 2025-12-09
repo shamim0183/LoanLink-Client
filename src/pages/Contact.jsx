@@ -1,15 +1,26 @@
 import React from "react";
-import { useState } from "react";
-import toast from "react-hot-toast"
+import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react"
 import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaPaperPlane,
   FaPhone,
 } from "react-icons/fa"
+import Swal from "sweetalert2"
 import LocationMap from "../components/LocationMap"
 
 const Contact = () => {
+  const mapRef = useRef(null)
+  const isMapInView = useInView(mapRef, { once: true, amount: 0.3 })
+  const [mapVisible, setMapVisible] = useState(false)
+
+  useEffect(() => {
+    if (isMapInView) {
+      setMapVisible(true)
+    }
+  }, [isMapInView])
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,7 +30,15 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    toast.success("Message sent successfully! We'll get back to you soon.")
+
+    Swal.fire({
+      icon: "success",
+      title: "Message Sent!",
+      text: "Thank you for contacting us. We'll get back to you soon!",
+      confirmButtonColor: "#570DF8",
+      confirmButtonText: "Great!",
+    })
+
     setFormData({ name: "", email: "", subject: "", message: "" })
   }
 
@@ -48,7 +67,13 @@ const Contact = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <div className="card bg-base-100 shadow-xl">
+          <motion.div
+            className="card bg-base-200 shadow-2xl ring-1 ring-base-300"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true, amount: 0.2 }}
+          >
             <div className="card-body">
               <h2 className="card-title text-3xl mb-6">Send us a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -113,10 +138,16 @@ const Contact = () => {
                 </button>
               </form>
             </div>
-          </div>
+          </motion.div>
 
           {/* Contact Info */}
-          <div className="space-y-8">
+          <motion.div
+            className="space-y-8"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
+          >
             <div>
               <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
               <p className="text-lg mb-8 text-white">
@@ -153,8 +184,8 @@ const Contact = () => {
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="bg-accent/20 p-4 rounded-lg">
-                  <FaEnvelope className="text-2xl text-accent" />
+                <div className="bg-primary/20 p-4 rounded-lg">
+                  <FaEnvelope className="text-2xl text-primary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Email</h3>
@@ -165,7 +196,13 @@ const Contact = () => {
             </div>
 
             {/* Office Hours */}
-            <div className="card bg-base-200">
+            <motion.div
+              className="card bg-base-200"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
+              viewport={{ once: true }}
+            >
               <div className="card-body">
                 <h3 className="card-title">Office Hours</h3>
                 <div className="space-y-2">
@@ -183,17 +220,18 @@ const Contact = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
 
         {/* Map Section */}
-        <div className="mt-16">
+        <div ref={mapRef} className="mt-16">
           <h2 className="text-3xl font-bold text-center mb-8">Find Us</h2>
           <LocationMap
             latitude={23.793807217195145}
             longitude={90.4053528677049}
             locationName="LoanLink Office"
+            isVisible={mapVisible}
           />
         </div>
       </div>
