@@ -1,4 +1,3 @@
-import React from "react"
 import axios from "axios"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -72,7 +71,22 @@ const ApplyLoan = () => {
       window.location.href = data.url
     } catch (error) {
       console.error("Checkout error:", error)
-      toast.error(ERROR_MESSAGES.PAYMENT_PROCESSING_FAILED)
+
+      // Check if user is suspended
+      if (error.response?.status === 403 && error.response?.data?.suspended) {
+        const { suspensionReason, suspendUntil } = error.response.data
+        const untilDate = suspendUntil
+          ? new Date(suspendUntil).toLocaleString()
+          : "indefinitely"
+        toast.error(
+          `Account Suspended: ${
+            suspensionReason || "No reason provided"
+          }. Suspended until ${untilDate}`,
+          { duration: 6000 }
+        )
+      } else {
+        toast.error(ERROR_MESSAGES.PAYMENT_PROCESSING_FAILED)
+      }
       setProcessing(false)
     }
   }

@@ -75,11 +75,26 @@ const PendingApplications = () => {
         showConfirmButton: false,
       })
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: error.response?.data?.error || "Failed to approve application",
-        icon: "error",
-      })
+      // Check if manager is suspended
+      if (error.response?.status === 403 && error.response?.data?.suspended) {
+        const { suspensionReason, suspendUntil } = error.response.data
+        const untilDate = suspendUntil
+          ? new Date(suspendUntil).toLocaleString()
+          : "indefinitely"
+        Swal.fire({
+          title: "Account Suspended!",
+          html: `<p><strong>Reason:</strong> ${
+            suspensionReason || "No reason provided"
+          }</p><p><strong>Suspended until:</strong> ${untilDate}</p>`,
+          icon: "error",
+        })
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: error.response?.data?.error || "Failed to approve application",
+          icon: "error",
+        })
+      }
     }
   }
 
@@ -121,11 +136,26 @@ const PendingApplications = () => {
         showConfirmButton: false,
       })
     } catch (error) {
-      Swal.fire({
-        title: "Error!",
-        text: error.response?.data?.error || "Failed to reject application",
-        icon: "error",
-      })
+      // Check if manager is suspended
+      if (error.response?.status === 403 && error.response?.data?.suspended) {
+        const { suspensionReason, suspendUntil } = error.response.data
+        const untilDate = suspendUntil
+          ? new Date(suspendUntil).toLocaleString()
+          : "indefinitely"
+        Swal.fire({
+          title: "Account Suspended!",
+          html: `<p><strong>Reason:</strong> ${
+            suspensionReason || "No reason provided"
+          }</p><p><strong>Suspended until:</strong> ${untilDate}</p>`,
+          icon: "error",
+        })
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: error.response?.data?.error || "Failed to reject application",
+          icon: "error",
+        })
+      }
     }
   }
 

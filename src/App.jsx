@@ -8,6 +8,7 @@ import About from "./pages/About"
 import AllLoans from "./pages/AllLoans"
 import ApplyLoan from "./pages/ApplyLoan"
 import Contact from "./pages/Contact"
+import AdminAddLoan from "./pages/dashboard/admin/AddLoan"
 import AdminAllLoans from "./pages/dashboard/admin/AllLoans"
 import LoanApplications from "./pages/dashboard/admin/LoanApplications"
 import ManageUsers from "./pages/dashboard/admin/ManageUsers"
@@ -141,6 +142,14 @@ function App() {
             element={
               <AdminRoute>
                 <LoanApplications />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/add-loan"
+            element={
+              <AdminRoute>
+                <AdminAddLoan />
               </AdminRoute>
             }
           />

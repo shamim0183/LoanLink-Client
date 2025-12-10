@@ -61,7 +61,26 @@ const ManageBorrowers = () => {
       queryClient.invalidateQueries(["manager-borrowers"])
     },
     onError: (error) => {
-      toast.error(error.response?.data?.error || "Failed to suspend borrower")
+      // Check if manager is suspended
+      if (error.response?.status === 403 && error.response?.data?.suspended) {
+        // Close the modal first so SweetAlert appears on top
+        document.getElementById("suspend_modal")?.close()
+
+        const { suspensionReason, suspendUntil } = error.response.data
+        const untilDate = suspendUntil
+          ? new Date(suspendUntil).toLocaleString()
+          : "indefinitely"
+
+        Swal.fire({
+          title: "Account Suspended!",
+          html: `<p><strong>Reason:</strong> ${
+            suspensionReason || "No reason provided"
+          }</p><p><strong>Suspended until:</strong> ${untilDate}</p>`,
+          icon: "error",
+        })
+      } else {
+        toast.error(error.response?.data?.error || "Failed to suspend borrower")
+      }
     },
   })
 
@@ -86,7 +105,24 @@ const ManageBorrowers = () => {
       queryClient.invalidateQueries(["manager-borrowers"])
     },
     onError: (error) => {
-      toast.error(error.response?.data?.error || "Failed to unsuspend borrower")
+      // Check if manager is suspended
+      if (error.response?.status === 403 && error.response?.data?.suspended) {
+        const { suspensionReason, suspendUntil } = error.response.data
+        const untilDate = suspendUntil
+          ? new Date(suspendUntil).toLocaleString()
+          : "indefinitely"
+        Swal.fire({
+          title: "Account Suspended!",
+          html: `<p><strong>Reason:</strong> ${
+            suspensionReason || "No reason provided"
+          }</p><p><strong>Suspended until:</strong> ${untilDate}</p>`,
+          icon: "error",
+        })
+      } else {
+        toast.error(
+          error.response?.data?.error || "Failed to unsuspend borrower"
+        )
+      }
     },
   })
 

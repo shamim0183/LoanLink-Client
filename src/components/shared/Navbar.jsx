@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import { useState } from "react";
 import Countdown from "react-countdown"
 import toast from "react-hot-toast"
@@ -9,10 +9,11 @@ import SuspendDetailsModal from "../modals/SuspendDetailsModal"
 import ThemeToggle from "./ThemeToggle"
 
 const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
-  const { user, logout, loading } = useAuth()
+  const { user, logout, loading, refreshUser } = useAuth()
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showSuspendModal, setShowSuspendModal] = useState(false)
+  const [suspensionExpired, setSuspensionExpired] = useState(false)
 
   // Countdown renderer for navbar
   const countdownRenderer = ({ days, hours, minutes, seconds, completed }) => {
@@ -25,6 +26,15 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
         {hours}h {minutes}m {seconds}s
       </span>
     )
+  }
+
+  // Handle suspension expiry
+  const handleSuspensionComplete = () => {
+    setSuspensionExpired(true)
+    // Optionally refresh user data to update status on backend
+    if (refreshUser) {
+      refreshUser()
+    }
   }
 
   const handleLogout = async () => {
@@ -177,26 +187,29 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
                         </div>
                       </div>
 
-                      {/* Countdown Timer - Always visible for suspended users */}
-                      {user.isSuspended && user.suspendUntil && (
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-error/10 rounded-lg border border-error/20">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] text-error/70 uppercase font-semibold">
-                              Suspended
-                            </span>
-                            <Countdown
-                              date={new Date(user.suspendUntil)}
-                              renderer={countdownRenderer}
-                            />
+                      {/* Countdown Timer - Hide when suspension expires */}
+                      {user.isSuspended &&
+                        user.suspendUntil &&
+                        !suspensionExpired && (
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-error/10 rounded-lg border border-error/20">
+                            <div className="flex flex-col">
+                              <span className="text-[10px] text-error/70 uppercase font-semibold">
+                                Suspended
+                              </span>
+                              <Countdown
+                                date={new Date(user.suspendUntil)}
+                                renderer={countdownRenderer}
+                                onComplete={handleSuspensionComplete}
+                              />
+                            </div>
+                            <button
+                              onClick={() => setShowSuspendModal(true)}
+                              className="btn btn-xs btn-error"
+                            >
+                              Details
+                            </button>
                           </div>
-                          <button
-                            onClick={() => setShowSuspendModal(true)}
-                            className="btn btn-xs btn-error"
-                          >
-                            Details
-                          </button>
-                        </div>
-                      )}
+                        )}
                       <button
                         onClick={handleLogout}
                         className="btn btn-sm bg-gradient-to-r from-primary to-primary-hover hover:shadow-lg hover:scale-105 text-white border-none transition-all duration-200"
@@ -282,19 +295,22 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
                       {user.name}
                     </span>
                     {/* Mobile Countdown */}
-                    {user.isSuspended && user.suspendUntil && (
-                      <div className="mt-1">
-                        <Countdown
-                          date={new Date(user.suspendUntil)}
-                          renderer={countdownRenderer}
-                        />
-                      </div>
-                    )}
+                    {user.isSuspended &&
+                      user.suspendUntil &&
+                      !suspensionExpired && (
+                        <div className="mt-1">
+                          <Countdown
+                            date={new Date(user.suspendUntil)}
+                            renderer={countdownRenderer}
+                            onComplete={handleSuspensionComplete}
+                          />
+                        </div>
+                      )}
                   </div>
                 </div>
 
                 {/* Suspend Details Button - Mobile */}
-                {user.isSuspended && (
+                {user.isSuspended && !suspensionExpired && (
                   <button
                     onClick={() => setShowSuspendModal(true)}
                     className="w-full text-center px-4 py-3 bg-error/20 text-error hover:bg-error/30 rounded-lg transition-all font-medium"

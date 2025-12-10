@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FaSave } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
-import Swal from "sweetalert2"
 import { FormInput, FormSelect, FormTextarea } from "../../../components/forms"
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants"
 
@@ -40,18 +39,18 @@ const AddLoan = () => {
         title: data.title,
         description: data.description,
         category: data.category,
-        interestRate: Number(data.interest), // Changed from interest
-        maxLoanLimit: Number(data.maxLimit), // Changed from maxLimit
+        interestRate: Number(data.interest),
+        maxLoanLimit: Number(data.maxLimit),
         requiredDocuments: data.requiredDocs
           .split(",")
-          .map((doc) => doc.trim()), // Changed from requiredDocs
-        emiPlans: emiPlans.map((plan) => JSON.stringify(plan)), // Convert objects to strings
-        images: [data.image], // Wrap single image URL in array
+          .map((doc) => doc.trim()),
+        emiPlans: emiPlans.map((plan) => JSON.stringify(plan)),
+        images: [data.image],
         showOnHome,
       }
 
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/manager/loans`,
+        `${import.meta.env.VITE_API_URL}/admin/loans`,
         loanData,
         {
           withCredentials: true,
@@ -66,23 +65,7 @@ const AddLoan = () => {
       // Redirect to dashboard after successful creation
       setTimeout(() => navigate("/dashboard"), 1500)
     } catch (error) {
-      // Check if manager is suspended
-      if (error.response?.status === 403 && error.response?.data?.suspended) {
-        const { suspensionReason, suspendUntil } = error.response.data
-        const untilDate = suspendUntil
-          ? new Date(suspendUntil).toLocaleString()
-          : "indefinitely"
-
-        Swal.fire({
-          title: "Account Suspended!",
-          html: `<p><strong>Reason:</strong> ${
-            suspensionReason || "No reason provided"
-          }</p><p><strong>Suspended until:</strong> ${untilDate}</p>`,
-          icon: "error",
-        })
-      } else {
-        toast.error(ERROR_MESSAGES.LOAN_CREATE_FAILED)
-      }
+      toast.error(ERROR_MESSAGES.LOAN_CREATE_FAILED)
       console.error(error)
     }
   }

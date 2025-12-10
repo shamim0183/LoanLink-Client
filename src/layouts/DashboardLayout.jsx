@@ -38,6 +38,7 @@ const DashboardLayout = () => {
   const adminMenu = [
     { to: "/dashboard", icon: <FaHome />, text: "Dashboard" },
     { to: "/dashboard/manage-users", icon: <FaUsers />, text: "Manage Users" },
+    { to: "/dashboard/admin/add-loan", icon: <FaPlus />, text: "Add Loan" },
     { to: "/dashboard/all-loans", icon: <FaFileAlt />, text: "All Loans" },
     {
       to: "/dashboard/loan-applications",

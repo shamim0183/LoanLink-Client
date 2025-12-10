@@ -4,16 +4,18 @@ import axios from "axios"
 import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"
+import useAuth from "../../../hooks/useAuth"
 
 const ManageLoans = () => {
+  const { user } = useAuth() // Get current user
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
   const [editingLoan, setEditingLoan] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
 
-  // Fetch manager's loans using TanStack Query
+  // Fetch manager's loans using TanStack Query with user-specific key
   const { data: loans = [], isLoading: loading } = useQuery({
-    queryKey: ["manager-loans"],
+    queryKey: ["manager-loans", user?.email], // Add user email to make query unique per manager
     queryFn: async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/manager/my-loans`,
