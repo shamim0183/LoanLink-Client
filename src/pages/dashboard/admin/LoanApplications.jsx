@@ -1,15 +1,20 @@
-import React from "react"
+import React from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios"
 import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEye, FaFilter } from "react-icons/fa"
-import { StatusBadge } from "../../../components/dashboard"
+import {
+  ApplicationModal,
+  DataTable,
+  StatusBadge,
+} from "../../../components/dashboard"
 
 const LoanApplications = () => {
   const queryClient = useQueryClient()
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedApp, setSelectedApp] = useState(null)
+  const [showModal, setShowModal] = useState(false)
 
   // Fetch all loan applications using TanStack Query
   const { data: applications = [], isLoading: loading } = useQuery({
@@ -23,7 +28,7 @@ const LoanApplications = () => {
     },
   })
 
-  // Use useMemo for filtering instead of useEffect + useState
+  // Use useMemo for filtering instead of useEffect + setState
   const filteredApplications = useMemo(() => {
     if (statusFilter === "all") {
       return applications
@@ -43,7 +48,7 @@ const LoanApplications = () => {
     onSuccess: () => {
       toast.success("Application approved successfully")
       setSelectedApp(null)
-      document.getElementById("view_application_modal").close()
+      setShowModal(false)
       queryClient.invalidateQueries(["admin-applications"])
       queryClient.invalidateQueries(["pending-applications"])
       queryClient.invalidateQueries(["approved-applications"])
@@ -65,7 +70,7 @@ const LoanApplications = () => {
     onSuccess: () => {
       toast.success("Application rejected")
       setSelectedApp(null)
-      document.getElementById("view_application_modal").close()
+      setShowModal(false)
       queryClient.invalidateQueries(["admin-applications"])
       queryClient.invalidateQueries(["pending-applications"])
     },
@@ -76,10 +81,13 @@ const LoanApplications = () => {
 
   const handleView = (app) => {
     setSelectedApp(app)
-    document.getElementById("view_application_modal").showModal()
+    setShowModal(true)
   }
 
-  // Removed getStatusBadge - now using StatusBadge component
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setSelectedApp(null)
+  }
 
   const handleApprove = (id) => {
     approveMutation.mutate(id)
@@ -89,13 +97,73 @@ const LoanApplications = () => {
     rejectMutation.mutate(id)
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    )
-  }
+  // Define table columns
+  const columns = [
+    {
+      key: "_id",
+      label: "Loan ID",
+      render: (app) => (
+        <span className="font-mono text-xs">{app._id.slice(-8)}</span>
+      ),
+    },
+    {
+      key: "user",
+      label: "User",
+      render: (app) => (
+        <div>
+          <div className="font-semibold">{app.userId?.name || "N/A"}</div>
+          <div className="text-xs opacity-70">{app.userId?.email}</div>
+        </div>
+      ),
+    },
+    {
+      key: "loan",
+      label: "Loan Title",
+      render: (app) => app.loanId?.title || "N/A",
+    },
+    {
+      key: "category",
+      label: "Category",
+      render: (app) => (
+        <span className="badge badge-primary flex justify-center items-center py-4">
+          {app.loanId?.category || "N/A"}
+        </span>
+      ),
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (app) => (
+        <span className="font-semibold">
+          ${app.loanAmount?.toLocaleString()}
+        </span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (app) => (
+        <StatusBadge status={app.status} type="application" className="py-4" />
+      ),
+    },
+    {
+      key: "date",
+      label: "Applied Date",
+      render: (app) => new Date(app.createdAt).toLocaleDateString(),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (app) => (
+        <button
+          className="btn btn-neutral btn-info"
+          onClick={() => handleView(app)}
+        >
+          <FaEye /> View
+        </button>
+      ),
+    },
+  ]
 
   return (
     <div className="p-6">
@@ -124,265 +192,24 @@ const LoanApplications = () => {
         </div>
       </div>
 
-      {/* Applications Table */}
-      <div className="overflow-x-auto bg-base-100 rounded-lg shadow">
-        <table className="table table-zebra w-full">
-          <thead>
-            <tr>
-              <th>Loan ID</th>
-              <th>User</th>
-              <th>Loan Title</th>
-              <th>Category</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Applied Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredApplications.map((app) => (
-              <tr key={app._id}>
-                <td className="font-mono text-xs">{app._id.slice(-8)}</td>
-                <td>
-                  <div>
-                    <div className="font-semibold">
-                      {app.userId?.name || "N/A"}
-                    </div>
-                    <div className="text-xs opacity-70">
-                      {app.userId?.email}
-                    </div>
-                  </div>
-                </td>
-                <td>{app.loanId?.title || "N/A"}</td>
-                <td>
-                  <span className="badge badge-primary flex justify-center items-center py-4">
-                    {app.loanId?.category || "N/A"}
-                  </span>
-                </td>
-                <td className="font-semibold">
-                  ${app.loanAmount?.toLocaleString()}
-                </td>
-                <td>
-                  <StatusBadge
-                    status={app.status}
-                    type="application"
-                    className="py-4"
-                  />
-                </td>
-                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
-                <td>
-                  <button
-                    className="btn btn-neutral btn-info"
-                    onClick={() => handleView(app)}
-                  >
-                    <FaEye /> View
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={filteredApplications}
+        loading={loading}
+        emptyMessage="No applications found"
+      />
 
-      {/* View Application Modal */}
-      <dialog id="view_application_modal" className="modal">
-        <div className="modal-box max-w-4xl">
-          {/* Close button - X */}
-          <button
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={() => {
-              setSelectedApp(null)
-              document.getElementById("view_application_modal").close()
-            }}
-          >
-            ✕
-          </button>
-
-          <h3 className="font-bold text-lg mb-4">Application Details</h3>
-
-          {selectedApp && (
-            <div className="space-y-4">
-              {/* User Info */}
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Applicant Information</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm opacity-70">Name</p>
-                      <p className="font-semibold">
-                        {selectedApp.firstName} {selectedApp.lastName}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Email</p>
-                      <p className="font-semibold">
-                        {selectedApp.userId?.email}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Contact Number</p>
-                      <p className="font-semibold">
-                        {selectedApp.contactNumber}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">National ID</p>
-                      <p className="font-semibold">{selectedApp.nationalId}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Loan Info */}
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Loan Information</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm opacity-70">Loan Title</p>
-                      <p className="font-semibold">
-                        {selectedApp.loanId?.title}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Category</p>
-                      <p className="font-semibold">
-                        {selectedApp.loanId?.category}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Requested Amount</p>
-                      <p className="font-semibold text-primary text-lg">
-                        ${selectedApp.loanAmount?.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Interest Rate</p>
-                      <p className="font-semibold">
-                        {selectedApp.interestRate}%
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Financial Info */}
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Financial Information</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm opacity-70">Income Source</p>
-                      <p className="font-semibold">
-                        {selectedApp.incomeSource}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Monthly Income</p>
-                      <p className="font-semibold">
-                        ${selectedApp.monthlyIncome?.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="col-span-2">
-                      <p className="text-sm opacity-70">Reason for Loan</p>
-                      <p className="font-semibold">{selectedApp.reason}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Address & Notes */}
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Additional Information</h4>
-                  <div className="space-y-2">
-                    <div>
-                      <p className="text-sm opacity-70">Address</p>
-                      <p>{selectedApp.address}</p>
-                    </div>
-                    {selectedApp.extraNotes && (
-                      <div>
-                        <p className="text-sm opacity-70">Extra Notes</p>
-                        <p>{selectedApp.extraNotes}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Status Info */}
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Status Information</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm opacity-70">Application Status</p>
-                      <StatusBadge
-                        status={selectedApp.status}
-                        type="application"
-                        className="py-4"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Fee Status</p>
-                      <span
-                        className={`badge flex justify-center items-center py-4 ${
-                          selectedApp.applicationFeeStatus === "paid"
-                            ? "badge-success"
-                            : "badge-warning"
-                        }`}
-                      >
-                        {selectedApp.applicationFeeStatus}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Applied Date</p>
-                      <p>{new Date(selectedApp.createdAt).toLocaleString()}</p>
-                    </div>
-                    {selectedApp.approvedAt && (
-                      <div>
-                        <p className="text-sm opacity-70">Approved Date</p>
-                        <p>
-                          {new Date(selectedApp.approvedAt).toLocaleString()}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="modal-action">
-            {/* Show approve/reject buttons only for pending applications */}
-            {selectedApp?.status === "pending" && (
-              <>
-                <button
-                  className="btn btn-success"
-                  onClick={() => handleApprove(selectedApp._id)}
-                >
-                  Approve
-                </button>
-                <button
-                  className="btn btn-error"
-                  onClick={() => handleReject(selectedApp._id)}
-                >
-                  Reject
-                </button>
-              </>
-            )}
-            <button
-              className="btn"
-              onClick={() => {
-                setSelectedApp(null)
-                document.getElementById("view_application_modal").close()
-              }}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </dialog>
+      {/* Application Modal */}
+      {selectedApp && (
+        <ApplicationModal
+          application={selectedApp}
+          isOpen={showModal}
+          onClose={handleCloseModal}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          showActions={selectedApp.status === "pending"}
+        />
+      )}
     </div>
   )
 }

@@ -1,13 +1,15 @@
-import React from "react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import React from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios"
 import { useState } from "react"
 import { FaCheck, FaEye, FaTimes } from "react-icons/fa"
 import Swal from "sweetalert2"
+import { ApplicationModal, DataTable } from "../../../components/dashboard"
 import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const PendingApplications = () => {
   const [selectedApp, setSelectedApp] = useState(null)
+  const [showModal, setShowModal] = useState(false)
   const queryClient = useQueryClient()
 
   // Fetch pending applications using TanStack Query
@@ -103,20 +105,17 @@ const PendingApplications = () => {
     const result = await Swal.fire({
       title: "Reject Application?",
       text: "Please provide a reason for rejection:",
-      icon: "warning",
       input: "textarea",
-      inputPlaceholder: "Enter rejection reason here...",
-      inputAttributes: {
-        "aria-label": "Rejection reason",
-      },
+      inputPlaceholder: "Enter rejection reason...",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
       cancelButtonColor: "#6b7280",
-      confirmButtonText: "Reject Application",
+      confirmButtonText: "Yes, reject it!",
       cancelButtonText: "Cancel",
       inputValidator: (value) => {
         if (!value) {
-          return "You need to provide a rejection reason!"
+          return "You need to provide a reason!"
         }
       },
     })
@@ -162,16 +161,85 @@ const PendingApplications = () => {
 
   const handleView = (app) => {
     setSelectedApp(app)
-    document.getElementById("view_app_modal").showModal()
+    setShowModal(true)
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    )
+  const handleCloseModal = () => {
+    setShowModal(false)
+    setSelectedApp(null)
   }
+
+  // Define table columns
+  const columns = [
+    {
+      key: "_id",
+      label: "Loan ID",
+      render: (app) => (
+        <span className="font-mono text-xs">{app._id.slice(-8)}</span>
+      ),
+    },
+    {
+      key: "user",
+      label: "User Info",
+      render: (app) => (
+        <div>
+          <div className="font-semibold">
+            {app.firstName} {app.lastName}
+          </div>
+          <div className="text-xs opacity-70">{app.userId?.email}</div>
+        </div>
+      ),
+    },
+    {
+      key: "loan",
+      label: "Loan",
+      render: (app) => app.loanId?.title,
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (app) => (
+        <span className="font-semibold text-primary">
+          ${app.loanAmount?.toLocaleString()}
+        </span>
+      ),
+    },
+    {
+      key: "date",
+      label: "Date",
+      render: (app) => (
+        <span className="cursor-help" title={formatRelativeTime(app.createdAt)}>
+          {formatDate(app.createdAt)}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (app) => (
+        <div className="flex gap-2">
+          <button
+            className="btn btn-sm btn-success gap-1"
+            onClick={() => handleApprove(app._id)}
+          >
+            <FaCheck /> Approve
+          </button>
+          <button
+            className="btn btn-sm btn-error gap-1"
+            onClick={() => handleReject(app._id)}
+          >
+            <FaTimes /> Reject
+          </button>
+          <button
+            className="btn btn-sm btn-info gap-1"
+            onClick={() => handleView(app)}
+          >
+            <FaEye /> View
+          </button>
+        </div>
+      ),
+    },
+  ]
 
   return (
     <div className="p-6">
@@ -180,146 +248,24 @@ const PendingApplications = () => {
         <div className="text-sm opacity-70">{applications.length} pending</div>
       </div>
 
-      {/* Applications Table */}
-      <div className="overflow-x-auto bg-base-100 rounded-lg shadow">
-        <table className="table table-zebra w-full">
-          <thead>
-            <tr>
-              <th>Loan ID</th>
-              <th>User Info</th>
-              <th>Loan</th>
-              <th>Amount</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((app) => (
-              <tr key={app._id}>
-                <td className="font-mono text-xs">{app._id.slice(-8)}</td>
-                <td>
-                  <div>
-                    <div className="font-semibold">
-                      {app.firstName} {app.lastName}
-                    </div>
-                    <div className="text-xs opacity-70">
-                      {app.userId?.email}
-                    </div>
-                  </div>
-                </td>
-                <td>{app.loanId?.title}</td>
-                <td className="font-semibold text-primary">
-                  ${app.loanAmount?.toLocaleString()}
-                </td>
-                <td>
-                  <span
-                    className="cursor-help"
-                    title={formatRelativeTime(app.createdAt)}
-                  >
-                    {formatDate(app.createdAt)}
-                  </span>
-                </td>
-                <td>
-                  <div className="flex gap-2">
-                    <button
-                      className="btn btn-sm btn-success gap-1"
-                      onClick={() => handleApprove(app._id)}
-                    >
-                      <FaCheck /> Approve
-                    </button>
-                    <button
-                      className="btn btn-sm btn-error gap-1"
-                      onClick={() => handleReject(app._id)}
-                    >
-                      <FaTimes /> Reject
-                    </button>
-                    <button
-                      className="btn btn-sm btn-info gap-1"
-                      onClick={() => handleView(app)}
-                    >
-                      <FaEye /> View
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={applications}
+        loading={loading}
+        emptyMessage="No pending applications"
+      />
 
-      {applications.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-lg opacity-70">No pending applications</p>
-        </div>
+      {/* Application Modal */}
+      {selectedApp && (
+        <ApplicationModal
+          application={selectedApp}
+          isOpen={showModal}
+          onClose={handleCloseModal}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          showActions={true}
+        />
       )}
-
-      {/* View Modal */}
-      <dialog id="view_app_modal" className="modal">
-        <div className="modal-box max-w-3xl">
-          <h3 className="font-bold text-lg mb-4">Application Details</h3>
-
-          {selectedApp && (
-            <div className="space-y-4">
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Applicant</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-sm opacity-70">Name</p>
-                      <p>
-                        {selectedApp.firstName} {selectedApp.lastName}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Contact</p>
-                      <p>{selectedApp.contactNumber}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">National ID</p>
-                      <p>{selectedApp.nationalId}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Monthly Income</p>
-                      <p>${selectedApp.monthlyIncome?.toLocaleString()}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="card bg-base-200">
-                <div className="card-body">
-                  <h4 className="font-bold">Loan Details</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-sm opacity-70">Loan Amount</p>
-                      <p className="text-lg font-bold text-primary">
-                        ${selectedApp.loanAmount?.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm opacity-70">Interest Rate</p>
-                      <p>{selectedApp.interestRate}%</p>
-                    </div>
-                    <div className="col-span-2">
-                      <p className="text-sm opacity-70">Reason</p>
-                      <p>{selectedApp.reasonForLoan}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="modal-action">
-            <button
-              className="btn"
-              onClick={() => document.getElementById("view_app_modal").close()}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </dialog>
     </div>
   )
 }

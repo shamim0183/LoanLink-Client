@@ -1,10 +1,11 @@
 import React from "react"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FaGithub, FaGoogle } from "react-icons/fa"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import Swal from "sweetalert2"
 import { FormInput, PasswordInput } from "../components/forms"
 import LoadingButton from "../components/shared/LoadingButton"
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../constants"
@@ -32,7 +33,14 @@ const Login = () => {
       toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
-      toast.error(error.message || ERROR_MESSAGES.LOGIN_FAILED)
+      Swal.fire({
+        title: "Login Failed!",
+        text: error.message?.includes("invalid-credential")
+          ? "Invalid email or password. Please check your credentials and try again."
+          : error.message || ERROR_MESSAGES.LOGIN_FAILED,
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      })
     } finally {
       setLoading(false)
     }
@@ -45,7 +53,12 @@ const Login = () => {
       toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
-      toast.error(error.message || ERROR_MESSAGES.GOOGLE_LOGIN_FAILED)
+      Swal.fire({
+        title: "Google Login Failed!",
+        text: error.message || ERROR_MESSAGES.GOOGLE_LOGIN_FAILED,
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      })
     } finally {
       setLoading(false)
     }
@@ -58,7 +71,12 @@ const Login = () => {
       toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
-      toast.error(error.message || ERROR_MESSAGES.GITHUB_LOGIN_FAILED)
+      Swal.fire({
+        title: "GitHub Login Failed!",
+        text: error.message || ERROR_MESSAGES.GITHUB_LOGIN_FAILED,
+        icon: "error",
+        confirmButtonColor: "#ef4444",
+      })
     } finally {
       setLoading(false)
     }
