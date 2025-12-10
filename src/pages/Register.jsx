@@ -26,6 +26,8 @@ const Register = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [uploadMethod, setUploadMethod] = useState("file") // 'file' or 'url'
+  const [photoUrlInput, setPhotoUrlInput] = useState("")
 
   // Use image upload hook
   const { uploading, imagePreview, photoURL, handleImageUpload } =
@@ -48,9 +50,10 @@ const Register = () => {
       // Register user
       await registerUser(data.email, data.password)
 
-      // Update Firebase profile with photoURL from ImgBB
-      if (photoURL) {
-        await updateUserProfile(data.name, photoURL)
+      // Update Firebase profile with photoURL from ImgBB or URL input
+      const finalPhotoURL = uploadMethod === "file" ? photoURL : photoUrlInput
+      if (finalPhotoURL) {
+        await updateUserProfile(data.name, finalPhotoURL)
 
         // Update backend database with photoURL and role
         try {
@@ -58,7 +61,7 @@ const Register = () => {
             `${import.meta.env.VITE_API_URL}/auth/update-profile`,
             {
               name: data.name,
-              photoURL: photoURL,
+              photoURL: finalPhotoURL,
               role: data.role,
             },
             { withCredentials: true }
@@ -188,27 +191,64 @@ const Register = () => {
                 {...register("email", emailValidation)}
               />
 
-              {/* Photo Upload */}
+              {/* Photo Upload - Tabs */}
               <div className="form-control">
                 <label className="form-label">Profile Photo (Optional)</label>
-                <div className="flex items-center gap-4">
-                  {imagePreview && (
+
+                {/* Tabs */}
+                <div role="tablist" className="tabs tabs-boxed mb-3">
+                  <button
+                    type="button"
+                    role="tab"
+                    className={`tab ${
+                      uploadMethod === "file" ? "tab-active" : ""
+                    }`}
+                    onClick={() => setUploadMethod("file")}
+                  >
+                    Upload from Device
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    className={`tab ${
+                      uploadMethod === "url" ? "tab-active" : ""
+                    }`}
+                    onClick={() => setUploadMethod("url")}
+                  >
+                    Enter Photo URL
+                  </button>
+                </div>
+
+                {/* Preview */}
+                {(imagePreview || photoUrlInput) && (
+                  <div className="flex justify-center mb-3">
                     <div className="avatar">
-                      <div className="w-20 h-20 rounded-full ring ring-primary">
-                        <img src={imagePreview} alt="Preview" />
+                      <div className="w-24 h-24 rounded-full ring ring-primary">
+                        <img
+                          src={
+                            uploadMethod === "file"
+                              ? imagePreview
+                              : photoUrlInput
+                          }
+                          alt="Preview"
+                        />
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
+
+                {/* File Upload Option */}
+                {uploadMethod === "file" && (
                   <label
                     htmlFor="photoUpload"
-                    className="btn btn-outline btn-primary flex-1"
+                    className="btn btn-outline btn-primary w-full"
                   >
                     {uploading ? (
                       <span className="loading loading-spinner loading-sm"></span>
                     ) : (
                       <>
                         <FaCamera />
-                        {imagePreview ? "Change Photo" : "Upload Photo"}
+                        {imagePreview ? "Change Photo" : "Choose Photo"}
                       </>
                     )}
                     <input
@@ -220,7 +260,25 @@ const Register = () => {
                       disabled={uploading || loading}
                     />
                   </label>
-                </div>
+                )}
+
+                {/* URL Input Option */}
+                {uploadMethod === "url" && (
+                  <input
+                    type="url"
+                    placeholder="https://example.com/photo.jpg"
+                    className="input input-bordered w-full"
+                    value={photoUrlInput}
+                    onChange={(e) => setPhotoUrlInput(e.target.value)}
+                    disabled={loading}
+                  />
+                )}
+
+                <p className="text-xs text-base-content/60 mt-2">
+                  {uploadMethod === "file"
+                    ? "Upload a photo from your device"
+                    : "Paste a URL to your hosted photo"}
+                </p>
               </div>
 
               {/* Role */}
