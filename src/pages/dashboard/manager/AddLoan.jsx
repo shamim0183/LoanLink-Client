@@ -4,6 +4,8 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FaSave } from "react-icons/fa"
+import { FormInput, FormSelect, FormTextarea } from "../../../components/forms"
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants"
 
 const AddLoan = () => {
   const {
@@ -53,12 +55,12 @@ const AddLoan = () => {
         }
       )
 
-      toast.success("Loan created successfully!")
+      toast.success(SUCCESS_MESSAGES.LOAN_CREATED)
       reset()
       setEmiPlans([{ months: 6, rate: 5 }])
       setShowOnHome(false)
     } catch (error) {
-      toast.error("Failed to create loan")
+      toast.error(ERROR_MESSAGES.LOAN_CREATE_FAILED)
       console.error(error)
     }
   }
@@ -74,145 +76,78 @@ const AddLoan = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Loan Title *</span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered"
-                  {...register("title", { required: "Title is required" })}
-                />
-                {errors.title && (
-                  <span className="text-error text-sm">
-                    {errors.title.message}
-                  </span>
-                )}
-              </div>
+              <FormInput
+                label="Loan Title"
+                error={errors.title}
+                {...register("title", { required: "Title is required" })}
+              />
 
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Category *</span>
-                </label>
-                <select
-                  className="select select-bordered"
-                  {...register("category", {
-                    required: "Category is required",
-                  })}
-                >
-                  <option value="">Select Category</option>
-                  <option value="Personal">Personal</option>
-                  <option value="Business">Business</option>
-                  <option value="Education">Education</option>
-                  <option value="Emergency">Emergency</option>
-                </select>
-                {errors.category && (
-                  <span className="text-error text-sm">
-                    {errors.category.message}
-                  </span>
-                )}
-              </div>
+              <FormSelect
+                label="Category"
+                error={errors.category}
+                options={[
+                  { value: "", label: "Select Category" },
+                  { value: "Personal", label: "Personal" },
+                  { value: "Business", label: "Business" },
+                  { value: "Education", label: "Education" },
+                  { value: "Emergency", label: "Emergency" },
+                ]}
+                {...register("category", { required: "Category is required" })}
+              />
             </div>
 
             {/* Description */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Description *</span>
-              </label>
-              <textarea
-                className="textarea textarea-bordered h-32"
-                {...register("description", {
-                  required: "Description is required",
-                })}
-              />
-              {errors.description && (
-                <span className="text-error text-sm">
-                  {errors.description.message}
-                </span>
-              )}
-            </div>
+            <FormTextarea
+              label="Description"
+              className="h-32"
+              error={errors.description}
+              {...register("description", {
+                required: "Description is required",
+              })}
+            />
 
             {/* Financial Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Interest Rate (%) *</span>
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  className="input input-bordered"
-                  {...register("interest", {
-                    required: "Interest rate is required",
-                    min: 0,
-                  })}
-                />
-                {errors.interest && (
-                  <span className="text-error text-sm">
-                    {errors.interest.message}
-                  </span>
-                )}
-              </div>
+              <FormInput
+                label="Interest Rate (%)"
+                type="number"
+                step="0.1"
+                error={errors.interest}
+                {...register("interest", {
+                  required: "Interest rate is required",
+                  min: 0,
+                })}
+              />
 
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Maximum Loan Limit ($) *</span>
-                </label>
-                <input
-                  type="number"
-                  className="input input-bordered"
-                  {...register("maxLimit", {
-                    required: "Max limit is required",
-                    min: 1,
-                  })}
-                />
-                {errors.maxLimit && (
-                  <span className="text-error text-sm">
-                    {errors.maxLimit.message}
-                  </span>
-                )}
-              </div>
+              <FormInput
+                label="Maximum Loan Limit ($)"
+                type="number"
+                error={errors.maxLimit}
+                {...register("maxLimit", {
+                  required: "Max limit is required",
+                  min: 1,
+                })}
+              />
             </div>
 
             {/* Required Documents */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">
-                  Required Documents (comma separated) *
-                </span>
-              </label>
-              <input
-                type="text"
-                placeholder="National ID, Proof of Income, Bank Statement"
-                className="input input-bordered"
-                {...register("requiredDocs", {
-                  required: "Required documents are needed",
-                })}
-              />
-              {errors.requiredDocs && (
-                <span className="text-error text-sm">
-                  {errors.requiredDocs.message}
-                </span>
-              )}
-            </div>
+            <FormInput
+              label="Required Documents (comma separated)"
+              placeholder="National ID, Proof of Income, Bank Statement"
+              error={errors.requiredDocs}
+              {...register("requiredDocs", {
+                required: "Required documents are needed",
+              })}
+            />
 
             {/* Image URL */}
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Image URL *</span>
-              </label>
-              <input
-                type="url"
-                placeholder="https://example.com/loan-image.jpg"
-                className="input input-bordered"
-                {...register("image", { required: "Image URL is required" })}
-              />
-              {errors.image && (
-                <span className="text-error text-sm">
-                  {errors.image.message}
-                </span>
-              )}
-            </div>
+            <FormInput
+              label="Image URL"
+              type="url"
+              placeholder="https://example.com/loan-image.jpg"
+              error={errors.image}
+              {...register("image", { required: "Image URL is required" })}
+            />
 
             {/* EMI Plans */}
             <div className="border rounded-lg p-4">

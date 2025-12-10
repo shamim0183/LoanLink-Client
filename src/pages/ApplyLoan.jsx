@@ -6,7 +6,9 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FaArrowLeft } from "react-icons/fa"
 import { useNavigate, useParams } from "react-router-dom"
+import { FormInput } from "../components/forms"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
+import { ERROR_MESSAGES } from "../constants"
 import useAuth from "../hooks/useAuth"
 
 const ApplyLoan = () => {
@@ -39,7 +41,7 @@ const ApplyLoan = () => {
       setLoan(data.loan)
     } catch (error) {
       console.error("Error:", error)
-      toast.error("Failed to load loan details. Please try again.")
+      toast.error(ERROR_MESSAGES.LOAN_LOAD_FAILED)
       navigate("/all-loans")
     } finally {
       setLoading(false)
@@ -70,7 +72,7 @@ const ApplyLoan = () => {
       window.location.href = data.url
     } catch (error) {
       console.error("Checkout error:", error)
-      toast.error("Failed to initiate payment. Please try again.")
+      toast.error(ERROR_MESSAGES.PAYMENT_PROCESSING_FAILED)
       setProcessing(false)
     }
   }
@@ -122,77 +124,38 @@ const ApplyLoan = () => {
                 <h2 className="text-xl font-bold mb-4">Personal Information</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="form-control">
-                    <label className="form-label">First Name</label>
-                    <input
-                      type="text"
-                      className={`input-field ${
-                        errors.firstName ? "border-error" : ""
-                      }`}
-                      {...register("firstName", {
-                        required: "First name is required",
-                      })}
-                    />
-                    {errors.firstName && (
-                      <span className="error-text">
-                        {errors.firstName.message}
-                      </span>
-                    )}
-                  </div>
+                  <FormInput
+                    label="First Name"
+                    error={errors.firstName}
+                    {...register("firstName", {
+                      required: "First name is required",
+                    })}
+                  />
 
-                  <div className="form-control">
-                    <label className="form-label">Last Name</label>
-                    <input
-                      type="text"
-                      className={`input-field ${
-                        errors.lastName ? "border-error" : ""
-                      }`}
-                      {...register("lastName", {
-                        required: "Last name is required",
-                      })}
-                    />
-                    {errors.lastName && (
-                      <span className="error-text">
-                        {errors.lastName.message}
-                      </span>
-                    )}
-                  </div>
+                  <FormInput
+                    label="Last Name"
+                    error={errors.lastName}
+                    {...register("lastName", {
+                      required: "Last name is required",
+                    })}
+                  />
 
-                  <div className="form-control">
-                    <label className="form-label">Contact Number</label>
-                    <input
-                      type="tel"
-                      className={`input-field ${
-                        errors.contactNumber ? "border-error" : ""
-                      }`}
-                      {...register("contactNumber", {
-                        required: "Contact number is required",
-                      })}
-                    />
-                    {errors.contactNumber && (
-                      <span className="error-text">
-                        {errors.contactNumber.message}
-                      </span>
-                    )}
-                  </div>
+                  <FormInput
+                    label="Contact Number"
+                    type="tel"
+                    error={errors.contactNumber}
+                    {...register("contactNumber", {
+                      required: "Contact number is required",
+                    })}
+                  />
 
-                  <div className="form-control">
-                    <label className="form-label">National ID</label>
-                    <input
-                      type="text"
-                      className={`input-field ${
-                        errors.nationalId ? "border-error" : ""
-                      }`}
-                      {...register("nationalId", {
-                        required: "National ID is required",
-                      })}
-                    />
-                    {errors.nationalId && (
-                      <span className="error-text">
-                        {errors.nationalId.message}
-                      </span>
-                    )}
-                  </div>
+                  <FormInput
+                    label="National ID"
+                    error={errors.nationalId}
+                    {...register("nationalId", {
+                      required: "National ID is required",
+                    })}
+                  />
                 </div>
 
                 <div className="form-control">
