@@ -22,47 +22,43 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [showRoleModal, setShowRoleModal] = useState(false)
 
-  // Register with email and password
   const register = (email, password) => {
     return createUserWithEmailAndPassword(auth, email, password)
   }
 
-  // Login with email and password
   const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password)
   }
 
-  // Google Login
   const googleLogin = () => {
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }
 
-  // GitHub Login
   const githubLogin = () => {
     const provider = new GithubAuthProvider()
     return signInWithPopup(auth, provider)
   }
 
-  // Reset Password
   const resetPassword = (email) => {
     return sendPasswordResetEmail(auth, email)
   }
 
-  // Update User Profile
   const updateUserProfile = async (name, photoURL) => {
     await updateProfile(auth.currentUser, {
       displayName: name,
       photoURL: photoURL,
     })
-    // Reload user to ensure the profile is synced
+    // Force reload to sync Firebase state with updated profile
     await auth.currentUser.reload()
   }
 
-  // Handle role selection
+  /**
+   * Called after OAuth user selects their role in the modal
+   * Refreshes user data from backend to get the updated role
+   */
   const handleRoleSelected = async (role) => {
     try {
-      // Refresh user data from backend
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/jwt`,
         {
@@ -80,10 +76,12 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  // Logout
+  /**
+   * Logout user from both Firebase and backend
+   * Clears JWT cookie and signs out of Firebase
+   */
   const logout = async () => {
     setLoading(true)
-    // Clear JWT cookie from backend
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/logout`,
@@ -96,24 +94,28 @@ const AuthProvider = ({ children }) => {
     return signOut(auth)
   }
 
-  // Observer for auth state changes
+  /**
+   * Firebase auth state observer - syncs Firebase auth with backend
+   * - Gets JWT token from backend
+   * - Syncs user data between Firebase and MongoDB
+   * - Shows role selection modal for OAuth users without roles
+   */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         try {
-          // Get JWT token from backend and store user data
           const { data } = await axios.post(
             `${import.meta.env.VITE_API_URL}/auth/jwt`,
             {
               email: currentUser.email,
               name: currentUser.displayName,
               photoURL: currentUser.photoURL,
-              uid: currentUser.uid, // For GitHub users without public email
+              uid: currentUser.uid, // GitHub users might not have public email
             },
             { withCredentials: true }
           )
 
-          // Ensure photoURL and name are always set from backend first, then Firebase
+          // Prefer backend data (has role), fallback to Firebase for photo/name
           const userData = {
             ...data.user,
             photoURL: data.user.photoURL || currentUser.photoURL,
@@ -122,8 +124,8 @@ const AuthProvider = ({ children }) => {
 
           setUser(userData)
 
-          // Show role modal only for OAuth users without a role
-          // Email/password users already select role during registration
+          // OAuth users need to select role on first login
+          // Email/password users already did this during registration
           const isOAuthUser = currentUser.providerData?.some(
             (provider) =>
               provider.providerId === "google.com" ||
