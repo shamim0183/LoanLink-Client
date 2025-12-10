@@ -1,9 +1,9 @@
-import React from 'react'
-import { motion } from "framer-motion";
+import React from "react"
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { FaEnvelope } from "react-icons/fa"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import Swal from "sweetalert2"
 import { FormInput } from "../components/forms"
 import LoadingButton from "../components/shared/LoadingButton"
@@ -13,6 +13,8 @@ import { emailValidation } from "../utils/validations"
 
 const ForgotPassword = () => {
   const { resetPassword } = useAuth()
+  const location = useLocation()
+  const emailFromLogin = location.state?.email || ""
   const [loading, setLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
 
