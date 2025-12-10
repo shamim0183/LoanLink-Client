@@ -1,5 +1,4 @@
-import React from "react"
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -53,14 +52,13 @@ const Login = () => {
       toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
+      setLoading(false)
       Swal.fire({
         title: "Google Login Failed!",
         text: error.message || ERROR_MESSAGES.GOOGLE_LOGIN_FAILED,
         icon: "error",
         confirmButtonColor: "#ef4444",
       })
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -71,14 +69,13 @@ const Login = () => {
       toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
+      setLoading(false)
       Swal.fire({
         title: "GitHub Login Failed!",
         text: error.message || ERROR_MESSAGES.GITHUB_LOGIN_FAILED,
         icon: "error",
         confirmButtonColor: "#ef4444",
       })
-    } finally {
-      setLoading(false)
     }
   }
 
