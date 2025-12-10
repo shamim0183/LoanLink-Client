@@ -6,7 +6,15 @@ import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 import { FaCamera, FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa"
 import { Link, useNavigate } from "react-router-dom"
+import { FormInput, FormSelect } from "../components/forms"
+import { SUCCESS_MESSAGES } from "../constants"
 import useAuth from "../hooks/useAuth"
+import { useImageUpload } from "../hooks/useImageUpload"
+import {
+  emailValidation,
+  nameValidation,
+  passwordValidation,
+} from "../utils/validations"
 
 const Register = () => {
   const {
@@ -18,9 +26,10 @@ const Register = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [imagePreview, setImagePreview] = useState(null)
-  const [photoURL, setPhotoURL] = useState("")
+
+  // Use image upload hook
+  const { uploading, imagePreview, photoURL, handleImageUpload } =
+    useImageUpload()
 
   const {
     register,
@@ -31,104 +40,36 @@ const Register = () => {
 
   const password = watch("password")
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please select an image file")
-      return
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image size should be less than 5MB")
-      return
-    }
-
-    // Show preview
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setImagePreview(reader.result)
-    }
-    reader.readAsDataURL(file)
-
-    // Upload to ImgBB
-    setUploading(true)
-    try {
-      const formData = new FormData()
-      formData.append("image", file)
-
-      console.log(
-        "📤 Uploading to ImgBB with API key:",
-        import.meta.env.VITE_IMGBB_API_KEY ? "✅ Found" : "❌ Missing"
-      )
-
-      const { data } = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${
-          import.meta.env.VITE_IMGBB_API_KEY
-        }`,
-        formData
-      )
-
-      console.log("✅ ImgBB upload successful! Full response:", data)
-      console.log("📸 ImgBB display_url:", data.data.display_url)
-
-      setPhotoURL(data.data.display_url)
-      console.log("📁 photoURL state updated to:", data.data.display_url)
-
-      toast.success("Image uploaded successfully!")
-    } catch (error) {
-      console.error("❌ Image upload error:", error)
-      console.error("Error details:", error.response?.data || error.message)
-      toast.error("Failed to upload image")
-      setImagePreview(null)
-    } finally {
-      setUploading(false)
-    }
-  }
+  // Image upload logic moved to useImageUpload hook
 
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      console.log("📸 Photo URL from ImgBB:", photoURL)
-
       // Register user
       await registerUser(data.email, data.password)
-      console.log("✅ User registered in Firebase")
 
       // Update Firebase profile with photoURL from ImgBB
       if (photoURL) {
-        console.log("🔄 Updating Firebase profile with photoURL:", photoURL)
         await updateUserProfile(data.name, photoURL)
-        console.log("✅ Firebase profile updated successfully")
 
-        // IMPORTANT: Also update backend database with photoURL and role
+        // Update backend database with photoURL and role
         try {
-          console.log("🔄 Updating backend database with photoURL and role...")
           await axios.patch(
             `${import.meta.env.VITE_API_URL}/auth/update-profile`,
             {
               name: data.name,
               photoURL: photoURL,
-              role: data.role, // Send the selected role
+              role: data.role,
             },
             { withCredentials: true }
           )
-          console.log("✅ Backend database updated with photoURL and role!")
         } catch (backendError) {
-          console.error(
-            "⚠️ Backend update failed (non-critical):",
-            backendError
-          )
-          // Don't fail registration if backend update fails
+          console.error("Backend update failed:", backendError)
         }
       } else {
-        console.log("⚠️ No photoURL, updating with name and role only")
         await updateUserProfile(data.name, "")
 
-        // Still update backend with role even without photo
+        // Update backend with role even without photo
         try {
           await axios.patch(
             `${import.meta.env.VITE_API_URL}/auth/update-profile`,
@@ -139,18 +80,19 @@ const Register = () => {
             { withCredentials: true }
           )
         } catch (backendError) {
-          console.error(
-            "⚠️ Backend update failed (non-critical):",
-            backendError
-          )
+          console.error("Backend update failed:", backendError)
         }
       }
 
-      toast.success("Registration successful!")
-      navigate("/")
+      toast.success(SUCCESS_MESSAGES.REGISTRATION_SUCCESS)
+
+      // Wait for Firebase auth state to sync before navigation
+      setTimeout(() => {
+        navigate("/")
+      }, 1000) // Increased to 1 second for reliable auth sync
     } catch (error) {
       console.error("Registration error:", error)
-      toast.error(error.message || "Registration failed. Please try again.")
+      toast.error(error.message || ERROR_MESSAGES.REGISTRATION_FAILED)
     } finally {
       setLoading(false)
     }
@@ -164,7 +106,7 @@ const Register = () => {
       navigate("/")
     } catch (error) {
       console.error("Google signup error:", error)
-      toast.error(error.message || "Google signup failed.")
+      toast.error(error.message || ERROR_MESSAGES.GOOGLE_SIGNUP_FAILED)
     } finally {
       setLoading(false)
     }
@@ -178,7 +120,7 @@ const Register = () => {
       navigate("/")
     } catch (error) {
       console.error("GitHub signup error:", error)
-      toast.error(error.message || "GitHub signup failed.")
+      toast.error(error.message || ERROR_MESSAGES.GITHUB_SIGNUP_FAILED)
     } finally {
       setLoading(false)
     }
@@ -229,46 +171,22 @@ const Register = () => {
             {/* Register Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Name */}
-              <div className="form-control">
-                <label className="form-label">Full Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter your full name"
-                  className={`input-field ${errors.name ? "border-error" : ""}`}
-                  {...register("name", {
-                    required: "Name is required",
-                    minLength: {
-                      value: 3,
-                      message: "Name must be at least 3 characters",
-                    },
-                  })}
-                />
-                {errors.name && (
-                  <span className="error-text">{errors.name.message}</span>
-                )}
-              </div>
+              <FormInput
+                label="Full Name"
+                type="text"
+                placeholder="Enter your full name"
+                error={errors.name}
+                {...register("name", nameValidation)}
+              />
 
               {/* Email */}
-              <div className="form-control">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className={`input-field ${
-                    errors.email ? "border-error" : ""
-                  }`}
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <span className="error-text">{errors.email.message}</span>
-                )}
-              </div>
+              <FormInput
+                label="Email"
+                type="email"
+                placeholder="Enter your email"
+                error={errors.email}
+                {...register("email", emailValidation)}
+              />
 
               {/* Photo Upload */}
               <div className="form-control">
@@ -306,24 +224,16 @@ const Register = () => {
               </div>
 
               {/* Role */}
-              <div className="form-control">
-                <label className="form-label">I am a</label>
-                <select
-                  className={`select-field ${
-                    errors.role ? "border-error" : ""
-                  }`}
-                  {...register("role", {
-                    required: "Please select your role",
-                  })}
-                >
-                  <option value="">Select role</option>
-                  <option value="borrower">Borrower - I need a loan</option>
-                  <option value="manager">Manager - I manage loans</option>
-                </select>
-                {errors.role && (
-                  <span className="error-text">{errors.role.message}</span>
-                )}
-              </div>
+              <FormSelect
+                label="I am a"
+                placeholder="Select role"
+                options={[
+                  { value: "borrower", label: "Borrower - I need a loan" },
+                  { value: "manager", label: "Manager - I manage loans" },
+                ]}
+                error={errors.role}
+                {...register("role", { required: "Please select your role" })}
+              />
 
               {/* Password */}
               <div className="form-control">
@@ -335,21 +245,7 @@ const Register = () => {
                     className={`input-field ${
                       errors.password ? "border-error" : ""
                     }`}
-                    {...register("password", {
-                      required: "Password is required",
-                      minLength: {
-                        value: 6,
-                        message: "Password must be at least 6 characters",
-                      },
-                      validate: {
-                        hasUpperCase: (value) =>
-                          /[A-Z]/.test(value) ||
-                          "Password must contain at least one uppercase letter",
-                        hasLowerCase: (value) =>
-                          /[a-z]/.test(value) ||
-                          "Password must contain at least one lowercase letter",
-                      },
-                    })}
+                    {...register("password", passwordValidation)}
                   />
                   <button
                     type="button"

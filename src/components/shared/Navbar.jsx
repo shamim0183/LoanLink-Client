@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import { useState } from "react";
 import Countdown from "react-countdown"
 import toast from "react-hot-toast"
@@ -8,7 +8,7 @@ import useAuth from "../../hooks/useAuth"
 import SuspendDetailsModal from "../modals/SuspendDetailsModal"
 import ThemeToggle from "./ThemeToggle"
 
-const Navbar = () => {
+const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
   const { user, logout, loading } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showSuspendModal, setShowSuspendModal] = useState(false)
@@ -29,9 +29,10 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout()
-      toast.success("Logged out successfully!")
+      toast.success("Logged out successfully")
+      navigate("/login")
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message || "Logout failed")
     }
   }
 
@@ -208,16 +209,22 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center space-x-4">
+          {/* Mobile Menu Button - Hide if hideMobileMenu=true, but keep theme toggle */}
+          <div
+            className={`md:hidden flex items-center space-x-4 ${
+              extraMargin ? "mr-12" : ""
+            }`}
+          >
             <ThemeToggle />
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-base-content hover:text-primary text-2xl transition-all duration-200 hover:scale-110"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <FaTimes /> : <FaBars />}
-            </button>
+            {!hideMobileMenu && (
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-base-content hover:text-primary text-2xl transition-all duration-200 hover:scale-110"
+                aria-label="Toggle menu"
+              >
+                {isMenuOpen ? <FaTimes /> : <FaBars />}
+              </button>
+            )}
           </div>
         </div>
 

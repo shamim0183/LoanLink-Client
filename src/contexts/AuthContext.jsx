@@ -120,8 +120,17 @@ const AuthProvider = ({ children }) => {
 
           setUser(userData)
 
-          // Show role modal if user doesn't have a role (OAuth users)
-          if (!userData.role || userData.role === "undefined") {
+          // Show role modal only for OAuth users without a role
+          // Email/password users already select role during registration
+          const isOAuthUser = currentUser.providerData?.some(
+            (provider) =>
+              provider.providerId === "google.com" ||
+              provider.providerId === "github.com"
+          )
+          if (
+            isOAuthUser &&
+            (!userData.role || userData.role === "undefined")
+          ) {
             setShowRoleModal(true)
           }
         } catch (error) {

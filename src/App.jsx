@@ -40,7 +40,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setMinTimeElapsed(true)
-    }, 2000)
+    }, 300) // Reduced to prevent flash of login/register buttons
 
     return () => clearTimeout(timer)
   }, [])

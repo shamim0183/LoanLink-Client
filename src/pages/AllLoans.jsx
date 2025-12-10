@@ -1,12 +1,12 @@
-import React from "react"
-import axios from "axios";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios"
 import { motion } from "framer-motion"
 import { useState } from "react"
 import { FaSearch } from "react-icons/fa"
 import ReactPaginate from "react-paginate"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
-import { useQuery } from "@tanstack/react-query";
 
 const AllLoans = () => {
   const [searchTerm, setSearchTerm] = useState("")

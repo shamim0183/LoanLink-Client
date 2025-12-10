@@ -1,5 +1,5 @@
 import React from "react"
-import axios from "axios";
+import axios from "axios"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -54,11 +54,11 @@ const ApplyLoan = () => {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/payments/create-checkout-session`,
         {
-          amount: 10, // $10 application fee
+          amount: 10, // Application fee in USD (change this value as needed)
           applicationData: {
             ...formData,
             interestRate: loan.interestRate,
-            loanImage: loan.imageUrl,
+            loanImage: loan.images?.[0] || null, // Use first image from images array
           },
           loanId: loan._id,
           loanTitle: loan.title,
