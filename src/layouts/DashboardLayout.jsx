@@ -17,6 +17,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import Footer from "../components/shared/Footer"
 import Navbar from "../components/shared/Navbar"
 import useAuth from "../hooks/useAuth"
+import { getAvatarUrl } from '../utils/avatar';
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth()
