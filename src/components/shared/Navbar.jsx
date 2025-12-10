@@ -3,13 +3,14 @@ import { useState } from "react";
 import Countdown from "react-countdown"
 import toast from "react-hot-toast"
 import { FaBars, FaTimes } from "react-icons/fa"
-import { Link, NavLink } from "react-router-dom"
+import { Link, NavLink, useNavigate } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
 import SuspendDetailsModal from "../modals/SuspendDetailsModal"
 import ThemeToggle from "./ThemeToggle"
 
 const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
   const { user, logout, loading } = useAuth()
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [showSuspendModal, setShowSuspendModal] = useState(false)
 

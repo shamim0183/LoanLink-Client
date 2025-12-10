@@ -89,7 +89,7 @@ const Register = () => {
       // Wait for Firebase auth state to sync before navigation
       setTimeout(() => {
         navigate("/")
-      }, 1000) // Increased to 1 second for reliable auth sync
+      }, 2000) // Increased to 1 second for reliable auth sync
     } catch (error) {
       console.error("Registration error:", error)
       toast.error(error.message || ERROR_MESSAGES.REGISTRATION_FAILED)

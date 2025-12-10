@@ -3,15 +3,18 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { FaEye, FaEyeSlash, FaGithub, FaGoogle } from "react-icons/fa"
+import { FaGithub, FaGoogle } from "react-icons/fa"
 import { Link, useLocation, useNavigate } from "react-router-dom"
+import { FormInput, PasswordInput } from "../components/forms"
+import LoadingButton from "../components/shared/LoadingButton"
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../constants"
 import useAuth from "../hooks/useAuth"
+import { emailValidation } from "../utils/validations"
 
 const Login = () => {
   const { login, googleLogin, githubLogin } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const from = location.state?.from?.pathname || "/"
@@ -26,32 +29,10 @@ const Login = () => {
     setLoading(true)
     try {
       await login(data.email, data.password)
-      toast.success("Login successful!")
+      toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
-      console.error("Login error:", error)
-
-      // Parse Firebase error codes to user-friendly messages
-      let errorMessage = "Login failed. Please try again."
-
-      if (
-        error.code === "auth/wrong-password" ||
-        error.code === "auth/invalid-credential"
-      ) {
-        errorMessage = "Incorrect password. Please try again."
-      } else if (error.code === "auth/user-not-found") {
-        errorMessage = "No account found with this email."
-      } else if (error.code === "auth/invalid-email") {
-        errorMessage = "Invalid email address."
-      } else if (error.code === "auth/user-disabled") {
-        errorMessage = "This account has been disabled."
-      } else if (error.code === "auth/too-many-requests") {
-        errorMessage = "Too many failed attempts. Please try again later."
-      } else if (error.message) {
-        errorMessage = error.message
-      }
-
-      toast.error(errorMessage)
+      toast.error(error.message || ERROR_MESSAGES.LOGIN_FAILED)
     } finally {
       setLoading(false)
     }
@@ -61,11 +42,10 @@ const Login = () => {
     setLoading(true)
     try {
       await googleLogin()
-      toast.success("Login successful!")
+      toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
-      console.error("Google login error:", error)
-      toast.error(error.message || "Google login failed.")
+      toast.error(error.message || ERROR_MESSAGES.GOOGLE_LOGIN_FAILED)
     } finally {
       setLoading(false)
     }
@@ -75,11 +55,10 @@ const Login = () => {
     setLoading(true)
     try {
       await githubLogin()
-      toast.success("Login successful!")
+      toast.success(SUCCESS_MESSAGES.LOGIN_SUCCESS)
       navigate(from, { replace: true })
     } catch (error) {
-      console.error("GitHub login error:", error)
-      toast.error(error.message || "GitHub login failed.")
+      toast.error(error.message || ERROR_MESSAGES.GITHUB_LOGIN_FAILED)
     } finally {
       setLoading(false)
     }
@@ -130,53 +109,23 @@ const Login = () => {
             {/* Login Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Email */}
-              <div className="form-control">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className={`input-field ${
-                    errors.email ? "border-error" : ""
-                  }`}
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
-                    },
-                  })}
-                />
-                {errors.email && (
-                  <span className="error-text">{errors.email.message}</span>
-                )}
-              </div>
+              <FormInput
+                label="Email"
+                type="email"
+                placeholder="Enter your email"
+                error={errors.email}
+                {...register("email", emailValidation)}
+              />
 
               {/* Password */}
-              <div className="form-control">
-                <label className="form-label">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className={`input-field ${
-                      errors.password ? "border-error" : ""
-                    }`}
-                    {...register("password", {
-                      required: "Password is required",
-                    })}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-base-content/60 hover:text-base-content"
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-                {errors.password && (
-                  <span className="error-text">{errors.password.message}</span>
-                )}
-              </div>
+              <PasswordInput
+                label="Password"
+                placeholder="Enter your password"
+                error={errors.password}
+                {...register("password", {
+                  required: ERROR_MESSAGES.PASSWORD_REQUIRED,
+                })}
+              />
 
               {/* Remember Me & Forgot Password */}
               <div className="flex items-center justify-between">
@@ -196,17 +145,13 @@ const Login = () => {
               </div>
 
               {/* Submit Button */}
-              <button
+              <LoadingButton
                 type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full"
+                loading={loading}
+                className="btn-primary w-full"
               >
-                {loading ? (
-                  <span className="loading loading-spinner"></span>
-                ) : (
-                  "Login"
-                )}
-              </button>
+                Login
+              </LoadingButton>
             </form>
 
             {/* Register Link */}

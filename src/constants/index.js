@@ -47,6 +47,8 @@ export const ERROR_MESSAGES = {
   BORROWER_UNSUSPEND_FAILED: "Failed to unsuspend borrower",
 
   // Validation
+  EMAIL_REQUIRED: "Email is required",
+  PASSWORD_REQUIRED: "Password is required",
   SUSPENSION_REASON_REQUIRED: "Please provide a reason for suspension",
   SUSPENSION_DURATION_REQUIRED: "Please provide a valid duration",
   LOGIN_REQUIRED: "Please login to apply for a loan",
