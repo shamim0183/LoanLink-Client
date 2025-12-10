@@ -5,6 +5,7 @@ import toast from "react-hot-toast"
 import { FaBars, FaTimes } from "react-icons/fa"
 import { Link, NavLink, useNavigate } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
+import { getAvatarUrl } from "../../utils/avatar"
 import SuspendDetailsModal from "../modals/SuspendDetailsModal"
 import ThemeToggle from "./ThemeToggle"
 
@@ -174,8 +175,7 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
                           <div className="w-10 h-10 rounded-full ring-2 ring-primary/50 hover:ring-primary transition-all duration-200 group-hover:scale-110">
                             <img
                               src={
-                                user.photoURL ||
-                                "https://via.placeholder.com/150"
+                                user.photoURL || getAvatarUrl(user.name, 150)
                               }
                               alt={user.name}
                               className="object-cover"
@@ -284,7 +284,7 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
                   <div className="avatar">
                     <div className="w-10 h-10 rounded-full ring-2 ring-primary/50">
                       <img
-                        src={user.photoURL || "https://via.placeholder.com/150"}
+                        src={user.photoURL || getAvatarUrl(user.name, 150)}
                         alt={user.name}
                         className="object-cover"
                       />

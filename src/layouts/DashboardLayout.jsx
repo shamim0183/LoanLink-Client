@@ -135,7 +135,7 @@ const DashboardLayout = () => {
                 <div className="avatar">
                   <div className="w-12 h-12 rounded-full ring ring-primary ring-offset-2 ring-offset-neutral">
                     <img
-                      src={user?.photoURL || "https://via.placeholder.com/150"}
+                      src={user?.photoURL || getAvatarUrl(user?.name, 150)}
                       alt={user?.name}
                     />
                   </div>
