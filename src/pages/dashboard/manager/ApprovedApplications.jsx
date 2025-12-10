@@ -1,7 +1,9 @@
-import React from "react"
+import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
 import { FaCalendar } from "react-icons/fa"
+import { DataTable, StatusBadge } from "../../../components/dashboard"
+import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const ApprovedApplications = () => {
   // Fetch approved applications using TanStack Query
@@ -16,13 +18,77 @@ const ApprovedApplications = () => {
     },
   })
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    )
-  }
+  // Define table columns
+  const columns = [
+    {
+      key: "_id",
+      label: "Loan ID",
+      render: (app) => (
+        <span className="font-mono text-xs">{app._id.slice(-8)}</span>
+      ),
+    },
+    {
+      key: "user",
+      label: "User Info",
+      render: (app) => (
+        <div>
+          <div className="font-semibold">
+            {app.firstName} {app.lastName}
+          </div>
+          <div className="text-xs opacity-70">{app.userId?.email}</div>
+        </div>
+      ),
+    },
+    {
+      key: "loan",
+      label: "Loan",
+      render: (app) => app.loanId?.title,
+    },
+    {
+      key: "amount",
+      label: "Amount",
+      render: (app) => (
+        <span className="font-semibold text-success">
+          ${app.loanAmount?.toLocaleString()}
+        </span>
+      ),
+    },
+    {
+      key: "appliedDate",
+      label: "Applied Date",
+      render: (app) => (
+        <span className="cursor-help" title={formatRelativeTime(app.createdAt)}>
+          {formatDate(app.createdAt)}
+        </span>
+      ),
+    },
+    {
+      key: "approvedDate",
+      label: "Approved Date",
+      render: (app) => (
+        <div className="flex items-center gap-2">
+          <FaCalendar className="text-success" />
+          <span
+            className="cursor-help"
+            title={formatRelativeTime(app.approvedAt)}
+          >
+            {formatDate(app.approvedAt)}
+          </span>
+        </div>
+      ),
+    },
+    {
+      key: "feeStatus",
+      label: "Fee Status",
+      render: (app) => (
+        <StatusBadge
+          status={app.applicationFeeStatus === "paid" ? "Paid" : "Unpaid"}
+          type="payment"
+          className="badge-lg py-4"
+        />
+      ),
+    },
+  ]
 
   return (
     <div className="p-6">
@@ -31,67 +97,12 @@ const ApprovedApplications = () => {
         <div className="text-sm opacity-70">{applications.length} approved</div>
       </div>
 
-      {/* Applications Table */}
-      <div className="overflow-x-auto bg-base-100 rounded-lg shadow">
-        <table className="table table-zebra w-full">
-          <thead>
-            <tr>
-              <th>Loan ID</th>
-              <th>User Info</th>
-              <th>Loan</th>
-              <th>Amount</th>
-              <th>Applied Date</th>
-              <th>Approved Date</th>
-              <th>Fee Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((app) => (
-              <tr key={app._id}>
-                <td className="font-mono text-xs">{app._id.slice(-8)}</td>
-                <td>
-                  <div>
-                    <div className="font-semibold">
-                      {app.firstName} {app.lastName}
-                    </div>
-                    <div className="text-xs opacity-70">
-                      {app.userId?.email}
-                    </div>
-                  </div>
-                </td>
-                <td>{app.loanId?.title}</td>
-                <td className="font-semibold text-success">
-                  ${app.loanAmount?.toLocaleString()}
-                </td>
-                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
-                <td>
-                  <div className="flex items-center gap-2">
-                    <FaCalendar className="text-success" />
-                    {new Date(app.approvedAt).toLocaleDateString()}
-                  </div>
-                </td>
-                <td>
-                  <span
-                    className={`badge badge-lg flex justify-center items-center py-4 ${
-                      app.applicationFeeStatus === "paid"
-                        ? "badge-success"
-                        : "badge-warning"
-                    }`}
-                  >
-                    {app.applicationFeeStatus === "paid" ? "Paid" : "Unpaid"}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {applications.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-lg opacity-70">No approved applications yet</p>
-        </div>
-      )}
+      <DataTable
+        columns={columns}
+        data={applications}
+        loading={loading}
+        emptyMessage="No approved applications yet"
+      />
     </div>
   )
 }

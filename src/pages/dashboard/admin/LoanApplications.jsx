@@ -1,13 +1,13 @@
 import React from "react"
-import axios from "axios";
-import { useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios"
+import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEye, FaFilter } from "react-icons/fa"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { StatusBadge } from "../../../components/dashboard"
 
 const LoanApplications = () => {
   const queryClient = useQueryClient()
-  const [filteredApplications, setFilteredApplications] = useState([])
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedApp, setSelectedApp] = useState(null)
 
@@ -23,14 +23,12 @@ const LoanApplications = () => {
     },
   })
 
-  useEffect(() => {
+  // Use useMemo for filtering instead of useEffect + useState
+  const filteredApplications = useMemo(() => {
     if (statusFilter === "all") {
-      setFilteredApplications(applications)
-    } else {
-      setFilteredApplications(
-        applications.filter((app) => app.status === statusFilter)
-      )
+      return applications
     }
+    return applications.filter((app) => app.status === statusFilter)
   }, [statusFilter, applications])
 
   // Approve application mutation
@@ -81,15 +79,7 @@ const LoanApplications = () => {
     document.getElementById("view_application_modal").showModal()
   }
 
-  const getStatusBadge = (status) => {
-    const badges = {
-      pending: "badge-warning",
-      approved: "badge-success",
-      rejected: "badge-error",
-      cancelled: "badge-ghost",
-    }
-    return `badge ${badges[status] || "badge-info"}`
-  }
+  // Removed getStatusBadge - now using StatusBadge component
 
   const handleApprove = (id) => {
     approveMutation.mutate(id)
@@ -173,14 +163,11 @@ const LoanApplications = () => {
                   ${app.loanAmount?.toLocaleString()}
                 </td>
                 <td>
-                  <span
-                    className={
-                      getStatusBadge(app.status) +
-                      " flex justify-center items-center py-4"
-                    }
-                  >
-                    {app.status}
-                  </span>
+                  <StatusBadge
+                    status={app.status}
+                    type="application"
+                    className="py-4"
+                  />
                 </td>
                 <td>{new Date(app.createdAt).toLocaleDateString()}</td>
                 <td>
@@ -330,14 +317,11 @@ const LoanApplications = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm opacity-70">Application Status</p>
-                      <span
-                        className={
-                          getStatusBadge(selectedApp.status) +
-                          " flex justify-center items-center py-4"
-                        }
-                      >
-                        {selectedApp.status}
-                      </span>
+                      <StatusBadge
+                        status={selectedApp.status}
+                        type="application"
+                        className="py-4"
+                      />
                     </div>
                     <div>
                       <p className="text-sm opacity-70">Fee Status</p>

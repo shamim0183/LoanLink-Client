@@ -5,6 +5,7 @@ import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"
 import useAuth from "../../../hooks/useAuth"
+import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const ManageLoans = () => {
   const { user } = useAuth() // Get current user
@@ -163,6 +164,16 @@ const ManageLoans = () => {
                   Shown on Home
                 </div>
               )}
+
+              {/* Created Date */}
+              <div className="text-xs opacity-70 mt-2">
+                <span
+                  className="cursor-help"
+                  title={formatRelativeTime(loan.createdAt)}
+                >
+                  Created: {formatDate(loan.createdAt)}
+                </span>
+              </div>
 
               <div className="card-actions justify-end mt-4 gap-2">
                 <button

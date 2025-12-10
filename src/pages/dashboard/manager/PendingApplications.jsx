@@ -4,6 +4,7 @@ import axios from "axios"
 import { useState } from "react"
 import { FaCheck, FaEye, FaTimes } from "react-icons/fa"
 import Swal from "sweetalert2"
+import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const PendingApplications = () => {
   const [selectedApp, setSelectedApp] = useState(null)
@@ -210,7 +211,14 @@ const PendingApplications = () => {
                 <td className="font-semibold text-primary">
                   ${app.loanAmount?.toLocaleString()}
                 </td>
-                <td>{new Date(app.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <span
+                    className="cursor-help"
+                    title={formatRelativeTime(app.createdAt)}
+                  >
+                    {formatDate(app.createdAt)}
+                  </span>
+                </td>
                 <td>
                   <div className="flex gap-2">
                     <button
