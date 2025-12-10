@@ -1,3 +1,4 @@
+import React from "react"
 import { useState } from "react"
 import Countdown from "react-countdown"
 import toast from "react-hot-toast"
