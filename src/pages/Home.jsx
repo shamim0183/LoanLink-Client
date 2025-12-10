@@ -21,8 +21,11 @@ import TrustedPartners from "../components/home/TrustedPartners"
 import WhyChooseUs from "../components/home/WhyChooseUs"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
+import useAuth from "../hooks/useAuth";
 
 const Home = () => {
+  const { user } = useAuth()
+
   // Fetch featured loans using TanStack Query
   const { data: featuredLoans = [], isLoading: loadingLoans } = useQuery({
     queryKey: ["featured-loans"],
@@ -66,7 +69,10 @@ const Home = () => {
               </p>
 
               <div>
-                <Link to="/all-loans" className="btn btn-primary btn-lg gap-2">
+                <Link
+                  to={user ? "/all-loans" : "/register"}
+                  className="btn btn-primary btn-lg gap-2"
+                >
                   Apply for Loan
                   <FaArrowRight />
                 </Link>
@@ -227,7 +233,10 @@ const Home = () => {
           )}
 
           <div className="text-center mt-8">
-            <Link to="/all-loans" className="btn btn-primary btn-lg">
+            <Link
+              to={user ? "/all-loans" : "/register"}
+              className="btn btn-primary btn-lg"
+            >
               View All Loans
               <FaArrowRight />
             </Link>
@@ -263,7 +272,10 @@ const Home = () => {
               Join thousands of satisfied customers who trust LoanLink for their
               financial needs
             </p>
-            <Link to="/all-loans" className="btn btn-neutral btn-lg">
+            <Link
+              to={user ? "/all-loans" : "/register"}
+              className="btn btn-neutral btn-lg"
+            >
               Apply Now - It's Free
             </Link>
           </motion.div>

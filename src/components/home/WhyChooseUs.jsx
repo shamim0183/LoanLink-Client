@@ -5,8 +5,12 @@ import {
   FaMoneyBillWave,
   FaShieldAlt,
 } from "react-icons/fa"
+import { Link } from "react-router-dom"
+import useAuth from "../../hooks/useAuth"
 
 const WhyChooseUs = () => {
+  const { user } = useAuth()
+
   const reasons = [
     {
       icon: <FaShieldAlt className="text-5xl text-primary" />,
@@ -70,9 +74,12 @@ const WhyChooseUs = () => {
               microloan services.
             </p>
             <div>
-              <a href="/register" className="btn btn-neutral btn-lg">
+              <Link
+                to={user ? "/all-loans" : "/register"}
+                className="btn btn-neutral btn-lg"
+              >
                 Get Started Now
-              </a>
+              </Link>
             </div>
           </div>
         </div>
