@@ -32,6 +32,7 @@ import Register from "./pages/Register"
 import AdminRoute from "./routes/AdminRoute"
 import ManagerRoute from "./routes/ManagerRoute"
 import PrivateRoute from "./routes/PrivateRoute"
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const { loading } = useAuth()
@@ -59,6 +60,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="all-loans" element={<AllLoans />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />

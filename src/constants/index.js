@@ -12,6 +12,8 @@ export const ERROR_MESSAGES = {
   GITHUB_LOGIN_FAILED: "GitHub login failed.",
   GOOGLE_SIGNUP_FAILED: "Google signup failed.",
   GITHUB_SIGNUP_FAILED: "GitHub signup failed.",
+  RESET_PASSWORD_FAILED:
+    "Failed to send password reset email. Please try again.",
 
   // Image Upload
   INVALID_IMAGE_FILE: "Please select an image file",

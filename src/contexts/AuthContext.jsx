@@ -1,10 +1,11 @@
-import React from "react"
-import axios from "axios"
+import React from "react";
+import axios from "axios";
 import {
   createUserWithEmailAndPassword,
   GithubAuthProvider,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -41,6 +42,11 @@ const AuthProvider = ({ children }) => {
   const githubLogin = () => {
     const provider = new GithubAuthProvider()
     return signInWithPopup(auth, provider)
+  }
+
+  // Reset Password
+  const resetPassword = (email) => {
+    return sendPasswordResetEmail(auth, email)
   }
 
   // Update User Profile
@@ -150,6 +156,7 @@ const AuthProvider = ({ children }) => {
     login,
     googleLogin,
     githubLogin,
+    resetPassword,
     updateUserProfile,
     logout,
   }
