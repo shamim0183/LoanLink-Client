@@ -23,26 +23,22 @@ const AuthProvider = ({ children }) => {
 
   // Register with email and password
   const register = (email, password) => {
-    setLoading(true)
     return createUserWithEmailAndPassword(auth, email, password)
   }
 
   // Login with email and password
   const login = (email, password) => {
-    setLoading(true)
     return signInWithEmailAndPassword(auth, email, password)
   }
 
   // Google Login
   const googleLogin = () => {
-    setLoading(true)
     const provider = new GoogleAuthProvider()
     return signInWithPopup(auth, provider)
   }
 
   // GitHub Login
   const githubLogin = () => {
-    setLoading(true)
     const provider = new GithubAuthProvider()
     return signInWithPopup(auth, provider)
   }
