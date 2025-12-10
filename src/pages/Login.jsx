@@ -1,5 +1,4 @@
-import React from "react";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -154,15 +153,17 @@ const Login = () => {
                   />
                   <span className="text-sm">Remember me</span>
                 </label>
-                <Link
-                  to="/forgot-password"
-                  state={{
-                    email: document.querySelector('input[type="email"]')?.value,
-                  }}
-                  className="text-sm text-primary hover:underline"
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate("/forgot-password", {
+                      state: { email: watch("email") },
+                    })
+                  }
+                  className="text-sm text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
                 >
                   Forgot password?
-                </Link>
+                </button>
               </div>
 
               {/* Submit Button */}
