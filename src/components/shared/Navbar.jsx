@@ -1,4 +1,3 @@
-import React from "react"
 import { useState } from "react"
 import Countdown from "react-countdown"
 import toast from "react-hot-toast"
@@ -66,6 +65,11 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
     isActive
       ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
       : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
+
+  const getMobileNavLinkClass = ({ isActive }) =>
+    isActive
+      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
+      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
 
   const navLinks = user ? (
     <>
@@ -194,35 +198,19 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
           <div className="md:hidden pb-4 flex flex-col space-y-1 bg-base-200/50 rounded-lg mt-2 p-2">
             {user ? (
               <>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/all-loans"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  All Loans
-                </NavLink>
+                {publicNavItems.slice(0, 2).map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={getMobileNavLinkClass}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
                 <NavLink
                   to="/dashboard"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
+                  className={getMobileNavLinkClass}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Dashboard
@@ -275,72 +263,32 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
               </>
             ) : (
               <>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </NavLink>
-                <NavLink
-                  to="/all-loans"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  All Loans
-                </NavLink>
-                <NavLink
-                  to="/about"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  About Us
-                </NavLink>
-                <NavLink
-                  to="/contact"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contact
-                </NavLink>
-                <NavLink
-                  to="/login"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary/20 text-primary font-medium rounded-lg transition-all"
-                      : "block px-4 py-3 text-base-content hover:bg-base-300 rounded-lg transition-all"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "block px-4 py-3 bg-primary text-white font-medium rounded-lg transition-all mt-2"
-                      : "block px-4 py-3 bg-primary/80 text-white hover:bg-primary rounded-lg transition-all mt-2 font-medium"
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Register
-                </NavLink>
+                {publicNavItems.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={getMobileNavLinkClass}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+                {authNavItems.map((item, index) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      index === 1 // Register button (last item)
+                        ? isActive
+                          ? "block px-4 py-3 bg-primary text-white font-medium rounded-lg transition-all mt-2"
+                          : "block px-4 py-3 bg-primary/80 text-white hover:bg-primary rounded-lg transition-all mt-2 font-medium"
+                        : getMobileNavLinkClass({ isActive })
+                    }
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
               </>
             )}
           </div>
