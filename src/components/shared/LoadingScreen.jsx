@@ -45,13 +45,13 @@ const LoadingScreen = () => {
 
         {/* Dots Animation */}
         <div className="mt-4 flex justify-center space-x-2">
-          <div className="h-2 w-2 rounded-full bg-primary animate-bounce"></div>
+          <div className="h-3 w-3 rounded-full bg-primary animate-bounce"></div>
           <div
-            className="h-2 w-2 rounded-full bg-primary animate-bounce"
+            className="h-3 w-3 rounded-full bg-primary animate-bounce"
             style={{ animationDelay: "0.1s" }}
           ></div>
           <div
-            className="h-2 w-2 rounded-full bg-primary animate-bounce"
+            className="h-3 w-3 rounded-full bg-primary animate-bounce"
             style={{ animationDelay: "0.2s" }}
           ></div>
         </div>

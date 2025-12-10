@@ -33,9 +33,9 @@ const LoanCard = ({ loan }) => {
         </h3>
 
         {/* Description */}
-        {/* <p className="text-base-content/70 text-sm line-clamp-2 mb-4 flex-shrink-0">
+        <p className="text-base-content/70 text-sm line-clamp-2 mb-4 flex-shrink-0">
           {loan.description}
-        </p> */}
+        </p>
 
         {/* Loan Details */}
         <div className="space-y-2 mb-4 flex-shrink-0">

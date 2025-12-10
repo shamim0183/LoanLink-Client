@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React from "react"
+import { useState } from "react"
 import Countdown from "react-countdown"
 import toast from "react-hot-toast"
 import { FaBars, FaTimes } from "react-icons/fa"
@@ -48,101 +48,48 @@ const Navbar = ({ hideMobileMenu = false, extraMargin = false }) => {
     }
   }
 
+  // Navigation configuration
+  const publicNavItems = [
+    { path: "/", label: "Home" },
+    { path: "/all-loans", label: "All Loans" },
+    { path: "/about", label: "About Us" },
+    { path: "/contact", label: "Contact" },
+  ]
+
+  const authNavItems = [
+    { path: "/login", label: "Login" },
+    { path: "/register", label: "Register" },
+  ]
+
+  // Shared className logic
+  const getNavLinkClass = ({ isActive }) =>
+    isActive
+      ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
+      : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
+
   const navLinks = user ? (
     <>
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        Home
-      </NavLink>
-      <NavLink
-        to="/all-loans"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        All Loans
-      </NavLink>
-      <NavLink
-        to="/dashboard"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
+      {publicNavItems.slice(0, 2).map((item) => (
+        <NavLink key={item.path} to={item.path} className={getNavLinkClass}>
+          {item.label}
+        </NavLink>
+      ))}
+      <NavLink to="/dashboard" className={getNavLinkClass}>
         Dashboard
       </NavLink>
     </>
   ) : (
     <>
-      <NavLink
-        to="/"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        Home
-      </NavLink>
-      <NavLink
-        to="/all-loans"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        All Loans
-      </NavLink>
-      <NavLink
-        to="/about"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        About Us
-      </NavLink>
-      <NavLink
-        to="/contact"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        Contact
-      </NavLink>
-      <NavLink
-        to="/login"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        Login
-      </NavLink>
-      <NavLink
-        to="/register"
-        className={({ isActive }) =>
-          isActive
-            ? "text-primary font-semibold relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-0.5 after:bg-primary"
-            : "text-base-content hover:text-primary transition-all duration-200 hover:scale-105"
-        }
-      >
-        Register
-      </NavLink>
+      {publicNavItems.map((item) => (
+        <NavLink key={item.path} to={item.path} className={getNavLinkClass}>
+          {item.label}
+        </NavLink>
+      ))}
+      {authNavItems.map((item) => (
+        <NavLink key={item.path} to={item.path} className={getNavLinkClass}>
+          {item.label}
+        </NavLink>
+      ))}
     </>
   )
 
