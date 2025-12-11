@@ -4,7 +4,7 @@ const useDocumentTitle = (title) => {
   useEffect(() => {
     const prevTitle = document.title
     document.title = title
-      ? `${title} | LoanLink`
+      ? `${title}`
       : "LoanLink - Microloan Management System"
 
     return () => {
