@@ -1,8 +1,11 @@
 import React from "react"
 import { FaChartLine, FaHandshake, FaShieldAlt, FaUsers } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const About = () => {
+  useDocumentTitle("About Us - LoanLink")
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}

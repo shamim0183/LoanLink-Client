@@ -5,8 +5,11 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import LoadingSpinner from "../../components/shared/LoadingSpinner"
 import { useQuery } from "@tanstack/react-query";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 const PaymentHistory = () => {
+  useDocumentTitle("Payment History - LoanLink")
+
   const navigate = useNavigate()
   const [filter, setFilter] = useState("all") // all, completed, pending
 

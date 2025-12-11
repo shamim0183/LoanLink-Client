@@ -5,9 +5,12 @@ import { useState } from "react"
 import { FaCheck, FaEye, FaTimes } from "react-icons/fa"
 import Swal from "sweetalert2"
 import { ApplicationModal, DataTable } from "../../../components/dashboard"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const PendingApplications = () => {
+  useDocumentTitle("Pending Applications - LoanLink")
+
   const [selectedApp, setSelectedApp] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const queryClient = useQueryClient()

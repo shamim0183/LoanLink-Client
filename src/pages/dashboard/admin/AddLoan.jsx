@@ -7,8 +7,11 @@ import { FaSave } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 import { FormInput, FormSelect, FormTextarea } from "../../../components/forms"
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 
 const AddLoan = () => {
+  useDocumentTitle("Add New Loan (Admin) - LoanLink")
+
   const navigate = useNavigate()
   const {
     register,

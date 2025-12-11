@@ -10,8 +10,11 @@ import { FormInput } from "../components/forms"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import { ERROR_MESSAGES } from "../constants"
 import useAuth from "../hooks/useAuth"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const ApplyLoan = () => {
+  useDocumentTitle("Apply for Loan - LoanLink")
+
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()

@@ -21,9 +21,11 @@ import TrustedPartners from "../components/home/TrustedPartners"
 import WhyChooseUs from "../components/home/WhyChooseUs"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
-import useAuth from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth"
+import useDocumentTitle from "../hooks/useDocumentTitle" // Added import
 
 const Home = () => {
+  useDocumentTitle("Home - LoanLink") // Added hook call
   const { user } = useAuth()
 
   // Fetch featured loans using TanStack Query

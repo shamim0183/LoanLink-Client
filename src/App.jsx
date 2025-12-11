@@ -1,38 +1,59 @@
-import React, { useEffect, useState } from "react"
+import React from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+
+// Components
 import LoadingScreen from "./components/shared/LoadingScreen"
+
+// Hooks
 import useAuth from "./hooks/useAuth"
+
+// Layouts
 import DashboardLayout from "./layouts/DashboardLayout"
 import MainLayout from "./layouts/MainLayout"
-import About from "./pages/About"
-import AllLoans from "./pages/AllLoans"
-import ApplyLoan from "./pages/ApplyLoan"
-import Contact from "./pages/Contact"
-import AdminAddLoan from "./pages/dashboard/admin/AddLoan"
-import AdminAllLoans from "./pages/dashboard/admin/AllLoans"
-import LoanApplications from "./pages/dashboard/admin/LoanApplications"
-import ManageUsers from "./pages/dashboard/admin/ManageUsers"
-import DashboardHome from "./pages/dashboard/DashboardHome"
-import AddLoan from "./pages/dashboard/manager/AddLoan"
-import ApprovedApplications from "./pages/dashboard/manager/ApprovedApplications"
-import ManageBorrowers from "./pages/dashboard/manager/ManageBorrowers"
-import ManageLoans from "./pages/dashboard/manager/ManageLoans"
-import PendingApplications from "./pages/dashboard/manager/PendingApplications"
-import MyLoans from "./pages/dashboard/MyLoans"
-import PaymentHistory from "./pages/dashboard/PaymentHistory"
-import Profile from "./pages/dashboard/Profile"
-import Home from "./pages/Home"
-import LoanDetails from "./pages/LoanDetails"
-import Login from "./pages/Login"
-import NotFound from "./pages/NotFound"
-import PaymentCancel from "./pages/PaymentCancel"
-import PaymentSuccess from "./pages/PaymentSuccess"
-import Receipt from "./pages/Receipt"
-import Register from "./pages/Register"
+
+// Main Pages
+import {
+  About,
+  AllLoans,
+  ApplyLoan,
+  Contact,
+  ForgotPassword,
+  Home,
+  LoanDetails,
+  Login,
+  NotFound,
+  PaymentCancel,
+  PaymentSuccess,
+  Receipt,
+  Register,
+} from "./pages"
+
+// Dashboard Pages
+import {
+  DashboardHome,
+  MyLoans,
+  PaymentHistory,
+  Profile,
+} from "./pages/dashboard"
+import {
+  AdminAddLoan,
+  AdminAllLoans,
+  LoanApplications,
+  ManageUsers,
+} from "./pages/dashboard/admin"
+import {
+  ApprovedApplications,
+  ManageBorrowers,
+  ManageLoans,
+  ManagerAddLoan,
+  PendingApplications,
+} from "./pages/dashboard/manager"
+
+// Route Guards
 import AdminRoute from "./routes/AdminRoute"
 import ManagerRoute from "./routes/ManagerRoute"
 import PrivateRoute from "./routes/PrivateRoute"
-import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const { loading } = useAuth()
@@ -120,7 +141,7 @@ function App() {
           {/* Borrower Routes */}
           <Route path="my-loans" element={<MyLoans />} />
           <Route path="payment-history" element={<PaymentHistory />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="borrower/profile" element={<Profile />} />
 
           {/* Admin Routes */}
           <Route
@@ -155,13 +176,21 @@ function App() {
               </AdminRoute>
             }
           />
+          <Route
+            path="admin/profile"
+            element={
+              <AdminRoute>
+                <Profile />
+              </AdminRoute>
+            }
+          />
 
           {/* Manager Routes */}
           <Route
             path="add-loan"
             element={
               <ManagerRoute>
-                <AddLoan />
+                <ManagerAddLoan />
               </ManagerRoute>
             }
           />
@@ -194,6 +223,14 @@ function App() {
             element={
               <ManagerRoute>
                 <ManageBorrowers />
+              </ManagerRoute>
+            }
+          />
+          <Route
+            path="manager/profile"
+            element={
+              <ManagerRoute>
+                <Profile />
               </ManagerRoute>
             }
           />

@@ -6,8 +6,11 @@ import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
 import Swal from "sweetalert2"
 import useAuth from "../../../hooks/useAuth"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 
 const ManageUsers = () => {
+  useDocumentTitle("Manage Users - LoanLink")
+
   const { user: currentUser } = useAuth() // Get current logged-in user
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")

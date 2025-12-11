@@ -5,9 +5,12 @@ import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaSearch, FaTrash } from "react-icons/fa"
 import useAuth from "../../../hooks/useAuth"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const ManageLoans = () => {
+  useDocumentTitle("Manage Loans - LoanLink")
+
   const { user } = useAuth() // Get current user
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")

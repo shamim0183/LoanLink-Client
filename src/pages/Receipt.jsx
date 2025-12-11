@@ -6,8 +6,11 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const Receipt = () => {
+  useDocumentTitle("Payment Receipt - LoanLink")
+
   const { applicationId } = useParams()
   const navigate = useNavigate()
   const [payment, setPayment] = useState(null)

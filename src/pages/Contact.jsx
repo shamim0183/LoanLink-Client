@@ -9,8 +9,11 @@ import {
 } from "react-icons/fa"
 import Swal from "sweetalert2"
 import LocationMap from "../components/LocationMap"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const Contact = () => {
+  useDocumentTitle("Contact Us - LoanLink")
+
   const mapRef = useRef(null)
   const isMapInView = useInView(mapRef, { once: true, amount: 0.3 })
   const [mapVisible, setMapVisible] = useState(false)

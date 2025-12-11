@@ -9,9 +9,11 @@ import { FormInput } from "../components/forms"
 import LoadingButton from "../components/shared/LoadingButton"
 import { ERROR_MESSAGES } from "../constants"
 import useAuth from "../hooks/useAuth"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 import { emailValidation } from "../utils/validations"
 
 const ForgotPassword = () => {
+  useDocumentTitle("Forgot Password - LoanLink")
   const { resetPassword } = useAuth()
   const location = useLocation()
   const emailFromLogin = location.state?.email || ""

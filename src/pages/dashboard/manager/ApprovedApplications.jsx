@@ -3,9 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
 import { FaCalendar } from "react-icons/fa"
 import { DataTable, StatusBadge } from "../../../components/dashboard"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 import { formatDate, formatRelativeTime } from "../../../utils/dateUtils"
 
 const ApprovedApplications = () => {
+  useDocumentTitle("Approved Applications - LoanLink")
+
   // Fetch approved applications using TanStack Query
   const { data: applications = [], isLoading: loading } = useQuery({
     queryKey: ["approved-applications"],

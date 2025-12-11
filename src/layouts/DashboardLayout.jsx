@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { useState } from "react";
 import toast from "react-hot-toast"
 import {
@@ -17,7 +17,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import Footer from "../components/shared/Footer"
 import Navbar from "../components/shared/Navbar"
 import useAuth from "../hooks/useAuth"
-import { getAvatarUrl } from '../utils/avatar';
+import { getAvatarUrl } from "../utils/avatar"
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth()
@@ -46,6 +46,7 @@ const DashboardLayout = () => {
       icon: <FaTasks />,
       text: "Applications",
     },
+    { to: "/dashboard/admin/profile", icon: <FaUser />, text: "Profile" },
   ]
 
   // Manager Menu
@@ -72,14 +73,14 @@ const DashboardLayout = () => {
       icon: <FaUsers />,
       text: "Manage Borrowers",
     },
-    { to: "/dashboard/profile", icon: <FaUser />, text: "Profile" },
+    { to: "/dashboard/manager/profile", icon: <FaUser />, text: "Profile" },
   ]
 
   // Borrower Menu
   const borrowerMenu = [
     { to: "/dashboard", icon: <FaHome />, text: "Dashboard" },
     { to: "/dashboard/my-loans", icon: <FaFileAlt />, text: "My Loans" },
-    { to: "/dashboard/profile", icon: <FaUser />, text: "Profile" },
+    { to: "/dashboard/borrower/profile", icon: <FaUser />, text: "Profile" },
   ]
 
   const getMenuItems = () => {

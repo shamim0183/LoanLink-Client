@@ -10,8 +10,11 @@ import {
 } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 import useAuth from "../../hooks/useAuth"
+import useDocumentTitle from "../../hooks/useDocumentTitle"
 
 const DashboardHome = () => {
+  useDocumentTitle("Dashboard - LoanLink")
+
   const { user } = useAuth()
   const navigate = useNavigate()
 

@@ -10,9 +10,12 @@ import { FormInput, PasswordInput } from "../components/forms"
 import LoadingButton from "../components/shared/LoadingButton"
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../constants"
 import useAuth from "../hooks/useAuth"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 import { emailValidation } from "../utils/validations"
 
 const Login = () => {
+  useDocumentTitle("Login - LoanLink")
+
   const { login, googleLogin, githubLogin } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()

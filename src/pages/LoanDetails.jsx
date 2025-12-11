@@ -7,8 +7,11 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import useAuth from "../hooks/useAuth"
 import { useQuery } from "@tanstack/react-query";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const LoanDetails = () => {
+  useDocumentTitle("Loan Details - LoanLink")
+
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()

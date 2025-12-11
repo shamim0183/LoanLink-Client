@@ -4,8 +4,11 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { FaEdit, FaToggleOff, FaToggleOn, FaTrash } from "react-icons/fa"
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query"
+import useDocumentTitle from '../../../hooks/useDocumentTitle';
 
 const AllLoans = () => {
+  useDocumentTitle("All Loans (Admin) - LoanLink")
+
   const queryClient = useQueryClient()
   const [selectedLoan, setSelectedLoan] = useState(null)
   const [editMode, setEditMode] = useState(false)

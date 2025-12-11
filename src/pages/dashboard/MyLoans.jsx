@@ -9,10 +9,13 @@ import PaymentDetailsModal from "../../components/modals/PaymentDetailsModal"
 import LoadingSpinner from "../../components/shared/LoadingSpinner"
 import useAuth from "../../hooks/useAuth"
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
 const MyLoans = () => {
+  useDocumentTitle("My Loans - LoanLink")
+
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [filter, setFilter] = useState("all")

@@ -13,9 +13,21 @@ import {
   FaUser,
 } from "react-icons/fa"
 import useAuth from "../../hooks/useAuth"
+import useDocumentTitle from "../../hooks/useDocumentTitle"
+import { useQuery } from "@tanstack/react-query";
 
 const Profile = () => {
   const { user, updateUserProfile } = useAuth()
+
+  // Dynamic title based on role
+  const profileTitle =
+    user?.role === "admin"
+      ? "Admin Profile - LoanLink"
+      : user?.role === "manager"
+      ? "Manager Profile - LoanLink"
+      : "My Profile - LoanLink"
+
+  useDocumentTitle(profileTitle)
   const [isEditing, setIsEditing] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
@@ -23,6 +35,19 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     name: user?.name || "",
     photoURL: user?.photoURL || "",
+  })
+
+  // Fetch user statistics from backend
+  const { data: statsData } = useQuery({
+    queryKey: ["profileStats", user?.role],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/dashboard/stats`,
+        { withCredentials: true }
+      )
+      return data
+    },
+    enabled: !!user,
   })
 
   if (!user) {
@@ -280,18 +305,75 @@ const Profile = () => {
               <h3 className="card-title mb-4">Account Statistics</h3>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div className="stat bg-base-200 rounded-lg">
-                  <div className="stat-title">Active Loans</div>
-                  <div className="stat-value text-primary">0</div>
-                </div>
-                <div className="stat bg-base-200 rounded-lg">
-                  <div className="stat-title">Applications</div>
-                  <div className="stat-value text-secondary">0</div>
-                </div>
-                <div className="stat bg-base-200 rounded-lg">
-                  <div className="stat-title">Total Paid</div>
-                  <div className="stat-value text-accent">$0</div>
-                </div>
+                {user?.role === "borrower" && (
+                  <>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">My Applications</div>
+                      <div className="stat-value text-primary">
+                        {statsData?.myApplications || 0}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Approved</div>
+                      <div className="stat-value text-success">
+                        {statsData?.approvedApplications || 0}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Total Borrowed</div>
+                      <div className="stat-value text-secondary">
+                        ${(statsData?.totalBorrowed || 0).toLocaleString()}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {user?.role === "manager" && (
+                  <>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">My Loans</div>
+                      <div className="stat-value text-primary">
+                        {statsData?.myLoans || 0}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Applications</div>
+                      <div className="stat-value text-warning">
+                        {statsData?.pendingApplications || 0}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Approved</div>
+                      <div className="stat-value text-success">
+                        {statsData?.approvedApplications || 0}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {user?.role === "admin" && (
+                  <>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Total Users</div>
+                      <div className="stat-value text-primary">
+                        {statsData?.totalUsers || 0}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Total Loans</div>
+                      <div className="stat-value text-secondary">
+                        {statsData?.totalLoans || 0}
+                      </div>
+                    </div>
+                    <div className="stat bg-base-200 rounded-lg">
+                      <div className="stat-title">Applications</div>
+                      <div className="stat-value text-success">
+                        {(statsData?.pendingApplications || 0) +
+                          (statsData?.approvedApplications || 0)}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

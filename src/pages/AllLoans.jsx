@@ -7,8 +7,11 @@ import { FaSearch } from "react-icons/fa"
 import ReactPaginate from "react-paginate"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const AllLoans = () => {
+  useDocumentTitle("All Loans - LoanLink")
+
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [currentPage, setCurrentPage] = useState(0)

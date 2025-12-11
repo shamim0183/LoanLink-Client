@@ -5,8 +5,11 @@ import { useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import { FaBan, FaSearch } from "react-icons/fa"
 import Swal from "sweetalert2"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 
 const ManageBorrowers = () => {
+  useDocumentTitle("Manage Borrowers - LoanLink")
+
   const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedUser, setSelectedUser] = useState(null)

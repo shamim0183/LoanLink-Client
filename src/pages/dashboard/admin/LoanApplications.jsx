@@ -9,8 +9,11 @@ import {
   DataTable,
   StatusBadge,
 } from "../../../components/dashboard"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 
 const LoanApplications = () => {
+  useDocumentTitle("Loan Applications - LoanLink")
+
   const queryClient = useQueryClient()
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedApp, setSelectedApp] = useState(null)

@@ -1,9 +1,11 @@
-import React from 'react'
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 import { FaArrowLeft, FaExclamationTriangle, FaRedo } from "react-icons/fa"
 import { useNavigate, useParams } from "react-router-dom"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const PaymentCancel = () => {
+  useDocumentTitle("Payment Cancelled - LoanLink")
+
   const navigate = useNavigate()
   const { id } = useParams() // loan ID if coming from apply-loan
 

@@ -8,8 +8,11 @@ import { FaCheckCircle, FaDownload, FaHome, FaListAlt } from "react-icons/fa"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import ReceiptCard from "../components/shared/ReceiptCard"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const PaymentSuccess = () => {
+  useDocumentTitle("Payment Successful - LoanLink")
+
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const sessionId = searchParams.get("session_id")

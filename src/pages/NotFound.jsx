@@ -2,8 +2,11 @@ import React from "react"
 import { motion } from "framer-motion"
 import { FaFileAlt, FaHome } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import useDocumentTitle from "../hooks/useDocumentTitle"
 
 const NotFound = () => {
+  useDocumentTitle("404 Not Found - LoanLink")
+
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">
       <motion.div

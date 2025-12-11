@@ -15,8 +15,11 @@ import {
   nameValidation,
   passwordValidation,
 } from "../utils/validations"
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const Register = () => {
+  useDocumentTitle("Register - LoanLink")
+
   const {
     register: registerUser,
     googleLogin,

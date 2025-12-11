@@ -1,5 +1,4 @@
-import React from "react";
-import axios from "axios";
+import axios from "axios"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -8,8 +7,11 @@ import { useNavigate } from "react-router-dom"
 import Swal from "sweetalert2"
 import { FormInput, FormSelect, FormTextarea } from "../../../components/forms"
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../../../constants"
+import useDocumentTitle from "../../../hooks/useDocumentTitle"
 
 const AddLoan = () => {
+  useDocumentTitle("Add New Loan - LoanLink")
+
   const navigate = useNavigate()
   const {
     register,
