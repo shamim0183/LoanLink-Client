@@ -5,6 +5,8 @@ import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate, useParams } from "react-router-dom"
+import ReceiptHeader from "../components/receipt/ReceiptHeader"
+import ReceiptTable from "../components/receipt/ReceiptTable"
 import LoadingSpinner from "../components/shared/LoadingSpinner"
 import useDocumentTitle from "../hooks/useDocumentTitle"
 
@@ -62,7 +64,7 @@ const Receipt = () => {
     } catch (error) {
       console.error("Error fetching receipt:", error)
       toast.error("Failed to load receipt")
-      setTimeout(() => navigate("/dashboard/my-loans"), 2000)
+      setTimeout(() => navigate("/dashboard/borrower/my-loans"), 2000)
     } finally {
       setLoading(false)
     }
@@ -95,7 +97,7 @@ const Receipt = () => {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Receipt Not Found</h2>
           <button
-            onClick={() => navigate("/dashboard/my-loans")}
+            onClick={() => navigate("/dashboard/borrower/my-loans")}
             className="btn btn-primary"
           >
             Back to My Applications
@@ -249,117 +251,78 @@ const Receipt = () => {
           </div>
 
           {/* Receipt Card */}
-          <div id="receipt-content" className="card bg-base-100 shadow-2xl">
+          <div id="receipt-content" className="card bg-base-200/40 shadow-2xl">
             <div className="card-body p-8">
-              {/* Header */}
-              <div className="text-center border-b-2 border-primary pb-4 mb-6">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-3xl">📊</span>
-                  <h2 className="text-3xl font-bold text-primary">LoanLink</h2>
-                </div>
-                <p className="text-sm text-base-content/60 font-semibold">
-                  PAYMENT RECEIPT
-                </p>
-                <p className="text-xs text-base-content/50 mt-1">
-                  Transaction ID: {payment.transactionId}
-                </p>
-              </div>
+              <ReceiptHeader transactionId={payment.transactionId} />
 
-              {/* Payment Summary Table */}
-              <div className="mb-6">
-                <h3 className="text-lg font-bold mb-3 text-primary">
-                  Payment Information
-                </h3>
-                <table className="table table-zebra w-full">
-                  <tbody>
-                    <tr>
-                      <td className="font-semibold w-1/3">Amount Paid</td>
-                      <td className="text-right">
-                        <span className="text-2xl font-bold text-success">
-                          ${payment.amount.toFixed(2)}
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Payment Date</td>
-                      <td className="text-right">
-                        {new Date(payment.createdAt).toLocaleString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Payment Method</td>
-                      <td className="text-right">Stripe</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <ReceiptTable
+                title="Payment Information"
+                rows={[
+                  {
+                    label: "Amount Paid",
+                    value: (
+                      <span className="text-2xl font-bold text-success">
+                        ${payment.amount.toFixed(2)}
+                      </span>
+                    ),
+                  },
+                  {
+                    label: "Payment Date",
+                    value: new Date(payment.createdAt).toLocaleString(),
+                  },
+                  {
+                    label: "Payment Method",
+                    value: "Stripe",
+                  },
+                ]}
+              />
 
-              {/* Applicant Details Table */}
-              <div className="mb-6">
-                <h3 className="text-lg font-bold mb-3 text-primary">
-                  Applicant Details
-                </h3>
-                <table className="table table-zebra w-full">
-                  <tbody>
-                    <tr>
-                      <td className="font-semibold w-1/3">Full Name</td>
-                      <td className="text-right">
-                        {payment.applicationId.firstName}{" "}
-                        {payment.applicationId.lastName}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Email</td>
-                      <td className="text-right">{payment.userEmail}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Contact Number</td>
-                      <td className="text-right">
-                        {payment.applicationId.contactNumber}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">National ID</td>
-                      <td className="text-right">
-                        {payment.applicationId.nationalId}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <ReceiptTable
+                title="Applicant Details"
+                rows={[
+                  {
+                    label: "Full Name",
+                    value: `${payment.applicationId.firstName} ${payment.applicationId.lastName}`,
+                  },
+                  {
+                    label: "Email",
+                    value: payment.userEmail,
+                  },
+                  {
+                    label: "Contact Number",
+                    value: payment.applicationId.contactNumber,
+                  },
+                  {
+                    label: "National ID",
+                    value: payment.applicationId.nationalId,
+                  },
+                ]}
+              />
 
-              {/* Loan Details Table */}
-              <div className="mb-4">
-                <h3 className="text-lg font-bold mb-3 text-primary">
-                  Loan Details
-                </h3>
-                <table className="table table-zebra w-full">
-                  <tbody>
-                    <tr>
-                      <td className="font-semibold w-1/3">Loan Type</td>
-                      <td className="text-right">{payment.loanId.title}</td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Category</td>
-                      <td className="text-right capitalize">
-                        {payment.loanId.category}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Requested Amount</td>
-                      <td className="text-right font-bold text-primary">
-                        ${payment.applicationId.loanAmount.toLocaleString()}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="font-semibold">Interest Rate</td>
-                      <td className="text-right font-bold text-primary">
-                        {payment.applicationId.interestRate}%
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <ReceiptTable
+                title="Loan Details"
+                rows={[
+                  {
+                    label: "Loan Type",
+                    value: payment.loanId.title,
+                  },
+                  {
+                    label: "Category",
+                    value: payment.loanId.category,
+                    className: "capitalize",
+                  },
+                  {
+                    label: "Requested Amount",
+                    value: `$${payment.applicationId.loanAmount.toLocaleString()}`,
+                    className: "font-bold text-primary",
+                  },
+                  {
+                    label: "Interest Rate",
+                    value: `${payment.applicationId.interestRate}%`,
+                    className: "font-bold text-primary",
+                  },
+                ]}
+              />
 
               {/* Footer Note */}
               <div className="text-center mt-6 pt-4 border-t">
@@ -405,7 +368,7 @@ const Receipt = () => {
             </button>
 
             <button
-              onClick={() => navigate("/dashboard/my-loans")}
+              onClick={() => navigate("/dashboard/borrower/my-loans")}
               className="btn btn-outline"
             >
               My Applications

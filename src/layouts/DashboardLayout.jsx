@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React from "react"
+import { useState } from "react"
 import toast from "react-hot-toast"
 import {
   FaBars,
@@ -38,11 +38,19 @@ const DashboardLayout = () => {
   // Admin Menu
   const adminMenu = [
     { to: "/dashboard", icon: <FaHome />, text: "Dashboard" },
-    { to: "/dashboard/manage-users", icon: <FaUsers />, text: "Manage Users" },
-    { to: "/dashboard/admin/add-loan", icon: <FaPlus />, text: "Add Loan" },
-    { to: "/dashboard/all-loans", icon: <FaFileAlt />, text: "All Loans" },
     {
-      to: "/dashboard/loan-applications",
+      to: "/dashboard/admin/manage-users",
+      icon: <FaUsers />,
+      text: "Manage Users",
+    },
+    { to: "/dashboard/admin/add-loan", icon: <FaPlus />, text: "Add Loan" },
+    {
+      to: "/dashboard/admin/all-loans",
+      icon: <FaFileAlt />,
+      text: "All Loans",
+    },
+    {
+      to: "/dashboard/admin/loan-applications",
       icon: <FaTasks />,
       text: "Applications",
     },
@@ -52,24 +60,24 @@ const DashboardLayout = () => {
   // Manager Menu
   const managerMenu = [
     { to: "/dashboard", icon: <FaHome />, text: "Dashboard" },
-    { to: "/dashboard/add-loan", icon: <FaPlus />, text: "Add Loan" },
+    { to: "/dashboard/manager/add-loan", icon: <FaPlus />, text: "Add Loan" },
     {
-      to: "/dashboard/manage-loans",
+      to: "/dashboard/manager/manage-loans",
       icon: <FaFileAlt />,
       text: "Manage Loans",
     },
     {
-      to: "/dashboard/pending-applications",
+      to: "/dashboard/manager/pending-applications",
       icon: <FaTasks />,
       text: "Pending",
     },
     {
-      to: "/dashboard/approved-applications",
+      to: "/dashboard/manager/approved-applications",
       icon: <FaCheckCircle />,
       text: "Approved",
     },
     {
-      to: "/dashboard/manage-borrowers",
+      to: "/dashboard/manager/manage-borrowers",
       icon: <FaUsers />,
       text: "Manage Borrowers",
     },
@@ -79,7 +87,11 @@ const DashboardLayout = () => {
   // Borrower Menu
   const borrowerMenu = [
     { to: "/dashboard", icon: <FaHome />, text: "Dashboard" },
-    { to: "/dashboard/my-loans", icon: <FaFileAlt />, text: "My Loans" },
+    {
+      to: "/dashboard/borrower/my-loans",
+      icon: <FaFileAlt />,
+      text: "My Loans",
+    },
     { to: "/dashboard/borrower/profile", icon: <FaUser />, text: "Profile" },
   ]
 

@@ -4,7 +4,6 @@ import { useState } from "react"
 import toast from "react-hot-toast"
 import {
   FaCalendar,
-  FaCamera,
   FaEnvelope,
   FaMapMarkerAlt,
   FaPhone,
@@ -12,6 +11,9 @@ import {
   FaTimes,
   FaUser,
 } from "react-icons/fa"
+import ProfileAvatar from "../../components/profile/ProfileAvatar"
+import ProfileInfoCard from "../../components/profile/ProfileInfoCard"
+import RoleBasedStats from "../../components/profile/RoleBasedStats"
 import useAuth from "../../hooks/useAuth"
 import useDocumentTitle from "../../hooks/useDocumentTitle"
 import { useQuery } from "@tanstack/react-query";
@@ -162,46 +164,14 @@ const Profile = () => {
         <div className="lg:col-span-1">
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body items-center text-center">
-              <div className="relative">
-                <div className="avatar">
-                  <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                    <img
-                      src={
-                        imagePreview ||
-                        formData.photoURL ||
-                        user.photoURL ||
-                        "https://via.placeholder.com/128"
-                      }
-                      alt={user.name}
-                    />
-                  </div>
-                </div>
-                {isEditing && (
-                  <div
-                    className="tooltip tooltip-right"
-                    data-tip="Upload Photo"
-                  >
-                    <label
-                      htmlFor="profileImage"
-                      className="absolute bottom-0 right-0 btn  btn-xs hover:btn-xs cursor-pointer"
-                    >
-                      {uploading ? (
-                        <span className="loading loading-spinner loading-xs"></span>
-                      ) : (
-                        <FaCamera className="text-white" />
-                      )}
-                      <input
-                        id="profileImage"
-                        type="file"
-                        accept="image/*"
-                        className="hidden "
-                        onChange={handleImageUpload}
-                        disabled={uploading}
-                      />
-                    </label>
-                  </div>
-                )}
-              </div>
+              <ProfileAvatar
+                photoURL={formData.photoURL || user.photoURL}
+                imagePreview={imagePreview}
+                name={user.name}
+                isEditing={isEditing}
+                uploading={uploading}
+                onImageUpload={handleImageUpload}
+              />
 
               {isEditing ? (
                 <input
@@ -249,51 +219,39 @@ const Profile = () => {
               <h3 className="card-title mb-4">Profile Information</h3>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
-                  <FaUser className="text-2xl text-primary" />
-                  <div>
-                    <p className="text-sm opacity-70">Full Name</p>
-                    <p className="font-semibold">{user.name}</p>
-                  </div>
-                </div>
+                <ProfileInfoCard
+                  icon={FaUser}
+                  label="Full Name"
+                  value={user.name}
+                />
 
-                <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
-                  <FaEnvelope className="text-2xl text-primary" />
-                  <div>
-                    <p className="text-sm opacity-70">Email Address</p>
-                    <p className="font-semibold">{user.email}</p>
-                  </div>
-                </div>
+                <ProfileInfoCard
+                  icon={FaEnvelope}
+                  label="Email Address"
+                  value={user.email}
+                />
 
-                <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
-                  <FaCalendar className="text-2xl text-primary" />
-                  <div>
-                    <p className="text-sm opacity-70">Account Role</p>
-                    <p className="font-semibold capitalize">{user.role}</p>
-                    <p className="text-xs opacity-60 mt-1">
-                      (Cannot be changed)
-                    </p>
-                  </div>
-                </div>
+                <ProfileInfoCard
+                  icon={FaCalendar}
+                  label="Account Role"
+                  value={user.role}
+                  note="(Cannot be changed)"
+                />
 
                 {user.phone && (
-                  <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
-                    <FaPhone className="text-2xl text-primary" />
-                    <div>
-                      <p className="text-sm opacity-70">Phone Number</p>
-                      <p className="font-semibold">{user.phone}</p>
-                    </div>
-                  </div>
+                  <ProfileInfoCard
+                    icon={FaPhone}
+                    label="Phone Number"
+                    value={user.phone}
+                  />
                 )}
 
                 {user.address && (
-                  <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
-                    <FaMapMarkerAlt className="text-2xl text-primary" />
-                    <div>
-                      <p className="text-sm opacity-70">Address</p>
-                      <p className="font-semibold">{user.address}</p>
-                    </div>
-                  </div>
+                  <ProfileInfoCard
+                    icon={FaMapMarkerAlt}
+                    label="Address"
+                    value={user.address}
+                  />
                 )}
               </div>
             </div>
@@ -305,75 +263,7 @@ const Profile = () => {
               <h3 className="card-title mb-4">Account Statistics</h3>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {user?.role === "borrower" && (
-                  <>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">My Applications</div>
-                      <div className="stat-value text-primary">
-                        {statsData?.myApplications || 0}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Approved</div>
-                      <div className="stat-value text-success">
-                        {statsData?.approvedApplications || 0}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Total Borrowed</div>
-                      <div className="stat-value text-secondary">
-                        ${(statsData?.totalBorrowed || 0).toLocaleString()}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {user?.role === "manager" && (
-                  <>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">My Loans</div>
-                      <div className="stat-value text-primary">
-                        {statsData?.myLoans || 0}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Applications</div>
-                      <div className="stat-value text-warning">
-                        {statsData?.pendingApplications || 0}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Approved</div>
-                      <div className="stat-value text-success">
-                        {statsData?.approvedApplications || 0}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {user?.role === "admin" && (
-                  <>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Total Users</div>
-                      <div className="stat-value text-primary">
-                        {statsData?.totalUsers || 0}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Total Loans</div>
-                      <div className="stat-value text-secondary">
-                        {statsData?.totalLoans || 0}
-                      </div>
-                    </div>
-                    <div className="stat bg-base-200 rounded-lg">
-                      <div className="stat-title">Applications</div>
-                      <div className="stat-value text-success">
-                        {(statsData?.pendingApplications || 0) +
-                          (statsData?.approvedApplications || 0)}
-                      </div>
-                    </div>
-                  </>
-                )}
+                <RoleBasedStats role={user?.role} statsData={statsData} />
               </div>
             </div>
           </div>

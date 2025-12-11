@@ -207,13 +207,15 @@ const DashboardHome = () => {
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/my-loans")}
+                  onClick={() => navigate("/dashboard/borrower/my-loans")}
                 >
                   View My Loans
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/payment-history")}
+                  onClick={() =>
+                    navigate("/dashboard/borrower/payment-history")
+                  }
                 >
                   Payment History
                 </button>
@@ -223,19 +225,21 @@ const DashboardHome = () => {
               <>
                 <button
                   className="btn btn-primary"
-                  onClick={() => navigate("/dashboard/add-loan")}
+                  onClick={() => navigate("/dashboard/manager/add-loan")}
                 >
                   Add New Loan
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/pending-applications")}
+                  onClick={() =>
+                    navigate("/dashboard/manager/pending-applications")
+                  }
                 >
                   Review Applications
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/manage-loans")}
+                  onClick={() => navigate("/dashboard/manager/manage-loans")}
                 >
                   Manage Loans
                 </button>
@@ -245,21 +249,21 @@ const DashboardHome = () => {
               <>
                 <button
                   className="btn btn-primary"
-                  onClick={() => navigate("/dashboard/manage-users")}
+                  onClick={() => navigate("/dashboard/admin/manage-users")}
                 >
                   Manage Users
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/all-loans")}
+                  onClick={() => navigate("/dashboard/admin/all-loans")}
                 >
                   View All Loans
                 </button>
                 <button
                   className="btn btn-outline"
-                  onClick={() => navigate("/dashboard/manage-users")}
+                  onClick={() => navigate("/dashboard/admin/loan-applications")}
                 >
-                  System Settings
+                  Applications
                 </button>
               </>
             )}

@@ -198,7 +198,7 @@ const PaymentSuccess = () => {
                 {downloading ? "Downloading..." : "Download Receipt"}
               </button>
               <button
-                onClick={() => navigate("/dashboard/my-loans")}
+                onClick={() => navigate("/dashboard/borrower/my-loans")}
                 className="btn btn-outline gap-2"
               >
                 <FaListAlt />

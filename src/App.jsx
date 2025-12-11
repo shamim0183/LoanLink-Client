@@ -1,5 +1,5 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React from "react"
+import { useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 // Components
@@ -139,13 +139,13 @@ function App() {
           <Route index element={<DashboardHome />} />
 
           {/* Borrower Routes */}
-          <Route path="my-loans" element={<MyLoans />} />
-          <Route path="payment-history" element={<PaymentHistory />} />
+          <Route path="borrower/my-loans" element={<MyLoans />} />
+          <Route path="borrower/payment-history" element={<PaymentHistory />} />
           <Route path="borrower/profile" element={<Profile />} />
 
           {/* Admin Routes */}
           <Route
-            path="manage-users"
+            path="admin/manage-users"
             element={
               <AdminRoute>
                 <ManageUsers />
@@ -153,7 +153,7 @@ function App() {
             }
           />
           <Route
-            path="all-loans"
+            path="admin/all-loans"
             element={
               <AdminRoute>
                 <AdminAllLoans />
@@ -161,7 +161,7 @@ function App() {
             }
           />
           <Route
-            path="loan-applications"
+            path="admin/loan-applications"
             element={
               <AdminRoute>
                 <LoanApplications />
@@ -187,7 +187,7 @@ function App() {
 
           {/* Manager Routes */}
           <Route
-            path="add-loan"
+            path="manager/add-loan"
             element={
               <ManagerRoute>
                 <ManagerAddLoan />
@@ -195,7 +195,7 @@ function App() {
             }
           />
           <Route
-            path="manage-loans"
+            path="manager/manage-loans"
             element={
               <ManagerRoute>
                 <ManageLoans />
@@ -203,7 +203,7 @@ function App() {
             }
           />
           <Route
-            path="pending-applications"
+            path="manager/pending-applications"
             element={
               <ManagerRoute>
                 <PendingApplications />
@@ -211,7 +211,7 @@ function App() {
             }
           />
           <Route
-            path="approved-applications"
+            path="manager/approved-applications"
             element={
               <ManagerRoute>
                 <ApprovedApplications />
@@ -219,7 +219,7 @@ function App() {
             }
           />
           <Route
-            path="manage-borrowers"
+            path="manager/manage-borrowers"
             element={
               <ManagerRoute>
                 <ManageBorrowers />
