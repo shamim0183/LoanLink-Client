@@ -1,3 +1,4 @@
+import React from "react"
 import { motion } from "framer-motion"
 import { FaArrowLeft, FaExclamationTriangle, FaRedo } from "react-icons/fa"
 import { useNavigate, useParams } from "react-router-dom"

@@ -1,13 +1,9 @@
-import React from "react";
+import React from "react"
 import { motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react"
-import {
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaPaperPlane,
-  FaPhone,
-} from "react-icons/fa"
+import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa"
 import Swal from "sweetalert2"
+import { ContactForm, ContactInfoItem } from "../components/contact"
 import LocationMap from "../components/LocationMap"
 import useDocumentTitle from "../hooks/useDocumentTitle"
 
@@ -70,78 +66,11 @@ const Contact = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <motion.div
-            className="card bg-base-200 shadow-2xl ring-1 ring-base-300"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            viewport={{ once: true, amount: 0.2 }}
-          >
-            <div className="card-body">
-              <h2 className="card-title text-3xl mb-6">Send us a Message</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Your Name</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="John Doe"
-                    className="input input-bordered"
-                    required
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Email Address</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="john@example.com"
-                    className="input input-bordered"
-                    required
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Subject</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    placeholder="How can we help?"
-                    className="input input-bordered"
-                    required
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Message</span>
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder="Your message here..."
-                    className="textarea textarea-bordered h-32"
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary w-full">
-                  <FaPaperPlane className="mr-2" />
-                  Send Message
-                </button>
-              </form>
-            </div>
-          </motion.div>
+          <ContactForm
+            formData={formData}
+            handleSubmit={handleSubmit}
+            handleChange={handleChange}
+          />
 
           {/* Contact Info */}
           <motion.div
@@ -160,42 +89,29 @@ const Contact = () => {
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="bg-primary/20 p-4 rounded-lg">
-                  <FaMapMarkerAlt className="text-2xl text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Address</h3>
-                  <p className="text-base-content/70">
-                    Level-4, 34, Awal Centre
-                  </p>
-                  <p className="text-base-content/70">Dhaka 1213, Bangladesh</p>
-                </div>
-              </div>
+              <ContactInfoItem
+                icon={<FaMapMarkerAlt />}
+                title="Address"
+                lines={["Level-4, 34, Awal Centre", "Dhaka 1213, Bangladesh"]}
+                iconBgColor="bg-primary/20"
+                iconColor="text-primary"
+              />
 
-              <div className="flex items-start space-x-4">
-                <div className="bg-secondary/20 p-4 rounded-lg">
-                  <FaPhone className="text-2xl text-secondary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Phone</h3>
-                  <p className="text-base-content/70">+1 (555) 123-4567</p>
-                  <p className="text-base-content/70 text-sm">
-                    Mon-Fri 9AM-6PM EST
-                  </p>
-                </div>
-              </div>
+              <ContactInfoItem
+                icon={<FaPhone />}
+                title="Phone"
+                lines={["+1 (555) 123-4567", "Mon-Fri 9AM-6PM EST"]}
+                iconBgColor="bg-secondary/20"
+                iconColor="text-secondary"
+              />
 
-              <div className="flex items-start space-x-4">
-                <div className="bg-primary/20 p-4 rounded-lg">
-                  <FaEnvelope className="text-2xl text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Email</h3>
-                  <p className="text-base-content/70">support@loanlink.com</p>
-                  <p className="text-base-content/70">info@loanlink.com</p>
-                </div>
-              </div>
+              <ContactInfoItem
+                icon={<FaEnvelope />}
+                title="Email"
+                lines={["support@loanlink.com", "info@loanlink.com"]}
+                iconBgColor="bg-primary/20"
+                iconColor="text-primary"
+              />
             </div>
 
             {/* Office Hours */}
