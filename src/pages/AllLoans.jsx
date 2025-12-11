@@ -1,5 +1,5 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
+import React from "react"
+import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { motion } from "framer-motion"
 import { useState } from "react"
@@ -15,6 +15,7 @@ const AllLoans = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [currentPage, setCurrentPage] = useState(0)
+  const [isFiltering, setIsFiltering] = useState(false)
   const loansPerPage = 6
 
   // Fetch all loans using TanStack Query
@@ -31,8 +32,19 @@ const AllLoans = () => {
     const matchesSearch =
       loan.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       loan.description.toLowerCase().includes(searchTerm.toLowerCase())
+
+    // Normalize categories for comparison (case-insensitive)
+    const normalizedLoanCategory =
+      (loan.category || "").charAt(0).toUpperCase() +
+      (loan.category || "").slice(1).toLowerCase()
+    const normalizedSelectedCategory =
+      selectedCategory.charAt(0).toUpperCase() +
+      selectedCategory.slice(1).toLowerCase()
+
     const matchesCategory =
-      selectedCategory === "all" || loan.category === selectedCategory
+      selectedCategory === "all" ||
+      normalizedLoanCategory === normalizedSelectedCategory
+
     return matchesSearch && matchesCategory
   })
 
@@ -46,8 +58,12 @@ const AllLoans = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  // Get unique categories
-  const categories = ["all", ...new Set(loans.map((loan) => loan.category))]
+  // Get unique categories (capitalize first letter to handle case inconsistencies)
+  const allCategories = loans.map((loan) => {
+    const category = loan.category || ""
+    return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()
+  })
+  const categories = ["all", ...new Set(allCategories).values()].filter(Boolean)
 
   if (loading) {
     return <LoadingSpinner fullScreen />
@@ -97,8 +113,11 @@ const AllLoans = () => {
             <select
               value={selectedCategory}
               onChange={(e) => {
+                setIsFiltering(true)
                 setSelectedCategory(e.target.value)
                 setCurrentPage(0)
+                // Brief delay to show skeleton
+                setTimeout(() => setIsFiltering(false), 700)
               }}
               className="select-field md:w-64"
             >
@@ -124,7 +143,43 @@ const AllLoans = () => {
         </div>
 
         {/* Loans Grid */}
-        {currentLoans.length > 0 ? (
+        {isFiltering ? (
+          // Skeleton Loading
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(loansPerPage)].map((_, index) => (
+              <div
+                key={index}
+                className="card bg-base-100 border border-base-content/10 shadow-xl h-full flex flex-col overflow-hidden"
+              >
+                {/* Image Skeleton */}
+                <div className="skeleton h-48 w-full rounded-none"></div>
+
+                <div className="card-body p-5 space-y-4">
+                  {/* Category Badge Skeleton */}
+                  <div className="skeleton h-6 w-20"></div>
+
+                  {/* Title Skeleton */}
+                  <div className="skeleton h-6 w-full"></div>
+
+                  {/* Description Skeleton */}
+                  <div className="space-y-2">
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-3/4"></div>
+                  </div>
+
+                  {/* Details Skeleton */}
+                  <div className="space-y-2">
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                  </div>
+
+                  {/* Button Skeleton */}
+                  <div className="skeleton h-12 w-full"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : currentLoans.length > 0 ? (
           <>
             <motion.div
               initial={{ opacity: 0 }}

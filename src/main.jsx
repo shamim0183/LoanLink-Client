@@ -6,6 +6,10 @@ import App from "./App.jsx"
 import AuthProvider from "./contexts/AuthContext"
 import "./index.css"
 
+// Initialize theme BEFORE React renders to prevent flash of wrong theme on loading screen
+const savedTheme = localStorage.getItem("theme") || "loanlink"
+document.documentElement.setAttribute("data-theme", savedTheme)
+
 // Create a query client
 const queryClient = new QueryClient({
   defaultOptions: {
