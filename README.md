@@ -1,9 +1,9 @@
 # 💼 LoanLink Client
 
-![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react) 
-![Vite](https://img.shields.io/badge/Vite-5.4-646cff?logo=vite) 
-![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?logo=tailwindcss) 
-![Firebase](https://img.shields.io/badge/Firebase-10.14-ffca28?logo=firebase) 
+![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react)
+![Vite](https://img.shields.io/badge/Vite-5.4-646cff?logo=vite)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?logo=tailwindcss)
+![Firebase](https://img.shields.io/badge/Firebase-10.14-ffca28?logo=firebase)
 ![Stripe](https://img.shields.io/badge/Stripe-Integrated-635bff?logo=stripe)
 
 Modern microloan management platform with role-based dashboards for borrowers, managers, and admins.
@@ -80,14 +80,100 @@ VITE_STRIPE_PUBLISHABLE_KEY=your_publishable_key
 ## 📁 Project Structure
 
 ```
-src/
-├── components/      # Reusable UI components
-├── contexts/        # Context providers
-├── pages/           # Page components
-│   └── dashboard/   # Role-based dashboards
-├── routes/          # Route guards
-└── config/          # Firebase config
+client/
+├── public/                 # Static assets
+├── src/
+│   ├── components/         # Reusable UI components
+│   │   ├── dashboard/      # Dashboard specific components
+│   │   │   ├── ApplicationModal.jsx
+│   │   │   ├── DataTable.jsx
+│   │   │   ├── StatusBadge.jsx
+│   │   │   └── index.js    # Barrel export
+│   │   ├── forms/          # Form components
+│   │   │   ├── FormInput.jsx
+│   │   │   ├── FormSelect.jsx
+│   │   │   ├── FormTextarea.jsx
+│   │   │   └── index.js
+│   │   ├── home/           # Home page components
+│   │   │   ├── Hero.jsx
+│   │   │   ├── AvailableLoans.jsx
+│   │   │   ├── HowItWorks.jsx
+│   │   │   ├── Testimonials.jsx
+│   │   │   └── WhyChooseUs.jsx
+│   │   ├── modals/         # Modal components
+│   │   └── shared/         # Shared components
+│   │       ├── Footer.jsx
+│   │       ├── Navbar.jsx
+│   │       ├── LoadingSpinner.jsx
+│   │       └── ReceiptCard.jsx
+│   ├── contexts/           # Context providers
+│   │   └── AuthContext.jsx # Firebase authentication
+│   ├── hooks/              # Custom React hooks
+│   │   ├── useAuth.js
+│   │   ├── useDocumentTitle.js
+│   │   └── useImageUpload.js
+│   ├── layouts/            # Layout components
+│   │   ├── MainLayout.jsx
+│   │   └── DashboardLayout.jsx
+│   ├── pages/              # Page components
+│   │   ├── Home.jsx
+│   │   ├── AllLoans.jsx
+│   │   ├── LoanDetails.jsx
+│   │   ├── ApplyLoan.jsx
+│   │   ├── About.jsx
+│   │   ├── Contact.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── ForgotPassword.jsx
+│   │   ├── PaymentSuccess.jsx
+│   │   ├── PaymentCancel.jsx
+│   │   ├── Receipt.jsx
+│   │   ├── NotFound.jsx
+│   │   ├── index.js        # Barrel export for main pages
+│   │   └── dashboard/      # Dashboard pages
+│   │       ├── DashboardHome.jsx
+│   │       ├── MyLoans.jsx
+│   │       ├── PaymentHistory.jsx
+│   │       ├── Profile.jsx  # Dynamic role-based title
+│   │       ├── index.js     # Barrel export
+│   │       ├── admin/       # Admin-only pages
+│   │       │   ├── AddLoan.jsx
+│   │       │   ├── AllLoans.jsx
+│   │       │   ├── LoanApplications.jsx
+│   │       │   ├── ManageUsers.jsx
+│   │       │   └── index.js # Barrel export
+│   │       └── manager/     # Manager-only pages
+│   │           ├── AddLoan.jsx
+│   │           ├── ManageLoans.jsx
+│   │           ├── PendingApplications.jsx
+│   │           ├── ApprovedApplications.jsx
+│   │           ├── ManageBorrowers.jsx
+│   │           └── index.js # Barrel export
+│   ├── routes/             # Route guards
+│   │   ├── PrivateRoute.jsx
+│   │   ├── AdminRoute.jsx
+│   │   └── ManagerRoute.jsx
+│   ├── utils/              # Utility functions
+│   │   ├── avatar.js
+│   │   └── dateUtils.js
+│   ├── config/             # Configuration files
+│   │   ├── firebase.config.js
+│   │   └── api.config.js
+│   ├── constants/          # Constants and enums
+│   │   └── index.js
+│   ├── App.jsx             # Main app with barrel imports
+│   └── main.jsx            # App entry point
+├── .env.local              # Environment variables
+└── package.json
 ```
+
+### Key Architecture Features
+
+- **Barrel Exports**: All page groups use `index.js` for clean imports
+- **Role-Based Routing**: Separate routes for Borrower, Manager, and Admin
+- **Dynamic Titles**: `useDocumentTitle` hook for SEO-friendly page titles
+- **Protected Routes**: Route guards ensure role-based access control
+- **Component Organization**: Grouped by feature and reusability
 
 ## 📦 Build
 
