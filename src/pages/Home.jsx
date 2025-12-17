@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios"
 import { motion } from "framer-motion"
@@ -276,7 +276,7 @@ const Home = () => {
             </p>
             <Link
               to={user ? "/all-loans" : "/register"}
-              className="btn btn-neutral btn-lg"
+              className="btn btn-primary btn-lg"
             >
               Apply Now - It's Free
             </Link>

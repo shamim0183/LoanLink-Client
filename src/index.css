@@ -187,3 +187,17 @@
     box-shadow: 0 0 20px rgba(255, 107, 44, 0.3);
   }
 }
+
+/* DaisyUI dark theme button override */
+[data-theme="dark"] .btn-primary {
+  background-color: #2c5f7f !important;
+  border-color: #2c5f7f;
+  color: white;
+  box-shadow: 0 4px 12px rgba(44, 95, 127, 0.3);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #3a7a9e !important;
+  border-color: #3a7a9e;
+  box-shadow: 0 6px 16px rgba(44, 95, 127, 0.4);
+}

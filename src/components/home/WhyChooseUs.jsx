@@ -76,7 +76,7 @@ const WhyChooseUs = () => {
             <div>
               <Link
                 to={user ? "/all-loans" : "/register"}
-                className="btn btn-neutral btn-lg"
+                className="btn btn-primary btn-lg"
               >
                 Get Started Now
               </Link>

@@ -4,8 +4,8 @@ import Marquee from "react-fast-marquee"
 const TrustedPartners = () => {
   const stats = [
     { label: "Total Loans Disbursed", value: "$2.5M+", color: "text-primary" },
-    { label: "Active Borrowers", value: "5,000+", color: "text-secondary" },
-    { label: "Loan Approval Rate", value: "95%", color: "text-accent" },
+    { label: "Active Borrowers", value: "5,000+", color: "text-primary" },
+    { label: "Loan Approval Rate", value: "95%", color: "text-primary" },
     {
       label: "Average Processing Time",
       value: "24 hrs",
@@ -71,7 +71,7 @@ const TrustedPartners = () => {
           </div>
           <div className="p-6 bg-base-100 rounded-lg shadow">
             <p className="text-sm opacity-70">Verified Business</p>
-            <p className="font-bold text-secondary">✓ Trusted</p>
+            <p className="font-bold text-primary">✓ Trusted</p>
           </div>
           <div className="p-6 bg-base-100 rounded-lg shadow">
             <p className="text-sm opacity-70">FDIC Insured</p>
