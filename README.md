@@ -10,11 +10,14 @@ Modern microloan management platform with role-based dashboards for borrowers, m
 
 ## ✨ Features
 
-- Browse and apply for loans
+- Browse and apply for loans with advanced filtering & sorting
 - Stripe payment integration
 - Real-time application tracking
 - Role-based dashboards (Borrower, Manager, Admin)
-- Firebase authentication (Email + Google OAuth)
+- Firebase authentication (Email + Google + GitHub OAuth)
+- Demo login for quick testing
+- Interactive FAQ section
+- Newsletter subscription
 
 ## 🛠️ Tech Stack
 
@@ -77,6 +80,32 @@ VITE_STRIPE_PUBLISHABLE_KEY=your_publishable_key
 - View all loans and applications
 - Assign user roles
 
+## 🧪 Demo Credentials
+
+For quick testing, use the demo login button on the login page or these credentials:
+
+```
+Email: demo@loanlink.com
+Password: Demo123!
+```
+
+## 🔍 Advanced Features
+
+**All Loans Page**
+
+- Search by title/description
+- Filter by category
+- Filter by interest rate (0-20% range slider)
+- Sort by: Newest, Price (low/high), Interest (low/high)
+- Pagination with results count
+
+**Home Page**
+
+- 10 engaging sections including FAQ and Newsletter
+- Smooth scroll animations
+- Interactive testimonials carousel
+- Trusted partners showcase
+
 ## 📁 Project Structure
 
 ```
@@ -95,11 +124,12 @@ client/
 │   │   │   ├── FormTextarea.jsx
 │   │   │   └── index.js
 │   │   ├── home/           # Home page components
-│   │   │   ├── Hero.jsx
-│   │   │   ├── AvailableLoans.jsx
 │   │   │   ├── HowItWorks.jsx
 │   │   │   ├── Testimonials.jsx
-│   │   │   └── WhyChooseUs.jsx
+│   │   │   ├── TrustedPartners.jsx
+│   │   │   ├── WhyChooseUs.jsx
+│   │   │   ├── FAQ.jsx        # NEW: FAQ accordion
+│   │   │   └── Newsletter.jsx # NEW: Email subscription
 │   │   ├── modals/         # Modal components
 │   │   └── shared/         # Shared components
 │   │       ├── Footer.jsx

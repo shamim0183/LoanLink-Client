@@ -14,6 +14,8 @@ const AllLoans = () => {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
+  const [sortBy, setSortBy] = useState("newest")
+  const [maxInterestRate, setMaxInterestRate] = useState(20)
   const [currentPage, setCurrentPage] = useState(0)
   const [isFiltering, setIsFiltering] = useState(false)
   const loansPerPage = 6
@@ -45,13 +47,36 @@ const AllLoans = () => {
       selectedCategory === "all" ||
       normalizedLoanCategory === normalizedSelectedCategory
 
-    return matchesSearch && matchesCategory
+    const matchesInterestRate = loan.interestRate <= maxInterestRate
+
+    return matchesSearch && matchesCategory && matchesInterestRate
+  })
+
+  // Sort filtered loans
+  const sortedLoans = [...filteredLoans].sort((a, b) => {
+    switch (sortBy) {
+      case "price-low":
+        return a.maxLoanLimit - b.maxLoanLimit
+      case "price-high":
+        return b.maxLoanLimit - a.maxLoanLimit
+      case "interest-low":
+        return a.interestRate - b.interestRate
+      case "interest-high":
+        return b.interestRate - a.interestRate
+      case "newest":
+      default:
+        // If loans have createdAt field, sort by it; otherwise maintain current order
+        if (a.createdAt && b.createdAt) {
+          return new Date(b.createdAt) - new Date(a.createdAt)
+        }
+        return 0
+    }
   })
 
   // Pagination
-  const pageCount = Math.ceil(filteredLoans.length / loansPerPage)
+  const pageCount = Math.ceil(sortedLoans.length / loansPerPage)
   const offset = currentPage * loansPerPage
-  const currentLoans = filteredLoans.slice(offset, offset + loansPerPage)
+  const currentLoans = sortedLoans.slice(offset, offset + loansPerPage)
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected)
@@ -93,7 +118,7 @@ const AllLoans = () => {
           transition={{ delay: 0.2 }}
           className="mb-8 bg-base-100 p-6 rounded-xl shadow-md"
         >
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col gap-4">
             {/* Search Bar */}
             <div className="flex-1 relative">
               <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50" />
@@ -109,24 +134,68 @@ const AllLoans = () => {
               />
             </div>
 
-            {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => {
-                setIsFiltering(true)
-                setSelectedCategory(e.target.value)
-                setCurrentPage(0)
-                // Brief delay to show skeleton
-                setTimeout(() => setIsFiltering(false), 700)
-              }}
-              className="select-field md:w-64"
-            >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category === "all" ? "All Categories" : category}
-                </option>
-              ))}
-            </select>
+            {/* Filter Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Category Filter */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => {
+                  setIsFiltering(true)
+                  setSelectedCategory(e.target.value)
+                  setCurrentPage(0)
+                  setTimeout(() => setIsFiltering(false), 700)
+                }}
+                className="select-field"
+              >
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category === "all" ? "All Categories" : category}
+                  </option>
+                ))}
+              </select>
+
+              {/* Sort Dropdown */}
+              <select
+                value={sortBy}
+                onChange={(e) => {
+                  setIsFiltering(true)
+                  setSortBy(e.target.value)
+                  setCurrentPage(0)
+                  setTimeout(() => setIsFiltering(false), 700)
+                }}
+                className="select-field"
+              >
+                <option value="newest">Newest First</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="interest-low">Interest: Low to High</option>
+                <option value="interest-high">Interest: High to Low</option>
+              </select>
+
+              {/* Interest Rate Filter */}
+              <div className="flex items-center gap-3 bg-base-200 px-4 py-2 rounded-lg">
+                <label className="text-sm font-medium whitespace-nowrap">
+                  Max Interest:
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="20"
+                  step="0.5"
+                  value={maxInterestRate}
+                  onChange={(e) => {
+                    setIsFiltering(true)
+                    setMaxInterestRate(parseFloat(e.target.value))
+                    setCurrentPage(0)
+                    setTimeout(() => setIsFiltering(false), 700)
+                  }}
+                  className="range range-primary range-sm flex-1"
+                />
+                <span className="text-sm font-semibold text-primary min-w-[3rem] text-right">
+                  {maxInterestRate}%
+                </span>
+              </div>
+            </div>
           </div>
         </motion.div>
 
@@ -137,8 +206,8 @@ const AllLoans = () => {
             <span className="font-semibold text-primary">
               {currentLoans.length}
             </span>{" "}
-            of {filteredLoans.length} loan
-            {filteredLoans.length !== 1 ? "s" : ""}
+            of {sortedLoans.length} loan
+            {sortedLoans.length !== 1 ? "s" : ""}
           </p>
         </div>
 

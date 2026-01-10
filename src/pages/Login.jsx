@@ -1,5 +1,4 @@
-import React from "react";
-import { motion } from "framer-motion";
+import { motion } from "framer-motion"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
@@ -122,6 +121,46 @@ const Login = () => {
               >
                 <FaGithub className="text-xl" />
                 Continue with GitHub
+              </button>
+            </div>
+
+            {/* Demo Login Info */}
+            <div className="alert alert-info flex justify-between items-center gap-2 bg-info/10 border-info/20">
+              <div className="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="stroke-info shrink-0 w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span className="text-sm">Want to try without signing up?</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const emailInput = document.querySelector(
+                    'input[type="email"]'
+                  )
+                  const passwordInput = document.querySelector(
+                    'input[type="password"]'
+                  )
+                  if (emailInput) emailInput.value = "demo@loanlink.com"
+                  if (passwordInput) passwordInput.value = "Demo123!"
+                  // Trigger onChange events manually
+                  const event = new Event("input", { bubbles: true })
+                  emailInput?.dispatchEvent(event)
+                  passwordInput?.dispatchEvent(event)
+                }}
+                className="btn btn-sm btn-outline btn-info"
+              >
+                Use Demo Account
               </button>
             </div>
 

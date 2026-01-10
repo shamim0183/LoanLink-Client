@@ -23,6 +23,8 @@ import LoadingSpinner from "../components/shared/LoadingSpinner"
 import LoanCard from "../components/shared/LoanCard"
 import useAuth from "../hooks/useAuth"
 import useDocumentTitle from "../hooks/useDocumentTitle" // Added import
+import FAQ from "../components/home/FAQ";
+import Newsletter from "../components/home/Newsletter";
 
 const Home = () => {
   useDocumentTitle("Home - LoanLink") // Added hook call
@@ -257,6 +259,12 @@ const Home = () => {
 
       {/* Trusted Partners Section */}
       <TrustedPartners />
+
+      {/* FAQ Section */}
+      <FAQ />
+
+      {/* Newsletter Section */}
+      <Newsletter />
 
       {/* CTA Section */}
       <section className="section-padding bg-gradient-to-r from-primary to-secondary text-white">
